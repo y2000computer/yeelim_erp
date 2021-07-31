@@ -26,7 +26,7 @@ $json_search_items = json_decode($json_searchphrase, true);
 								<th style="text-align:left" width ="3%'"><?php echo _t("No");?></th>
 								<th style="text-align:left" width ="8%'">Journal Date</th>
 								<th style="text-align:left" width ="8%'">Journal Code</th>
-								<th style="text-align:left" width ="8%'">Chart Code</th>
+								<th style="text-align:left" width ="12%'">Chart Code</th>
 								<th style="text-align:left" width ="">Chart Name/Description</th>
 								<th style="text-align:right" width ="10">Amount</th>
 								<th style="text-align:left" width ="6%'">Posting</th>
