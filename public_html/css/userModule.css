@@ -1,0 +1,27 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+form.attachPanel
+{
+	padding: 10px;
+}
+
+form.attachPanel .formRow
+{
+	justify-content: flex-start;
+	margin-top: 0;
+}
+form.attachPanel .formRow:last-child
+{
+	margin-bottom: 0;
+}
+
+form.attachPanel .formRow select
+{
+	width: 400px;
+}
+
+.alertMsg
+{
+	width: calc(100% - 20px);
+	margin: 0 10px 20px 10px;
+}

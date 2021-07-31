@@ -1,0 +1,66 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+body
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	font: 32px/normal;
+	text-align: center;
+	color: #000000;
+	font-size-adjust: inherit;
+	font-stretch: normal;
+}
+
+img {
+	vertical-align: middle;
+}
+
+.loginContainer
+{
+	width: 800px;
+	margin: 40px auto;
+	padding: 100px;
+	background-color: #fff;
+	border-radius: 10px;
+}
+
+.loginLogo
+{
+	display: block;
+	width: 100%;
+	margin-bottom: 60px;
+	text-align: center;
+	color: #162a57;
+	font-size: 40px;
+	line-height: 1.3em;
+	font-weight: 700;
+}
+
+form .formLabel
+{
+	min-width: 100px;
+	max-width: 100px;
+}
+
+form .formInput
+{
+	min-width: 200px;
+	max-width: 200px;
+}
+
+form input[type="text"],
+form input[type="password"]
+{
+	width: 200px;
+}
+
+form .loginBtn
+{
+    margin: 10px auto 0;
+	padding: 10px 20px;
+    border-radius: 80px;
+	font-size: 16px;
+	font-weight: 700;
+}
