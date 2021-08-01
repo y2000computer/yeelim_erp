@@ -27,7 +27,7 @@ define('DIR_PUBLIC_UPLOAD', '../document');
 
 //Encryption setting
 define('SALT', 'REVAMP'); 
-DEFINE('SYSTEM_PAGE_ROW_LIMIT', '30');
+DEFINE('SYSTEM_PAGE_ROW_LIMIT', '50');
 
 
 //Email setting
