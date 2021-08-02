@@ -29,8 +29,17 @@ foreach ($arr_charts as $report):
 	
 	//$report_ttl += $report['amount'];
 	$report_brought_forward = $report['brought_forward'];
+	/*
 	$report_previous_balance = $dmReport->get_previous_balance($report['chart_id'],$json_search_items['criteria']['journal_date_from'],$json_search_items['criteria']['journal_date_to']);
+	*/
+	$report_previous_balance = $dmReport->get_previous_balance($report['chart_id'],$json_search_items['criteria']);
+
+	/*
 	$report_current_period_balance = $dmReport->get_current_period_balance($report['chart_id'],$json_search_items['criteria']['journal_date_from'],$json_search_items['criteria']['journal_date_to']);
+	*/
+
+	$report_current_period_balance = $dmReport->get_current_period_balance($report['chart_id'],$json_search_items['criteria']);
+
 
 	if($type_code=='120') {		//Equity-gets closed , calcuate P & L
 		

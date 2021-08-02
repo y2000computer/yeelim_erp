@@ -42,8 +42,18 @@ foreach ($arr_report as $report):
 	$excel_row++;
 
 	$report_brought_forward = $report['brought_forward'];
+	/*
 	$report_previous_balance = $dmReport->get_previous_balance($report['chart_id'],$json_search_items['criteria']['journal_date_from'],$json_search_items['criteria']['journal_date_to']);
+	*/
+	$report_previous_balance = $dmReport->get_previous_balance($report['chart_id'],$json_search_items['criteria']);
+
+	/*
 	$report_current_period_balance = $dmReport->get_current_period_balance($report['chart_id'],$json_search_items['criteria']['journal_date_from'],$json_search_items['criteria']['journal_date_to']);
+	*/
+
+	$report_current_period_balance = $dmReport->get_current_period_balance($report['chart_id'],$json_search_items['criteria']);
+
+
 	$report_ending_balance = $report_brought_forward + $report_previous_balance + $report_current_period_balance;
 
 	$report_brought_forward = round($report_brought_forward,2);
