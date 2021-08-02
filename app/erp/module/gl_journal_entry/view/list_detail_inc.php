@@ -53,6 +53,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 						</div>
 						<form class="fullWidthForm fullWidthForm-2col" action="<?php echo actionURL('detail_update','?item_id='.$item_id.'&lot_id='.$lot_id.'&tab='.$tab.'&deleteaction='.$deleteaction);?>" method="post" style="padding-top: 0;">
 
+						<input type="hidden" name="general[comp_id]"  value="<?php echo $_SESSION["target_comp_id"];?>" >
 						<input type="hidden" name="general[irow_id]"   value="<?php echo $general['irow_id'];?>" />
 						<input type="hidden" name="general[deleteaction]"   value="<?php echo $deleteaction;?>" />
 						

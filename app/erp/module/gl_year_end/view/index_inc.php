@@ -13,8 +13,10 @@ if ($IS_action=='new') {
 				</div>
 				<div class="sidebarContent">
 					<div class="sidebarContentCol">
+
 						<?php echo '<form class="fullWidthForm fullWidthForm-2col" action="'.actionURL('process','').'" method="post" onsubmit="return handle_confirm()"  >';?>
 						<input type="hidden" name="criteria[comp_id]"  value="<?php echo $_SESSION["target_comp_id"];?>" >
+
 						
 						<?php
 						if(isset($vlValidation)) {

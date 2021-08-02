@@ -219,7 +219,9 @@ class gl_chart_master_model
  
 	public function create($general)
 	{
-		$comp_id = $_SESSION["target_comp_id"];
+		//$comp_id = $_SESSION["target_comp_id"];
+		$comp_id = addslashes($general['comp_id']);
+		//$comp_id = $_SESSION["target_comp_id"];
 		$chart_code = trim(addslashes($general['chart_code']));
 		$chart_name = trim(addslashes($general['chart_name']));
 		$type_code = addslashes($general['type_code']);
