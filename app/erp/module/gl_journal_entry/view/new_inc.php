@@ -5,6 +5,7 @@ require __DIR__.'/../../../template/header_inc.php';
 if ($IS_action=='new') {
 	$general['status'] = 1;
 	$general['journal_date'] = date('d/m/Y') ;
+
 }
 ?>
 		<div class="bodyContent breadcrumbExist" id="BodyDiv">
@@ -16,6 +17,7 @@ if ($IS_action=='new') {
 				<div class="sidebarContent">
 					<div class="sidebarContentCol">
 						<?php echo '<form class="fullWidthForm fullWidthForm-2col" action="'.actionURL('create','').'" method="post" >';?>
+						<input type="hidden" name="general[comp_id]"  value="<?php echo $_SESSION["target_comp_id"];?>" >
 						
 						<?php
 						if(isset($vlValidation)) {

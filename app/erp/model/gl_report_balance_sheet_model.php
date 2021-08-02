@@ -30,18 +30,21 @@ class gl_report_balance_sheet_model
 	{
 
 		$json = json_decode($jsondata, true);
-		
+		$comp_id = $json['criteria']['comp_id'];
+
+
 		$sql_filter = "";
 
 		$sql = " SELECT C.chart_id, C.chart_code, C.chart_name, TY.type_name, C.brought_forward  ";
 		$sql .= " FROM  tbl_gl_chart_master AS C  ";
 		$sql .= " LEFT JOIN  tbl_gl_chart_type_master AS TY ON C.type_code = TY.type_code  ";
 		$sql .= "  WHERE ";
-		$sql .= " C .comp_id = ". $_SESSION["target_comp_id"] ;
+		//$sql .= " C .comp_id = ". $_SESSION["target_comp_id"] ;
+		$sql .= " C .comp_id = ". $comp_id ;
 		$sql .= " AND C.status  =  1 ";
 		$sql .= " ORDER  BY C.chart_code ASC ; ";
 		
-		//echo '<br>'.$sql.'<br>';
+		echo '<br>'.$sql.'<br>';
 
 
 		$record = array();
