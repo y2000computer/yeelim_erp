@@ -1,0 +1,37 @@
+/*
+SQLyog Community Edition- MySQL GUI v6.51
+MySQL - 5.5.5-10.3.14-MariaDB : Database - yeelim_db_erp_uat
+*********************************************************************
+*/
+
+/*!40101 SET NAMES utf8 */;
+
+/*!40101 SET SQL_MODE=''*/;
+
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+/*Table structure for table `tbl_gl_journal_entry` */
+
+DROP TABLE IF EXISTS `tbl_gl_journal_entry`;
+
+CREATE TABLE `tbl_gl_journal_entry` (
+  `journal_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `comp_id` varchar(6) NOT NULL DEFAULT '',
+  `journal_code` varchar(50) NOT NULL DEFAULT '',
+  `journal_date` datetime DEFAULT NULL,
+  `balance` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `posting_is` int(11) DEFAULT 0,
+  `year_end_is` int(11) DEFAULT 0,
+  `status` int(11) NOT NULL DEFAULT 1,
+  `create_user` varchar(50) DEFAULT NULL,
+  `create_datetime` datetime DEFAULT NULL,
+  `modify_user` varchar(50) DEFAULT NULL,
+  `modify_datetime` datetime DEFAULT NULL,
+  PRIMARY KEY (`journal_id`),
+  UNIQUE KEY `comp_id_journal_code` (`comp_id`,`journal_code`),
+  KEY `comp_id_journal_date` (`comp_id`,`journal_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=50338 DEFAULT CHARSET=utf8;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
