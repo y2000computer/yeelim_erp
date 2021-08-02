@@ -31,6 +31,7 @@ class gl_report_trial_balance_model
 
 		$json = json_decode($jsondata, true);
 		
+		
 		$sql_filter = "";
 
 		$sql = " SELECT C.chart_id, C.chart_code, C.chart_name, TY.type_name, C.brought_forward  ";
