@@ -43,7 +43,7 @@ class gl_report_balance_sheet_model
    	$sql .= " AND C.status  =  1 ";
 		$sql .= " ORDER  BY C.chart_code ASC ; ";
 		
-		echo '<br>'.$sql.'<br>';
+		//echo '<br>'.$sql.'<br>';
 
 
 		$record = array();
