@@ -436,7 +436,8 @@ class gl_journal_entry_model
  
 	public function create($general)
 	{
-		$comp_id = $_SESSION["target_comp_id"];
+		//$comp_id = $_SESSION["target_comp_id"];
+		$comp_id = addslashes($general['comp_id']);
 		$journal_code = addslashes($general['journal_code']);
 		$journal_date = toYMD($general['journal_date']);
 		$type_code = trim(addslashes($general['type_code']));
@@ -756,6 +757,7 @@ class gl_journal_entry_model
 	{
 		$deleteaction = addslashes($general['deleteaction']);
 		
+		$comp_id = addslashes($general['comp_id']);
 		$irow_id = addslashes($general['irow_id']);
 		$chart_code = addslashes($general['chart_code']);
 		$description = trim(addslashes($general['description']));
@@ -765,7 +767,8 @@ class gl_journal_entry_model
 
 		//retreive chart_id
 		$sql ="SELECT chart_id FROM tbl_gl_chart_master WHERE ";
-		$sql .= " comp_id = ". $_SESSION["target_comp_id"] ;
+		//$sql .= " comp_id = ". $_SESSION["target_comp_id"] ;
+		$sql .= " comp_id = ". $comp_id ;
 		$sql .= " AND " ;
 		$sql .= " chart_code = "."'". $chart_code."'" ;
 		//echo "<br>sql:".$sql."<br>";
