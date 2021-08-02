@@ -88,6 +88,16 @@ switch(IS_MODULE)
 			break;	
 
 
+/*********************************************PROP***********************************/						
+case "prop_home";
+require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+	break;
+case "prop_tenant_info";
+require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+	break;
+	
+
+
 			
 /* Schedule Job */
 /* Schedule Job */

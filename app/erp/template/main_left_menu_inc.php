@@ -22,8 +22,8 @@ for($x=0; $x<$moudule_count; $x++){
 		?>
 
 		<?php
-		if(in_array("CUST", $module_code_array)){  
-		echo '<LI class="main_menu_unselected"><a href="/'.IS_PORTAL.'/'.IS_LANG.'/cust_home/">'.'Customer'.'&nbsp;'.'&raquo;'.'</a></LI>';
+		if(in_array("PROP", $module_code_array)){  
+		echo '<LI class="main_menu_unselected"><a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_home/">'.'Properly Rent/Maint.'.'&nbsp;'.'&raquo;'.'</a></LI>';
 		}
 		?>
 
