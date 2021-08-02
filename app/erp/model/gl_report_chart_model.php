@@ -30,12 +30,14 @@ class gl_report_chart_model
 	{
 
 		$json = json_decode($jsondata, true);
-		$json=$json['criteria'];
+		//$json=$json['criteria'];
+		$comp_id = $json['criteria']['comp_id'];
 	
 		$sql = "SELECT C.*, TY.type_name FROM tbl_gl_chart_master AS C  ";
 		$sql .= " LEFT JOIN  tbl_gl_chart_type_master AS TY ON C.type_code = TY.type_code  ";
 		$sql .= "  WHERE ";
-		$sql .= " comp_id = ". $_SESSION["target_comp_id"] ;
+		//$sql .= " comp_id = ". $_SESSION["target_comp_id"] ;
+		$sql .= " comp_id = ". $comp_id ;
 		$sql .= " AND C.status  =  1 ";
 		$sql .= " ORDER  BY C.chart_code ASC ; ";
 		
