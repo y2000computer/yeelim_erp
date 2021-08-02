@@ -7,9 +7,10 @@ $checkaccess =  new checkaccess_model();
 list($allow,$level,$add,$change,$delete) = $checkaccess->checkRight('PROP-TRAN-01-001');
 if($allow == 0) require __DIR__.'/../../../template/sorry_inc.php';
 
-$dmGeneralModel = new gl_chart_master_model();  //Open database connection
+$dmGeneralModel = new prop_tenant_info_model();  //Open database connection
 
-$arr_chart_type_master = $dmGeneralModel->chart_type_master_viewall(); 
+$arr_prop_build_master = $dmGeneralModel->prop_build_master_viewall($_SESSION["target_comp_id"]);
+
 		
 switch($IS_action)
 {
@@ -60,6 +61,9 @@ switch($IS_action)
 		require __DIR__.'/common_paging_inc.php';
 		$item_id=$_GET["item_id"];
 		$general = $dmGeneralModel->select($_GET["item_id"]);
+		$general['rent_date'] = YMDtoDMY($general['rent_date']);
+		$general['maint_date'] = YMDtoDMY($general['maint_date']);
+
 		require __DIR__.'/../view/edit_inc.php';
 		break;
 		
@@ -74,6 +78,8 @@ switch($IS_action)
 				if($vlValidation->ValidateFormActionUpdate($item_id, $general)) {
 					$void=$dmGeneralModel->update($item_id, $_POST['general']);
 					$general = $dmGeneralModel->select($item_id);
+					$general['rent_date'] = YMDtoDMY($general['rent_date']);
+					$general['maint_date'] = YMDtoDMY($general['maint_date']);
 					require __DIR__.'/../view/edit_inc.php';
 	
 			} 

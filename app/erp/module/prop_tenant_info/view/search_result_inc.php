@@ -24,10 +24,12 @@ $json_search_items = json_decode($json_searchphrase, true);
 							<tbody>
 								<tr>
 								<th style="text-align:left" width ="5%'"><?php echo _t("No");?></th>
-								<th style="text-align:left" width ="12%'">Chart Code</th>
-								<th style="text-align:left" width ="25%'">Type Name</th>
-								<th style="text-align:left" >Chart Name</th>
-								<th style="text-align:right" width="15%">Brought Forward</th>
+								<th style="text-align:left" width ="13%">Tenant Code</th>
+								<th style="text-align:left" width ="">Name</th>
+								<th style="text-align:left" width ="10%">Rent Bill Date</th>
+								<th style="text-align:right" width="8%">Rent Amt.</th>
+								<th style="text-align:left" width ="10%">Maint. Bill Date</th>
+								<th style="text-align:right" width="8%">Maint. Amt.</th>
 								<th style="text-align:left" width ="10%">Status</th>								
 								</tr>
 								<?php
@@ -38,12 +40,26 @@ $json_search_items = json_decode($json_searchphrase, true);
 										if ($general_model['status']==0)  echo '<tr style="background: #D1D0CE;">';
 										echo '<td>'.$i_count++.'</td>';
 										echo '<td>';
-										echo '<a href="'.actionURL('edit','?item_id='.$general_model[$dmGeneralModel->primary_keyname()].'&lot_id='.$lot_id.'&page='.$page).'">'.htmlspecialchars($general_model['chart_code']).'&nbsp;'.'&raquo;'.'</a>';
+										echo '<a href="'.actionURL('edit','?item_id='.$general_model[$dmGeneralModel->primary_keyname()].'&lot_id='.$lot_id.'&page='.$page).'">'.htmlspecialchars($general_model['tenant_code']).'&nbsp;'.'&raquo;'.'</a>';
 										echo '</td>';
-										echo '<td>'.htmlspecialchars($general_model['type_name']).'&nbsp;'.'('.htmlspecialchars($general_model['type_code']).')'.'</td>';
-										echo '<td>'.htmlspecialchars($general_model['chart_name']).'</td>';
-										echo '<td  style="text-align:right" >'.htmlspecialchars(number_format($general_model['brought_forward'],2)).'</td>';
-										echo '<td>';		switch($general_model['status']) {
+										echo '<td>'.htmlspecialchars($general_model['eng_name']).'<br> &nbsp;'.htmlspecialchars($general_model['add_1']).'
+										<br> &nbsp;'.htmlspecialchars($general_model['add_2']).
+										'<br> &nbsp;'.htmlspecialchars($general_model['add_3']).
+										'<br> &nbsp;'.htmlspecialchars($general_model['ref_no']).
+										'<br> &nbsp;'.htmlspecialchars($general_model['shop_no']).
+										'</td>';
+
+										echo '<td>'.htmlspecialchars(YMDtoDMY($general_model['rent_date'])).'</td>';
+
+										echo '<td style="text-align:right" >'.htmlspecialchars(number_format($general_model['rent_amount']),2).'</td>';
+
+										echo '<td>'.htmlspecialchars(YMDtoDMY($general_model['maint_date'])).'</td>';
+
+										echo '<td style="text-align:right" >'.htmlspecialchars(number_format($general_model['maint_amount']),2).'</td>';
+										
+
+										echo '<td>';	
+											switch($general_model['status']) {
 											case "1": echo "Active"; break;
 											case "0": echo "De-active"; break;
 										};

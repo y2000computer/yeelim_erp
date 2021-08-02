@@ -18,21 +18,21 @@ class general_validation
 		$icheck = true;
 		//do checking for action create
 
-		if (!valid::isDecimalNumber($form['brought_forward'])) {
-			$this->problemMsg .= '[Brought Forward] format is not Valid!<br>';
+		if (!valid::isDecimalNumber($form['rent_amount'])) {
+			$this->problemMsg .= '[Rent. Amount] format is not Valid!<br>';
+			$icheck = false;
+		} 		
+		if (!valid::isDecimalNumber($form['maint_amount'])) {
+			$this->problemMsg .= '[Maint. Amount] format is not Valid!<br>';
 			$icheck = false;
 		} 
 
-		if($this->dataModel->is_duplicate_field('chart_name', $form['chart_name'])){
-				$this->problemMsg .= '[Chart Name] cannot duplicate !<br>';
+		if($this->dataModel->is_duplicate_field('tenant_code', $form['tenant_code'], $form['build_id']))
+		{
+				$this->problemMsg .= '[Tenant Code] cannot duplicate !<br>';
 				$icheck = false;
 		}
 
-
-		if($this->dataModel->is_duplicate_field('chart_code', $form['chart_code'])){
-				$this->problemMsg .= '[Chart Code] cannot duplicate !<br>';
-				$icheck = false;
-		}
 
 		
 		return $icheck;
@@ -44,13 +44,18 @@ class general_validation
 		$icheck = true;
 		//do checking for action update
 
-		if (!valid::isDecimalNumber($form['brought_forward'])) {
-			$this->problemMsg .= '[Brought Forward] format is not Valid!<br>';
+		if (!valid::isDecimalNumber($form['rent_amount'])) {
+			$this->problemMsg .= '[Rent. Amount] format is not Valid!<br>';
 			$icheck = false;
-		} 
+		} 		
+		if (!valid::isDecimalNumber($form['maint_amount'])) {
+			$this->problemMsg .= '[Maint. Amount] format is not Valid!<br>';
+			$icheck = false;
+		}  
 		
-		if($this->dataModel->is_duplicate_field_myself($id, 'chart_name', $form['chart_name'])){
-				$this->problemMsg .= '[Chart Name] cannot duplicate !<br>';
+		if($this->dataModel->is_duplicate_field_myself($id, 'tenant_code', $form['tenant_code'], $form['build_id']))
+		{
+				$this->problemMsg .= '[Tenant Code] cannot duplicate !<br>';
 				$icheck = false;
 		}
 	
