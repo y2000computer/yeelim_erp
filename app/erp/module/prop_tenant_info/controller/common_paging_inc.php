@@ -1,4 +1,5 @@
 <?php
+$tab=$_GET["tab"];
 if(isset($_GET["lot_id"]) && $_GET["lot_id"]<>'')  
 {
 	$lot_id=$_GET["lot_id"];

@@ -12,7 +12,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 					if(isset($page)) echo '<a href="'.actionURL('search','?lot_id='.$lot_id.'&page='.$page).'">Search Result</a>';
 					echo ' &raquo; ';
 					echo 'Edit ';
-					?>
+					?>				
 					<div class="pagingNavigation">
 						<?php
 						if(isset($paging)) {
@@ -29,11 +29,32 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 						} //if(isset($page))  
 						?>
 					</div>
-				
 				</div>
 				<div class="sidebarContent">
 					<div class="sidebarContentCol">
-						<?php echo '<form class="fullWidthForm fullWidthForm-2col" action="'.actionURL('update','?item_id='.$item_id.'&lot_id='.$lot_id).'" method="post" >'; ?>
+						<div class="fullWidthContent" style="padding-bottom: 0;">
+							<span class="contentRow">
+							<?php require 'edit_tab_inc.php'; ?>
+							</span>
+							<span class="contentRow">
+								<span class="menu_group_headers">
+									<span>
+										Building: 
+										<?php
+										foreach ($arr_prop_build_master  as $master) { 
+											if($general['build_id']  == $master['build_id']){
+												echo $master['eng_name'];
+												}		
+									  		}
+										?>
+										&nbsp;&nbsp;&nbsp;
+										Tenant Code:
+										<?php echo $general['tenant_code'];?>		
+									</span>
+								</span>
+							</span>
+						</div>
+						<form class="fullWidthForm fullWidthForm-2col" action="<?php echo actionURL('update','?item_id='.$item_id.'&lot_id='.$lot_id);?>" method="post" style="padding-top: 0;">
 						
 						<?php
 						if(isset($vlValidation)) {
@@ -50,6 +71,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 						}	
 						?>						
 						
+
 						<span class="formRow">
 								<span class="formLabel">
 									<label class="">Building :</label>
@@ -285,7 +307,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 								<span class="formInput">
 									<span class="message"><?php echo  $general['modify_datetime']; ?></span>
 								</span>
-							</span>							
+							</span>	
 							
 							
 						</form>
@@ -293,7 +315,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 				</div>
 			</div>
 		</div>
-
+		
 		<script>
 			$(document).ready
 			(
@@ -302,7 +324,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 					$(".datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
 				}
 			);
-		</script>		
+		</script>							
 <?php
 require __DIR__.'/../../../template/footer_inc.php';
 ?>

@@ -436,6 +436,54 @@ class prop_tenant_info_model
 	}	
 	
 
+	public function rent_transaction_list($primary_id)
+	{
+
+
+		$sql = "SELECT A.*  FROM tbl_prop_rent_inv AS A  ";
+		$sql .= " WHERE A.".$this->primary_keyname. " = '$primary_id'";
+		$sql .= " ORDER BY A.".$this->primary_keyname." ; ";
+
+		//echo "<br><br><br>sql:".$sql."<br>";
+				
+		$arr_record = array();
+		try {
+			$rows = $this->dbh->query($sql);
+			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+			  $arr_record[] = $row;
+			 }
+			} catch (PDOException $e) {
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}		
+		
+		return $arr_record;
+	}		
+
+	public function maint_transaction_list($primary_id)
+	{
+
+
+		$sql = "SELECT A.*  FROM tbl_prop_maint_inv AS A  ";
+		$sql .= " WHERE A.".$this->primary_keyname. " = '$primary_id'";
+		$sql .= " ORDER BY A.".$this->primary_keyname." ; ";
+
+		//echo "<br><br><br>sql:".$sql."<br>";
+				
+		$arr_record = array();
+		try {
+			$rows = $this->dbh->query($sql);
+			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+			  $arr_record[] = $row;
+			 }
+			} catch (PDOException $e) {
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}		
+		
+		return $arr_record;
+	}		
+ 	
 
     public function close()
 	{
