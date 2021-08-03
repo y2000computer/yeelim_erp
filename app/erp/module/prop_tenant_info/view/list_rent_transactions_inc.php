@@ -95,7 +95,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 												echo '<td style="text-align:left" >'.$i_count++.'</td>';
 												
 												echo '<td style="text-align:left">';
-												echo YMDtoDMY($rent_transaction['period_date_from']);
+												echo YMDtoDMY($rent_transaction['inv_date']);
 												echo '</td>';														
 												echo '<td style="text-align:left">';
 												echo $rent_transaction['inv_code'];
