@@ -1,5 +1,5 @@
 					<ul>
-						<li class="main_menu_selected"><span>Tenant</span></li>
+						<li class="main_menu_selected"><span>Rent Invoice</span></li>
 						<li class="main_menu_unselected"><?php echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_tenant_info/new">'.'Add Tenant'.'</a>'?></li>
 					</ul>
 
