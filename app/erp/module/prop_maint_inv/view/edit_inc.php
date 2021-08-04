@@ -81,16 +81,10 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							
 
 							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Invoice Date :</label>
-								</span>
-								<span class="formInput" data-remarks="(dd/mm/yyyy)">
-									<?php echo htmlspecialchars($general['inv_date']);?> 
-								</span>
 							</span>
 							<span class="formRow">
-							</span>		
-
+							</span>							
+							
 
 							<span class="formRow">
 								<span class="formLabel">
@@ -102,6 +96,19 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							</span>
 							<span class="formRow">
 							</span>
+
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Invoice Date :</label>
+								</span>
+								<span class="formInput" data-remarks="(dd/mm/yyyy)">
+									<?php echo htmlspecialchars($general['inv_date']);?> 
+								</span>
+							</span>
+							<span class="formRow">
+							</span>		
+
+							
 							
 							<span class="formRow">
 								<span class="formLabel">

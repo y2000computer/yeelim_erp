@@ -138,7 +138,7 @@ class prop_rent_inv_model
 		
 		if ($arr_primary_id != '')		
 		{
-			$sql = "SELECT INV.*, C.tenant_code, C.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV ";
+			$sql = "SELECT INV.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV ";
 			$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
 			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON C.build_id = B.build_id  ";
 			if(!empty($arr_primary_id)) $sql .= "WHERE ".$this->primary_keyname. " in (".$arr_primary_id.")" ;
@@ -219,8 +219,7 @@ class prop_rent_inv_model
 
     public function select($primary_id)
 	{
- 		$sql ="SELECT * FROM tbl_prop_rent_inv WHERE ".$this->primary_keyname. " = '$primary_id'";
-		
+ 		
 		 $sql ="SELECT INV.*, T.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV";
 		 $sql .= " LEFT JOIN  tbl_prop_tenant_info AS T ON INV.tenant_id = T.tenant_id ";
 		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON T.build_id = B.build_id ";
@@ -363,7 +362,7 @@ class prop_rent_inv_model
 		$sql.=',`modify_datetime`=NOW()'.' ';
 		$sql.=' WHERE ';
 		$sql.='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';
-		echo '<br>'.$sql; // Debug used				
+		//echo '<br>'.$sql; // Debug used				
 	
 		try {
 			$rows = $this->dbh->query($sql);

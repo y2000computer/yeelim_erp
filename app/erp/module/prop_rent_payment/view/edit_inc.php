@@ -57,6 +57,9 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 						?>						
 						
 
+
+					
+							
 							<span class="formRow">
 								<span class="formLabel">
 									<label class="">Building :</label>
@@ -79,11 +82,12 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							<span class="formRow">
 							</span>
 							
+
 							<span class="formRow">
 							</span>
 							<span class="formRow">
-							</span>							
-							
+							</span>	
+
 
 							<span class="formRow">
 								<span class="formLabel">
@@ -96,7 +100,6 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							<span class="formRow">
 							</span>
 
-							
 							<span class="formRow">
 								<span class="formLabel">
 									<label class="">Invoice Date :</label>
@@ -108,88 +111,13 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							<span class="formRow">
 							</span>		
 
-						
-
-
+							
 							<span class="formRow">
 								<span class="formLabel">
 									<label class="">Name :</label>
 								</span>
 								<span class="formInput">
-									<?php echo htmlspecialchars($general['eng_name']);?>
-								</span>
-							</span>
-							<span class="formRow">
-							</span>
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Add(1) :</label>
-								</span>
-								<span class="formInput">
-								<?php echo htmlspecialchars($general['add_1']);?>
-								</span>
-							</span>
-							<span class="formRow">
-							</span>
-
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Add(2) :</label>
-								</span>
-								<span class="formInput">
-								<?php echo htmlspecialchars($general['add_2']);?>
-								</span>
-							</span>
-							<span class="formRow">
-							</span>
-
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Add(3) :</label>
-								</span>
-								<span class="formInput">
-								<?php echo htmlspecialchars($general['add_3']);?>
-								</span>
-							</span>
-							<span class="formRow">
-							</span>
-
-
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Ref No. :</label>
-								</span>
-								<span class="formInput">
-								<?php echo htmlspecialchars($general['ref_no']);?>
-								</span>
-							</span>
-							<span class="formRow">
-							</span>
-
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Shop No. :</label>
-								</span>
-								<span class="formInput">
-								<?php echo htmlspecialchars($general['shop_no']);?>
-								</span>
-							</span>
-							<span class="formRow">
-							</span>
-
-
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Description :</label>
-								</span>
-								<span class="formInput">
-								<?php echo htmlspecialchars($general['description']);?>
+									<?php echo htmlspecialchars($general['tenant_eng_name']);?>
 								</span>
 							</span>
 							<span class="formRow">
@@ -233,25 +161,62 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							
 							<span class="formRow">
 								<span class="formLabel">
-									<label class="">Amount :</label>
+									<label class="">Invoice Amount :</label>
 								</span>
 								<span class="formInput">
-								<?php echo htmlspecialchars(number_format($general['amount'],2));?>									
+								<?php echo htmlspecialchars(number_format($general['inv_amount'],2));?>									
 								</span>
 							</span>
 							<span class="formRow">
 							</span>
 
+	
+							<span class="formRow">
+							</span>
+							<span class="formRow">
+							</span>
+	
+		
+							
 							<span class="formRow">
 								<span class="formLabel">
-									<label class="">Balance :</label>
+									<label class="">Payment No. :</label>
 								</span>
 								<span class="formInput">
-								<?php echo htmlspecialchars(number_format($general['balance'],2));?>									
+										<?php echo htmlspecialchars($general['payment_code']);?> 
 								</span>
 							</span>
 							<span class="formRow">
+							</span>
+							
+
+
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Payment Date :</label>
+								</span>
+								<span class="formInput" data-remarks="(dd/mm/yyyy)">
+									<input id="journal_date" class="datepicker" style="width: 140px" type="text" name="general[payment_date]" autocomplete="off" value="<?php echo $general['payment_date'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+								</span>
 							</span>							
+							<span class="formRow">
+							</span>						
+						
+
+
+
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Payment Amount :</label>
+								</span>
+								<span class="formInput">
+									<input type="text"  name="general[amount]"  autocomplete="off" class="four" required value="<?php echo htmlspecialchars($general['amount']);?>" />
+								</span>
+							</span>							
+							<span class="formRow">
+							</span>
+							
+
 
 							<span class="formRow">
 							</span>
