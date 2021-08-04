@@ -98,7 +98,11 @@ require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
 case "prop_rent_inv";
 require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
 	break;
+case "prop_maint_inv";
+require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+	break;
 	
+			
 		
 
 
