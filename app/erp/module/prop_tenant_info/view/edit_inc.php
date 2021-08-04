@@ -37,21 +37,6 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							<?php require 'edit_tab_inc.php'; ?>
 							</span>
 							<span class="contentRow">
-								<span class="menu_group_headers">
-									<span>
-										Building: 
-										<?php
-										foreach ($arr_prop_build_master  as $master) { 
-											if($general['build_id']  == $master['build_id']){
-												echo $master['eng_name'];
-												}		
-									  		}
-										?>
-										&nbsp;&nbsp;&nbsp;
-										Tenant Code:
-										<?php echo $general['tenant_code'];?>		
-									</span>
-								</span>
 							</span>
 						</div>
 						<form class="fullWidthForm fullWidthForm-2col" action="<?php echo actionURL('update','?item_id='.$item_id.'&lot_id='.$lot_id);?>" method="post" style="padding-top: 0;">

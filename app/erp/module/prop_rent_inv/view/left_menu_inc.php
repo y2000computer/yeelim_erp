@@ -1,7 +1,5 @@
-					<ul>
-						<li class="main_menu_selected"><span>Rent Invoice</span></li>
-						<li class="main_menu_unselected"><?php echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_tenant_info/new">'.'Add Tenant'.'</a>'?></li>
-					</ul>
+
+
 
 					<div class="cardWrapper">
 						<?php echo '<form action="'.actionURL('search','').'" method="post" >'; ?>
@@ -33,6 +31,37 @@
 									</select>
 								</span>
 							</span>
+
+
+							<span class="formRow">
+								<span class="formLabel">
+									<label for="userModule_email" class="">Invoice Date From</label>
+								</span>
+								<span class="formInput" data-remarks="(dd/mm/yyyy)">
+									<input id="inv_date_from" class="datepicker" style="width: 140px" type="text" name="general[inv_date_from]" autocomplete="off" value="<?php echo $json_search_items['general']['inv_date_from'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+								</span>
+							</span>
+							
+							<span class="formRow">
+								<span class="formLabel">
+									<label for="userModule_email" class="">To</label>
+								</span>
+								<span class="formInput" data-remarks="(dd/mm/yyyy)">
+									<input id="inv_date_to" class="datepicker" style="width: 140px" type="text" name="general[inv_date_to]" autocomplete="off" value="<?php echo $json_search_items['general']['inv_date_to'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+								</span>
+							</span>
+							
+							
+							<span class="formRow">
+								<span class="formLabel">
+									<label for="userModule_email" class="">Invoice No.</label>
+								</span>
+								<span class="formInput">
+									<input type="text"  name="general[inv_code]"  autocomplete="off" class="four" value="<?php echo htmlspecialchars($json_search_items['general']['inv_code']);?>" />
+								</span>
+
+
+
 
 
 							<span class="formRow">

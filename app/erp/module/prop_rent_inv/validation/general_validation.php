@@ -18,6 +18,7 @@ class general_validation
 		$icheck = true;
 		//do checking for action create
 
+		/*
 		if (!valid::isDecimalNumber($form['rent_amount'])) {
 			$this->problemMsg .= '[Rent. Amount] format is not Valid!<br>';
 			$icheck = false;
@@ -32,7 +33,7 @@ class general_validation
 				$this->problemMsg .= '[Tenant Code] cannot duplicate !<br>';
 				$icheck = false;
 		}
-
+		*/
 
 		
 		return $icheck;
@@ -44,6 +45,7 @@ class general_validation
 		$icheck = true;
 		//do checking for action update
 
+		/*
 		if (!valid::isDecimalNumber($form['rent_amount'])) {
 			$this->problemMsg .= '[Rent. Amount] format is not Valid!<br>';
 			$icheck = false;
@@ -58,7 +60,7 @@ class general_validation
 				$this->problemMsg .= '[Tenant Code] cannot duplicate !<br>';
 				$icheck = false;
 		}
-	
+		*/
 
 		
 		return $icheck;

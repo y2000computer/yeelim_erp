@@ -31,8 +31,22 @@ class prop_rent_inv_model
 	
 		$sql_filter = "";
 		if($json['general']['build_id']<>"") {
-			$sql_filter .= " C.build_id = '".addslashes($json['general']['build_id'])."'" ;
-		}		
+			$sql_filter .= " INV.build_id = '".addslashes($json['general']['build_id'])."'" ;
+		}	
+		
+		
+		if($json['general']['inv_date_from']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " date(INV.inv_date) BETWEEN '". toYMD($json['general']['inv_date_from'])."' AND '". toYMD($json['general']['inv_date_to'])."'" ;
+		}			
+
+		
+		if($json['general']['inv_code']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " INV.inv_code LIKE '%".addslashes($json['general']['inv_code'])."%'" ;
+		}
+
+
 		if($json['general']['tenant_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
 			$sql_filter .= " C.tenant_code LIKE '%".addslashes($json['general']['tenant_code'])."%'" ;
@@ -205,8 +219,13 @@ class prop_rent_inv_model
 
     public function select($primary_id)
 	{
- 		$sql ="SELECT * FROM tbl_prop_tenant_info WHERE ".$this->primary_keyname. " = '$primary_id'";
-		//echo "<br>sql:".$sql."<br>";
+ 		$sql ="SELECT * FROM tbl_prop_rent_inv WHERE ".$this->primary_keyname. " = '$primary_id'";
+		
+		 $sql ="SELECT INV.*, T.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV";
+		 $sql .= " LEFT JOIN  tbl_prop_tenant_info AS T ON INV.tenant_id = T.tenant_id ";
+		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON T.build_id = B.build_id ";
+		 $sql .= " WHERE INV.".$this->primary_keyname. " = '$primary_id'";
+		 //echo "<br>sql:".$sql."<br>";
 				
 		$arr_record = array();
 		try {
@@ -227,7 +246,7 @@ class prop_rent_inv_model
 	public function is_duplicate_field($field_name, $para, $build_id)
 	{
 		$para = addslashes($para);
-		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_prop_tenant_info ";
+		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_prop_rent_inv ";
 		$sql .= "  WHERE ";
 		$sql .= " build_id = ". $build_id ;
 		$sql .=" AND $field_name = '$para'";
@@ -257,7 +276,7 @@ class prop_rent_inv_model
 		$field_name = addslashes($field_name);
 		$field_para = addslashes($field_para);
 		
-		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_prop_tenant_info ";
+		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_prop_rent_inv ";
 		$sql .= "  WHERE ";
 		$sql .= " build_id = ". $build_id ;
 		$sql .=" AND $field_name = '$field_para' AND ".$this->primary_keyname. "<>'$myself_id_para' ";
@@ -305,124 +324,46 @@ class prop_rent_inv_model
 		return $record;
 	}	
 
-	public function create($general)
+    public function prop_tenant_info_viewall($build_id)
 	{
-		$build_id = trim(addslashes($general['build_id']));
-		$tenant_code = trim(addslashes($general['tenant_code']));
-		$eng_name = trim(addslashes($general['eng_name']));
-		$add_1 = trim(addslashes($general['add_1']));
-		$add_2 = trim(addslashes($general['add_2']));
-		$add_3 = trim(addslashes($general['add_3']));
-		$ref_no = trim(addslashes($general['ref_no']));
-		$shop_no = trim(addslashes($general['shop_no']));
-		$rent_date = toYMD($general['rent_date']);
-		$rent_amount = trim(addslashes($general['rent_amount']));
-		$maint_date = toYMD($general['maint_date']);
-		$maint_amount = trim(addslashes($general['maint_amount']));
-		$ptype = addslashes($general['ptype']);
-		$status = $general['status'];
+		$sql ="SELECT * FROM tbl_prop_tenant_info ";
+		$sql .= " WHERE ";
+		$sql .= " build_id = ". $build_id;
+		$sql .= " ORDER BY tenant_id ASC; ";
 		
-		$create_user = $_SESSION['sUserID'];
-
-		$this->dbh->beginTransaction();
+		//echo '<br>'.$sql; // Debug used		
 		
-		$sql = "INSERT INTO `tbl_prop_tenant_info`(
-						`build_id`
-						,`tenant_code`
-						,`eng_name`
-						,`add_1`
-						,`add_2`
-						,`add_3`
-						,`ref_no`
-						,`shop_no`
-						,`rent_date`
-						,`rent_amount`
-						,`maint_date`
-						,`maint_amount`
-						,`ptype`
-						,`status`
-						,`create_user`
-						,`modify_user`
-						,`create_datetime`
-						,`modify_datetime`
-						) VALUES (
-							'$build_id'
-							,'$tenant_code'
-							,'$eng_name'
-							,'$add_1'
-							,'$add_2'
-							,'$add_3'
-							,'$ref_no'
-							,'$shop_no'
-							,'$rent_date'
-							,'$rent_amount'
-							,'$maint_date'
-							,'$maint_amount'
-							,'$ptype'
-							,'$status'
-							,'$create_user'
-							,'$create_user'
-							,now()
-							,now()
-							)";
-
-		//echo '<br>'.$sql.'<br>';		
-								
+		$record = array();
 		try {
 			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
+			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+			  $record[] = $row;
+				}
+			} catch (PDOException $e) {
 				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
 				die();
-				}		
+			}		
 		
-		$this->dbh->commit();
-			
-		return $last_insert_id;
-	}
-	
+		return $record;
+	}	
+
+
 	
 	public function update($primary_id, $general)
 	{
-		$build_id = trim(addslashes($general['build_id']));
-		$tenant_code = trim(addslashes($general['tenant_code']));
-		$eng_name = trim(addslashes($general['eng_name']));
-		$add_1 = trim(addslashes($general['add_1']));
-		$add_2 = trim(addslashes($general['add_2']));
-		$add_3 = trim(addslashes($general['add_3']));
-		$ref_no = trim(addslashes($general['ref_no']));
-		$shop_no = trim(addslashes($general['shop_no']));
-		$rent_date = toYMD($general['rent_date']);
-		$rent_amount = trim(addslashes($general['rent_amount']));
-		$maint_date = toYMD($general['maint_date']);
-		$maint_amount = trim(addslashes($general['maint_amount']));
-		$ptype = addslashes($general['ptype']);
 		$status = $general['status'];
 		
 		$modify_user = $_SESSION['sUserID'];
 
 		$this->dbh->beginTransaction();
 	
-		$sql ='UPDATE  `tbl_prop_tenant_info` SET ';
-		$sql.='`build_id`='.'\''.trim($build_id).'\'';
-		$sql.=',`tenant_code`='.'\''.$tenant_code.'\'';
-		$sql.=',`eng_name`='.'\''.$eng_name.'\'';
-		$sql.=',`add_1`='.'\''.$add_1.'\'';
-		$sql.=',`add_2`='.'\''.$add_2.'\'';
-		$sql.=',`add_3`='.'\''.$add_3.'\'';
-		$sql.=',`ref_no`='.'\''.$ref_no.'\'';
-		$sql.=',`shop_no`='.'\''.$shop_no.'\'';
-		$sql.=',`rent_date`='.'\''.$rent_date.'\'';
-		$sql.=',`rent_amount`='.'\''.$rent_amount.'\'';
-		$sql.=',`maint_date`='.'\''.$maint_date.'\'';
-		$sql.=',`maint_amount`='.'\''.$maint_amount.'\'';
-		$sql.=',`ptype`='.'\''.$ptype.'\'';
-		$sql.=',`status`='.'\''.$status.'\'';
+		$sql ='UPDATE  `tbl_prop_rent_inv` SET ';
+		$sql.=' `status`='.'\''.$status.'\'';
 		$sql.=',`modify_user`='.'\''.$modify_user.'\'';
 		$sql.=',`modify_datetime`=NOW()'.' ';
 		$sql.=' WHERE ';
 		$sql.='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';
-		//echo '<br>'.$sql; // Debug used				
+		echo '<br>'.$sql; // Debug used				
 	
 		try {
 			$rows = $this->dbh->query($sql);
@@ -438,54 +379,8 @@ class prop_rent_inv_model
 	}	
 	
 
-	public function rent_transaction_list($primary_id)
-	{
+	
 
-
-		$sql = "SELECT A.*  FROM tbl_prop_rent_inv AS A  ";
-		$sql .= " WHERE A.".$this->primary_keyname. " = '$primary_id'";
-		$sql .= " ORDER BY A.".$this->primary_keyname." ; ";
-
-		//echo "<br><br><br>sql:".$sql."<br>";
-				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		return $arr_record;
-	}		
-
-	public function maint_transaction_list($primary_id)
-	{
-
-
-		$sql = "SELECT A.*  FROM tbl_prop_maint_inv AS A  ";
-		$sql .= " WHERE A.".$this->primary_keyname. " = '$primary_id'";
-		$sql .= " ORDER BY A.".$this->primary_keyname." ; ";
-
-		//echo "<br><br><br>sql:".$sql."<br>";
-				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		return $arr_record;
-	}		
- 	
 
     public function close()
 	{

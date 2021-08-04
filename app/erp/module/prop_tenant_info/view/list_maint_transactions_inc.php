@@ -37,23 +37,6 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							<?php require 'edit_tab_inc.php'; ?>
 							</span>
 							<span class="contentRow">
-								<span class="menu_group_headers">
-
-									<span>
-										Building: 
-										<?php
-										foreach ($arr_prop_build_master  as $master) { 
-											if($general['build_id']  == $master['build_id']){
-												echo $master['eng_name'];
-												}		
-									  		}
-										?>
-										&nbsp;&nbsp;&nbsp;
-										Tenant Code:
-										<?php echo $general['tenant_code'];?>		
-									</span>									
-
-								</span>
 							</span>
 						</div>
 
@@ -78,8 +61,8 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 									<tbody>
 										<tr>
 										<th style="text-align:left" width ="5%'"><?php echo _t("No");?></th>
-										<th style="text-align:left"  width ="12%'">Bill Date</th>
-										<th style="text-align:left"  width ="8%'">Bill No.</th>
+										<th style="text-align:left"  width ="12%'">Invoice Date</th>
+										<th style="text-align:left"  width ="8%'">Invoice No.</th>
 										<th style="text-align:left"  width ="12%'">Period From</th>
 										<th style="text-align:left"  width ="12%'">Period To</th>
 										<th style="text-align:right"  width ="10%'">Bill Amount</th>

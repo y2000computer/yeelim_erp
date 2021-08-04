@@ -41,18 +41,7 @@ switch($IS_action)
 		
 	case "create";
 
-		$general = $_POST['general'] ;
-		if ($_SERVER['REQUEST_METHOD'] == "POST") {
-			$vlValidation = new general_validation('create',$dmGeneralModel);
-			if($vlValidation->ValidateFormActionCreate($general)) {
-				$item_id=$dmGeneralModel->create($_POST['general']);
-				$general = $dmGeneralModel->select($item_id);
-				require __DIR__.'/../view/edit_inc.php';
-			} else {
-				require __DIR__.'/../view/new_inc.php';
-			}	
-		}
-		
+
 		break;		
 		
 	
@@ -61,21 +50,14 @@ switch($IS_action)
 		require __DIR__.'/common_paging_inc.php';
 		$item_id=$_GET["item_id"];
 		$general = $dmGeneralModel->select($_GET["item_id"]);
+		$general['inv_date'] = YMDtoDMY($general['inv_date']);
+		$general['period_date_from'] = YMDtoDMY($general['period_date_from']);
+		$general['period_date_to'] = YMDtoDMY($general['period_date_to']);
 
 		if($tab=='general' ||  $tab=='') {
-			$general['rent_date'] = YMDtoDMY($general['rent_date']);
-			$general['maint_date'] = YMDtoDMY($general['maint_date']);
 			require __DIR__.'/../view/edit_inc.php';
 		}	
-		if($tab=='rent') {
-			$arr_rent_transactions = $dmGeneralModel->rent_transaction_list($_GET["item_id"]);
-			require __DIR__.'/../view/list_rent_transactions_inc.php';
-		}
-		if($tab=='maint') {
-			$arr_maint_transactions = $dmGeneralModel->maint_transaction_list($_GET["item_id"]);
-			require __DIR__.'/../view/list_maint_transactions_inc.php';
-		}
-			
+	
 
 		break;
 		
@@ -90,8 +72,9 @@ switch($IS_action)
 				if($vlValidation->ValidateFormActionUpdate($item_id, $general)) {
 					$void=$dmGeneralModel->update($item_id, $_POST['general']);
 					$general = $dmGeneralModel->select($item_id);
-					$general['rent_date'] = YMDtoDMY($general['rent_date']);
-					$general['maint_date'] = YMDtoDMY($general['maint_date']);
+					$general['inv_date'] = YMDtoDMY($general['inv_date']);
+					$general['period_date_from'] = YMDtoDMY($general['period_date_from']);
+					$general['period_date_to'] = YMDtoDMY($general['period_date_to']);
 					require __DIR__.'/../view/edit_inc.php';
 	
 			} 
