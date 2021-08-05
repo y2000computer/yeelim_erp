@@ -107,8 +107,14 @@ require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
 	case "prop_maint_payment";
 require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
 	break;
+
+
+/*********************************************PROP Report******************************/		
+	case "prop_report_tenant_info";
+require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+	break;
 	
-			
+				
 			
 		
 

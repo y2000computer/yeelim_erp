@@ -64,6 +64,15 @@ require __DIR__.'/../../../func/check_session_func.php';
 					<div class="sidebarContentCol sidebarContentCol-3 inquiries" id="InquiriesDiv">
 						<ul>
 							<li class="menu_group_headers alignCenter theme-blue"><span>Inquiries and Reports</span></li>
+
+							<?php
+							if(in_array("PROP-REPORT-01-001", module_array())){ 
+							echo '<li class="menu_group_item"><p>';  
+							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_report_tenant_info/">'.'Tenant Information Report'.'&nbsp;'.'&raquo;'.'</a>';
+							echo '</P></li>';
+							}
+							?>
+
 							<li class="menu_group_item">&nbsp;</li>
 							<li class="menu_group_item">&nbsp;</li>
 						</ul>
