@@ -85,7 +85,7 @@ if ($IS_action=='new') {
 									<label class="">Invoice Date From :</label>
 								</span>
 								<span class="formInput" data-remarks="(dd/mm/yyyy)">
-									<input id="inv_date_from" class="datepicker" style="width: 140px" type="text" name="general[rent_date]" autocomplete="off" value="<?php echo $general['inv_date_from'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+									<input id="inv_date_from" class="datepicker" style="width: 140px" type="text" name="general[inv_date_from]" autocomplete="off" value="<?php echo $general['inv_date_from'];?>" placeholder="dd/mm/yyyy" maxlength="10">
 								</span>
 							</span>
 							<span class="formRow">
@@ -96,7 +96,7 @@ if ($IS_action=='new') {
 									<label class="">Invoice Date To :</label>
 								</span>
 								<span class="formInput" data-remarks="(dd/mm/yyyy)">
-									<input id="inv_date_to" class="datepicker" style="width: 140px" type="text" name="general[rent_date]" autocomplete="off" value="<?php echo $general['inv_date_to'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+									<input id="inv_date_to" class="datepicker" style="width: 140px" type="text" name="general[inv_date_to]" autocomplete="off" value="<?php echo $general['inv_date_to'];?>" placeholder="dd/mm/yyyy" maxlength="10">
 								</span>
 							</span>
 							<span class="formRow">

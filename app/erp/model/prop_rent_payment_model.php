@@ -140,7 +140,7 @@ class prop_rent_payment_model
 		if ($arr_primary_id != '')		
 		{
 			$sql = "SELECT PAY.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name', INV.inv_date, INV.inv_code, INV.period_date_from, INV.period_date_to ";
-			$sql .= "  ,INV.amount AS inv_amount ";
+			$sql .= "  ,INV.amount AS inv_amount, INV.balance AS inv_balance ";
 			$sql .= "  FROM tbl_prop_rent_payment AS PAY ";
 			$sql .= "  LEFT JOIN  tbl_prop_rent_inv AS INV ON PAY.inv_id = INV.inv_id  ";
 			$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
@@ -225,7 +225,7 @@ class prop_rent_payment_model
 	{
 
 		$sql = "SELECT PAY.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name', INV.inv_date, INV.inv_code, INV.period_date_from, INV.period_date_to ";
-		$sql .= "  ,INV.amount AS inv_amount ";
+		$sql .= "  ,INV.amount AS inv_amount, INV.balance AS inv_balance ";
 		$sql .= "  FROM tbl_prop_rent_payment AS PAY ";
 		$sql .= "  LEFT JOIN  tbl_prop_rent_inv AS INV ON PAY.inv_id = INV.inv_id  ";
 		$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
@@ -463,7 +463,7 @@ class prop_rent_payment_model
 		$sql.=' `balance`='.'\''.$balance.'\'';
 		$sql.=' WHERE ';
 		$sql.='`'.'inv_id'. '`='.'\''.addslashes($inv_id).'\''.' ';
-		echo '<br>'.$sql; // Debug used				
+		//echo '<br>'.$sql; // Debug used				
 	
 		try {
 			$rows = $this->dbh->query($sql);
@@ -616,6 +616,166 @@ class prop_rent_payment_model
 		return $arr_record;
 	}
 
+
+
+    public function invoice_select($primary_id)
+	{
+ 		
+		 $sql ="SELECT INV.*, INV.amount AS inv_amount, INV.balance AS inv_balance, INV.eng_name AS 'tenant_eng_name' , T.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV";
+		 $sql .= " LEFT JOIN  tbl_prop_tenant_info AS T ON INV.tenant_id = T.tenant_id ";
+		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON T.build_id = B.build_id ";
+		 $sql .= " WHERE INV."." inv_id ". " = '$primary_id'";
+		 //echo "<br>sql:".$sql."<br>";
+				
+		$arr_record = array();
+		try {
+			$rows = $this->dbh->query($sql);
+			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+			  $arr_record[] = $row;
+			 }
+			} catch (PDOException $e) {
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}		
+		
+		return $arr_record[0];
+	}		
+	
+ 
+
+	public function create($general)
+	{
+		$build_id = addslashes($general['build_id']);
+		$inv_id = addslashes($general['inv_id']);
+		$payment_date = toYMD($general['payment_date']);
+		$amount = trim(addslashes($general['amount']));
+		$status = $general['status'];
+		
+		$create_user = $_SESSION['sUserID'];
+
+
+		$codel_prefix	='RP';
+
+		//Generate prefix
+		$YY =substr($payment_date,2,2);
+		$prefix_YY = $codel_prefix.$YY;
+		//echo '<br>prefix_YY ='.$prefix_YY.'<br>'	;
+		$sql = "SELECT MAX(payment_code) as max  FROM tbl_prop_rent_payment WHERE
+					build_id=".$build_id." and left(payment_code,4)='".$prefix_YY."'";
+		//echo '<br>'.$sql.'<br>';
+		$prefix_max ='';
+		try {
+			$rows = $this->dbh->query($sql);
+			while($now= $rows->fetch(PDO::FETCH_ASSOC)){				  
+				$prefix_max = $now['max'];
+				}
+			} catch (PDOException $e) {		
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}
+
+		//echo '<br>prefix_max ='.$prefix_max.'<br>'	;
+		
+		if($prefix_max ==null )	{
+			$prefix_max_no = 0;	  
+		} else {
+			$prefix_max_no = substr($prefix_max, 4, 5); 
+		}
+		
+		$prefix_max_no = $prefix_max_no+1;
+		//echo 'prefix_max_no ='.$prefix_max_no.'<br>'	;
+		$payment_code =$prefix_YY.str_pad($prefix_max_no,5,0,STR_PAD_LEFT);
+		//echo 'payment_code ='.$payment_code.'<br>'	;
+		
+		//<end>Generate prefix
+
+
+		$this->dbh->beginTransaction();
+		
+		$sql = "INSERT INTO `tbl_prop_rent_payment`(
+						`build_id`
+						,`inv_id`
+						,`payment_code`
+						,`payment_date`
+						,`amount`
+						,`status`
+						,`create_user`
+						,`modify_user`
+						,`create_datetime`
+						,`modify_datetime`
+						) VALUES (
+							'$build_id'
+							,'$inv_id'
+							,'$payment_code'
+							,'$payment_date'
+							,'$amount'
+							,'$status'
+							,'$create_user'
+							,'$create_user'
+							,now()
+							,now()
+							)";
+
+		//echo '<br>'.$sql.'<br>';		
+								
+		try {
+			$rows = $this->dbh->query($sql);
+			$last_insert_id = $this->dbh->lastInsertId(); 
+			} catch (PDOException $e) {		
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}		
+		
+		//Update invoice
+		$sql ="SELECT * FROM tbl_prop_rent_inv ";
+		$sql .= " WHERE ";
+		$sql .= " inv_id = ". $inv_id. ";";
+		//echo '<br>'.$sql; // Debug used				
+
+	
+		$inv_row = array();
+		try {
+			$rows = $this->dbh->query($sql);
+			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+			  $inv_row[] = $row;
+				}
+			} catch (PDOException $e) {
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+			}
+		
+		
+		$inv_rs = $inv_row[0];
+		$inv_amount = $inv_rs['amount'];
+		$balance = $inv_rs['balance'];
+
+
+		//revert & re-calcuate balance
+		if($status == 1) $balance = $balance - $amount;
+
+
+		$sql ='UPDATE  `tbl_prop_rent_inv` SET ';
+		$sql.=' `balance`='.'\''.$balance.'\'';
+		$sql.=' WHERE ';
+		$sql.='`'.'inv_id'. '`='.'\''.addslashes($inv_id).'\''.' ';
+		//echo '<br>'.$sql; // Debug used				
+	
+		try {
+			$rows = $this->dbh->query($sql);
+			} catch (PDOException $e) {		
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}	
+
+
+
+
+
+		$this->dbh->commit();
+			
+		return $last_insert_id;
+	}
+	
 
 
 

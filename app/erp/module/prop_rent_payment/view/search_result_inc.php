@@ -28,7 +28,7 @@ $json_search_items = json_decode($json_searchphrase, true);
 								<th style="text-align:left" width ="9%">Payment Date</th>
 								<th style="text-align:left" width ="10%">Tenant Code</th>
 								<th style="text-align:left" width ="">Name</th>
-								<th style="text-align:left" width ="8%">Inv No.</th>
+								<th style="text-align:left" width ="8%">Invoice No.</th>
 								<th style="text-align:left" width ="9%">Period From</th>
 								<th style="text-align:left" width ="9%">Period To</th>
 								<th style="text-align:right" width="8%">Inv. Amount</th>

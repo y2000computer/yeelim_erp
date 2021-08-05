@@ -18,6 +18,18 @@ class general_validation
 		$icheck = true;
 		//do checking for action create
 
+		
+		if (!valid::isDecimalNumber($form['amount'])) {
+			$this->problemMsg .= '[Payment Amount] format is not Valid!<br>';
+			$icheck = false;
+		} 
+		
+		if (!valid::isDate($form['payment_date'])) {
+			$this->problemMsg .= '[Payment Date] format is not Vaild!<br>';
+			$icheck = false;
+		} 
+
+
 		/*
 		if (!valid::isDecimalNumber($form['rent_amount'])) {
 			$this->problemMsg .= '[Rent. Amount] format is not Valid!<br>';

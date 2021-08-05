@@ -170,6 +170,18 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 							<span class="formRow">
 							</span>
 
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Invoice Balance :</label>
+								</span>
+								<span class="formInput">
+								<?php echo htmlspecialchars(number_format($general['inv_balance'],2));?>									
+								</span>
+							</span>
+							<span class="formRow">
+							</span>
+
+
 	
 							<span class="formRow">
 							</span>
