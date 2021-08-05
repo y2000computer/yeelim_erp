@@ -51,7 +51,7 @@ class gl_report_general_ledger_model
 		$sql .= " AND J.posting_is  =  1 ";
 		$sql .= " AND J.status  =  1 ";
 		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
-		$sql .= " ORDER  BY C.chart_code, J.journal_date  ASC ; ";
+		$sql .= " ORDER  BY C.chart_code, J.journal_date, JD.irow_id  ASC ; ";
 		
 		//echo '<br>'.$sql.'<br>';
 

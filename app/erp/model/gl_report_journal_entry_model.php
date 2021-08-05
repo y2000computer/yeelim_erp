@@ -51,7 +51,7 @@ class gl_report_journal_entry_model
 		$sql .= " AND J.posting_is  =  1 ";
 		$sql .= " AND J.status  =  1 ";
 		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
-		$sql .= " ORDER  BY J.journal_date, J.journal_code  ASC ; ";
+		$sql .= " ORDER  BY J.journal_date, J.journal_code, JD.irow_id  ASC ; ";
 		
 		//echo '<br>'.$sql.'<br>';
 		
