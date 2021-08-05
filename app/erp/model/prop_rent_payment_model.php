@@ -479,7 +479,144 @@ class prop_rent_payment_model
 	}	
 	
 
+
+	public function search_outstanding_invoice($jsondata)
+	{
+		$json = json_decode($jsondata, true);
 	
+		$sql_filter = "";
+		if($json['general']['build_id']<>"") {
+			$sql_filter .= " INV.build_id = '".addslashes($json['general']['build_id'])."'" ;
+		}	
+		
+		if($json['general']['tenant_code']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " C.tenant_code LIKE '%".addslashes($json['general']['tenant_code'])."%'" ;
+		}
+
+		if($json['general']['inv_code']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " INV.inv_code LIKE '%".addslashes($json['general']['inv_code'])."%'" ;
+		}
+
+
+		if($json['general']['inv_date_from']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " date(INV.inv_date) BETWEEN '". toYMD($json['general']['inv_date_from'])."' AND '". toYMD($json['general']['inv_date_to'])."'" ;
+		}			
+
+		if(!empty($sql_filter)) {
+			$sql_filter.=" AND ";
+			$sql_filter .= " INV.balance <> 0 AND INV.status = 1 " ;
+		}			
+
+		//echo "<br>sql_filter:".$sql_filter."<br>";
+		$sql = " SELECT INV.inv_id FROM  tbl_prop_rent_inv AS INV ";
+		$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
+		$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON C.build_id = B.build_id  ";
+		$sql .= "  WHERE ";
+		$sql .= " (1) " ;
+		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
+		$sql .= " ORDER BY "." INV.inv_id ". ";";
+		//echo "<br>sql:".$sql."<br>";
+		
+		$arr_primary_id =array();
+		try {
+			$rs = $this->dbh->query($sql);
+			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
+				$arr_primary_id[] = "'". addslashes($row['inv_id']) ."'";
+				}
+			} catch (PDOException $e){
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}		
+		
+
+		$array_count = count($arr_primary_id);
+
+		if ($array_count > 0){	  
+			$result_id = implode(",", $arr_primary_id);
+		}
+		
+		$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
+
+		$this->dbh->beginTransaction();
+
+		$sql = 'INSERT INTO `tbl_sys_paging_control`(
+					`searchphrase`,
+					`lot_id`,
+					`result_id`,
+					`create_user`,
+					`create_datetime`
+					) VALUES (';
+		$sql.='\''.addslashes($jsondata).'\''.',';
+		$sql.='\''.addslashes($lot_id).'\''.',';
+		$sql.='\''.addslashes($result_id).'\''.',';
+		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
+		$sql.='now()'.')';
+
+		try {
+			$rows = $this->dbh->query($sql);
+			} catch (PDOException $e) {
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}
+		  
+		$this->dbh->commit();
+
+		return $lot_id;
+	}
+
+
+	public function retreive_content_outstanding_invoice($lot_id,$page)
+	{
+
+		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
+		//echo "<br>sql:".$sql."<br>";
+		$arr_record = array();	
+		try {
+				$rs = $this->dbh->query($sql);
+				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
+					$arr_record[] = $row;
+					}
+				} catch (PDOException $e){
+					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+					die();
+					}		
+
+		$arr =  $arr_record[0];
+		$arr_primary_id = $arr['result_id']; 
+		
+		
+		if ($arr_primary_id != '')		
+		{
+			
+			$sql = "SELECT INV.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV ";
+			$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
+			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON C.build_id = B.build_id  ";
+			if(!empty($arr_primary_id)) $sql .= "WHERE "." INV.inv_id ". " in (".$arr_primary_id.")" ;
+			$sql .= " ORDER BY " ." INV.inv_id " ;
+			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
+			//echo "<br>sql:".$sql."<br>";
+
+
+			$arr_record = array();	
+			try {
+					$rs = $this->dbh->query($sql);
+					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
+						$arr_record[] = $row;
+						}
+					} catch (PDOException $e){
+						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+						die();
+						}		
+			return $arr_record;
+		}
+		
+		return $arr_record;
+	}
+
+
 
 
     public function close()

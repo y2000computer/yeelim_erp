@@ -36,9 +36,26 @@ switch($IS_action)
 		break;			
 		
 	case "new";
-		require __DIR__.'/../view/new_inc.php';
+		require __DIR__.'/../view/new_step_01_inc.php';
 		break;		
-		
+
+	case "new_step_02";
+		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+				$page=1;
+				$json_searchphrase = json_encode($_POST);	
+				$lot_id=$dmGeneralModel->search_outstanding_invoice($json_searchphrase);
+		} else {
+				$lot_id=$_GET["lot_id"];
+				$page=$_GET["page"];		
+				$json_searchphrase = $dmGeneralModel->searchphrase($lot_id);
+				}
+		$result_id=$dmGeneralModel->paging_config($lot_id);
+		$paging = new PagingManger($result_id,SYSTEM_PAGE_ROW_LIMIT);
+		$arr_general_model=array();
+		if ($result_id != '') $arr_general_model=$dmGeneralModel->retreive_content_outstanding_invoice($lot_id,$page);	
+		require __DIR__.'/../view/new_step_02_inc.php';
+		break;		
+
 	case "create";
 
 
