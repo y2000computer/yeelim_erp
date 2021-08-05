@@ -140,7 +140,7 @@ class prop_rent_inv_model
 		{
 			$sql = "SELECT INV.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV ";
 			$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
-			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON C.build_id = B.build_id  ";
+			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id  ";
 			if(!empty($arr_primary_id)) $sql .= "WHERE ".$this->primary_keyname. " in (".$arr_primary_id.")" ;
 			$sql .= " ORDER BY " .$this->primary_indexname ;
 			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
@@ -222,7 +222,7 @@ class prop_rent_inv_model
  		
 		 $sql ="SELECT INV.*, T.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV";
 		 $sql .= " LEFT JOIN  tbl_prop_tenant_info AS T ON INV.tenant_id = T.tenant_id ";
-		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON T.build_id = B.build_id ";
+		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id ";
 		 $sql .= " WHERE INV.".$this->primary_keyname. " = '$primary_id'";
 		 //echo "<br>sql:".$sql."<br>";
 				

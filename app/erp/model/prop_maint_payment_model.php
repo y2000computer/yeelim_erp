@@ -1,5 +1,5 @@
 <?php
-class prop_rent_payment_model
+class prop_maint_payment_model
 {
 	private $dbh;
 	private $primary_table;
@@ -59,8 +59,8 @@ class prop_rent_payment_model
 
 		//echo "<br>sql_filter:".$sql_filter."<br>";
 		
-		$sql = "SELECT ".$this->primary_keyname. " FROM tbl_prop_rent_payment AS PAY ";
-		$sql .= "  LEFT JOIN  tbl_prop_rent_inv AS INV ON PAY.inv_id = INV.inv_id  ";
+		$sql = "SELECT ".$this->primary_keyname. " FROM tbl_prop_maint_payment AS PAY ";
+		$sql .= "  LEFT JOIN  tbl_prop_maint_inv AS INV ON PAY.inv_id = INV.inv_id  ";
 		$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
 		$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON C.build_id = B.build_id  ";
 		$sql .= "  WHERE ";
@@ -141,8 +141,8 @@ class prop_rent_payment_model
 		{
 			$sql = "SELECT PAY.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name', INV.inv_date, INV.inv_code, INV.period_date_from, INV.period_date_to ";
 			$sql .= "  ,INV.amount AS inv_amount, INV.balance AS inv_balance ";
-			$sql .= "  FROM tbl_prop_rent_payment AS PAY ";
-			$sql .= "  LEFT JOIN  tbl_prop_rent_inv AS INV ON PAY.inv_id = INV.inv_id  ";
+			$sql .= "  FROM tbl_prop_maint_payment AS PAY ";
+			$sql .= "  LEFT JOIN  tbl_prop_maint_inv AS INV ON PAY.inv_id = INV.inv_id  ";
 			$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
 			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON C.build_id = B.build_id  ";
 			if(!empty($arr_primary_id)) $sql .= "WHERE ".$this->primary_keyname. " in (".$arr_primary_id.")" ;
@@ -226,8 +226,8 @@ class prop_rent_payment_model
 
 		$sql = "SELECT PAY.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name', INV.inv_date, INV.inv_code, INV.period_date_from, INV.period_date_to ";
 		$sql .= "  ,INV.amount AS inv_amount, INV.balance AS inv_balance ";
-		$sql .= "  FROM tbl_prop_rent_payment AS PAY ";
-		$sql .= "  LEFT JOIN  tbl_prop_rent_inv AS INV ON PAY.inv_id = INV.inv_id  ";
+		$sql .= "  FROM tbl_prop_maint_payment AS PAY ";
+		$sql .= "  LEFT JOIN  tbl_prop_maint_inv AS INV ON PAY.inv_id = INV.inv_id  ";
 		$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
 		$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id  ";
 		$sql .= "  WHERE ".$this->primary_keyname. " = '$primary_id'";
@@ -253,7 +253,7 @@ class prop_rent_payment_model
 	public function is_duplicate_field($field_name, $para, $build_id)
 	{
 		$para = addslashes($para);
-		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_prop_rent_payment ";
+		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_prop_maint_payment ";
 		$sql .= "  WHERE ";
 		$sql .= " build_id = ". $build_id ;
 		$sql .=" AND $field_name = '$para'";
@@ -283,7 +283,7 @@ class prop_rent_payment_model
 		$field_name = addslashes($field_name);
 		$field_para = addslashes($field_para);
 		
-		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_prop_rent_payment ";
+		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_prop_maint_payment ";
 		$sql .= "  WHERE ";
 		$sql .= " build_id = ". $build_id ;
 		$sql .=" AND $field_name = '$field_para' AND ".$this->primary_keyname. "<>'$myself_id_para' ";
@@ -365,11 +365,11 @@ class prop_rent_payment_model
 		$modify_user = $_SESSION['sUserID'];
 
 
-		$sql ="SELECT * FROM tbl_prop_rent_inv ";
+		$sql ="SELECT * FROM tbl_prop_maint_inv ";
 		$sql .= " WHERE ";
 		$sql .= " inv_id = ";
 		$sql .= " ( ";
-		$sql .= "  SELECT inv_id FROM tbl_prop_rent_payment WHERE  ";
+		$sql .= "  SELECT inv_id FROM tbl_prop_maint_payment WHERE  ";
 		$sql .='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';		
 		$sql .= "  ) ";
 		//echo '<br>'.$sql; // Debug used				
@@ -392,7 +392,7 @@ class prop_rent_payment_model
 		$inv_amount = $inv_rs['amount'];
 		$balance = $inv_rs['balance'];
 
-		$sql ="SELECT * FROM tbl_prop_rent_payment ";
+		$sql ="SELECT * FROM tbl_prop_maint_payment ";
 		$sql .= " WHERE ";
 		$sql .='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';		
 		//echo '<br>'.$sql; // Debug used				
@@ -422,7 +422,7 @@ class prop_rent_payment_model
 	
 		$this->dbh->beginTransaction();
 	
-		$sql ='UPDATE  `tbl_prop_rent_payment` SET ';
+		$sql ='UPDATE  `tbl_prop_maint_payment` SET ';
 		$sql.=' `payment_date`='.'\''.$payment_date.'\'';
 		$sql.=',`amount`='.'\''.$amount.'\'';
 		$sql.=',`status`='.'\''.$status.'\'';
@@ -440,7 +440,7 @@ class prop_rent_payment_model
 				die();
 				}		
 		
-		$sql ='UPDATE  `tbl_prop_rent_payment` SET ';
+		$sql ='UPDATE  `tbl_prop_maint_payment` SET ';
 		$sql.=' `payment_date`='.'\''.$payment_date.'\'';
 		$sql.=',`amount`='.'\''.$amount.'\'';
 		$sql.=',`status`='.'\''.$status.'\'';
@@ -459,7 +459,7 @@ class prop_rent_payment_model
 				}	
 
 
-		$sql ='UPDATE  `tbl_prop_rent_inv` SET ';
+		$sql ='UPDATE  `tbl_prop_maint_inv` SET ';
 		$sql.=' `balance`='.'\''.$balance.'\'';
 		$sql.=' WHERE ';
 		$sql.='`'.'inv_id'. '`='.'\''.addslashes($inv_id).'\''.' ';
@@ -511,7 +511,7 @@ class prop_rent_payment_model
 		}			
 
 		//echo "<br>sql_filter:".$sql_filter."<br>";
-		$sql = " SELECT INV.inv_id FROM  tbl_prop_rent_inv AS INV ";
+		$sql = " SELECT INV.inv_id FROM  tbl_prop_maint_inv AS INV ";
 		$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
 		$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id  ";
 		$sql .= "  WHERE ";
@@ -591,7 +591,7 @@ class prop_rent_payment_model
 		if ($arr_primary_id != '')		
 		{
 			
-			$sql = "SELECT INV.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV ";
+			$sql = "SELECT INV.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name' FROM tbl_prop_maint_inv AS INV ";
 			$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
 			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id  ";
 			if(!empty($arr_primary_id)) $sql .= "WHERE "." INV.inv_id ". " in (".$arr_primary_id.")" ;
@@ -621,7 +621,7 @@ class prop_rent_payment_model
     public function invoice_select($primary_id)
 	{
  		
-		 $sql ="SELECT INV.*, INV.amount AS inv_amount, INV.balance AS inv_balance, INV.eng_name AS 'tenant_eng_name' , T.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV";
+		 $sql ="SELECT INV.*, INV.amount AS inv_amount, INV.balance AS inv_balance, INV.eng_name AS 'tenant_eng_name' , T.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_maint_inv AS INV";
 		 $sql .= " LEFT JOIN  tbl_prop_tenant_info AS T ON INV.tenant_id = T.tenant_id ";
 		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id ";
 		 $sql .= " WHERE INV."." inv_id ". " = '$primary_id'";
@@ -654,13 +654,13 @@ class prop_rent_payment_model
 		$create_user = $_SESSION['sUserID'];
 
 
-		$codel_prefix	='RP';
+		$codel_prefix	='MP';
 
 		//Generate prefix
 		$YY =substr($payment_date,2,2);
 		$prefix_YY = $codel_prefix.$YY;
 		//echo '<br>prefix_YY ='.$prefix_YY.'<br>'	;
-		$sql = "SELECT MAX(payment_code) as max  FROM tbl_prop_rent_payment WHERE
+		$sql = "SELECT MAX(payment_code) as max  FROM tbl_prop_maint_payment WHERE
 					build_id=".$build_id." and left(payment_code,4)='".$prefix_YY."'";
 		//echo '<br>'.$sql.'<br>';
 		$prefix_max ='';
@@ -692,7 +692,7 @@ class prop_rent_payment_model
 
 		$this->dbh->beginTransaction();
 		
-		$sql = "INSERT INTO `tbl_prop_rent_payment`(
+		$sql = "INSERT INTO `tbl_prop_maint_payment`(
 						`build_id`
 						,`inv_id`
 						,`payment_code`
@@ -727,7 +727,7 @@ class prop_rent_payment_model
 				}		
 		
 		//Update invoice
-		$sql ="SELECT * FROM tbl_prop_rent_inv ";
+		$sql ="SELECT * FROM tbl_prop_maint_inv ";
 		$sql .= " WHERE ";
 		$sql .= " inv_id = ". $inv_id. ";";
 		//echo '<br>'.$sql; // Debug used				
@@ -754,7 +754,7 @@ class prop_rent_payment_model
 		if($status == 1) $balance = $balance - $amount;
 
 
-		$sql ='UPDATE  `tbl_prop_rent_inv` SET ';
+		$sql ='UPDATE  `tbl_prop_maint_inv` SET ';
 		$sql.=' `balance`='.'\''.$balance.'\'';
 		$sql.=' WHERE ';
 		$sql.='`'.'inv_id'. '`='.'\''.addslashes($inv_id).'\''.' ';

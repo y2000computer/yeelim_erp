@@ -5,7 +5,7 @@ define('ENV', 'UAT');  //define('ENV', 'PROD');
 
 
 //MySQL Database Connection setting
-DEFINE('DB_HOST', 'localhost:3306'); //sam notebook
+DEFINE('DB_HOST', 'localhost:3307'); //sam notebook
 //DEFINE('DB_HOST', 'localhost');
 
 DEFINE('DB_USERNAME', 'user_uat');
