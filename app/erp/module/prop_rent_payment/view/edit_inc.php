@@ -196,7 +196,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 									<label class="">Payment Date :</label>
 								</span>
 								<span class="formInput" data-remarks="(dd/mm/yyyy)">
-									<input id="journal_date" class="datepicker" style="width: 140px" type="text" name="general[payment_date]" autocomplete="off" value="<?php echo $general['payment_date'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+									<input id="journal_date" class="datepicker" style="width: 140px" type="text" name="general[payment_date]" autocomplete="off"  required value="<?php echo $general['payment_date'];?>" placeholder="dd/mm/yyyy" maxlength="10">
 								</span>
 							</span>							
 							<span class="formRow">
