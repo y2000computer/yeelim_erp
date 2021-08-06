@@ -7,7 +7,7 @@ echo '<DIV id="BodyDiv">';
 		<tbody>
 		
 		<tr>
-		<th colspan="5" align="left">Report: Tenant Information Report</th>
+		<th colspan="5" align="left">Report: Rent Invoice Report</th>
 		</tr>
 
 		<tr>
@@ -23,19 +23,16 @@ echo '<DIV id="BodyDiv">';
 
 		<tr>
 		<th style="text-align:left" width ="5%'"><?php echo _t("No");?></th>
-		<th style="text-align:left" width ="20%">Building</th>
-		<th style="text-align:left" width ="15%">Tenant Code</th>
+		<th style="text-align:left" width ="15%">Building</th>
+		<th style="text-align:left" width ="8%">Invoice Date</th>
+		<th style="text-align:left" width ="8%">Invoice No.</th>
+		<th style="text-align:left" width ="8%">Tenant Code</th>
 		<th style="text-align:left" width ="">Name</th>
-		<th style="text-align:left" width ="">Add(1)</th>
-		<th style="text-align:left" width ="">Add(2)</th>
-		<th style="text-align:left" width ="">Add(3)</th>
-		<th style="text-align:left" width ="">Ref No.</th>
-		<th style="text-align:left" width ="">Shop No.</th>
-		<th style="text-align:left" width ="">Rent Bill Date</th>
-		<th style="text-align:left" width ="">Rent Amount</th>
-		<th style="text-align:left" width ="">Maint. Bill Date</th>
-		<th style="text-align:left" width ="">Maint. Amount</th>
-		<th style="text-align:left" width ="">Print Type</th>
+		<th style="text-align:left" width ="8%">Ref No.</th>
+		<th style="text-align:left" width ="8%">Shop No.</th>
+		<th style="text-align:left" width ="8%">Period Date From</th>
+		<th style="text-align:left" width ="8%">Period Date To</th>
+		<th style="text-align:right" width ="8%">Amount</th>
 
 		</tr>	
 
@@ -45,19 +42,15 @@ echo '<DIV id="BodyDiv">';
 				echo '<tr>';
 				echo '<td>'.$i_count++.'</td>';
 				echo '<td>'.htmlspecialchars($report['build_eng_name']).'</td>';
+				echo '<td>'.htmlspecialchars(YMDtoDMY($report['inv_date'])).'</td>';
+				echo '<td>'.htmlspecialchars($report['inv_code']).'</td>';
 				echo '<td>'.htmlspecialchars($report['tenant_code']).'</td>';
 				echo '<td>'.htmlspecialchars($report['eng_name']).'</td>';
-				echo '<td>'.htmlspecialchars($report['add_1']).'</td>';
-				echo '<td>'.htmlspecialchars($report['add_2']).'</td>';
-				echo '<td>'.htmlspecialchars($report['add_3']).'</td>';
 				echo '<td>'.htmlspecialchars($report['ref_no']).'</td>';
 				echo '<td>'.htmlspecialchars($report['shop_no']).'</td>';
-				echo '<td>'.htmlspecialchars(YMDtoDMY($report['rent_date'])).'</td>';
-				echo '<td>'.htmlspecialchars($report['rent_amount']).'</td>';
-				echo '<td>'.htmlspecialchars(YMDtoDMY($report['maint_date'])).'</td>';
-				echo '<td>'.htmlspecialchars($report['maint_amount']).'</td>';
-				echo '<td>'.htmlspecialchars($report['ptype']).'</td>';
-				
+				echo '<td>'.htmlspecialchars(YMDtoDMY($report['period_date_from'])).'</td>';
+				echo '<td>'.htmlspecialchars(YMDtoDMY($report['period_date_to'])).'</td>';
+				echo '<td style="text-align:right" >'.htmlspecialchars($report['amount']).'</td>';
 				echo '</tr>';
 			endforeach; 	
 		?>								

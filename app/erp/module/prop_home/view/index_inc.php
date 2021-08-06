@@ -72,6 +72,20 @@ require __DIR__.'/../../../func/check_session_func.php';
 							echo '</P></li>';
 							}
 							?>
+							<?php
+							if(in_array("PROP-REPORT-01-005", module_array())){ 
+							echo '<li class="menu_group_item"><p>';  
+							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_report_rent_inv/">'.'Rent Invoice Report'.'&nbsp;'.'&raquo;'.'</a>';
+							echo '</P></li>';
+							}
+							?>
+							<?php
+							if(in_array("PROP-REPORT-01-010", module_array())){ 
+							echo '<li class="menu_group_item"><p>';  
+							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_report_rent_payment/">'.'Rent Payment Report'.'&nbsp;'.'&raquo;'.'</a>';
+							echo '</P></li>';
+							}
+							?>
 
 							<li class="menu_group_item">&nbsp;</li>
 							<li class="menu_group_item">&nbsp;</li>
