@@ -89,51 +89,58 @@ switch(IS_MODULE)
 
 
 /*********************************************PROP***********************************/						
-case "prop_home";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
-case "prop_tenant_info";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
-case "prop_rent_inv";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
-case "prop_rent_payment";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+	case "prop_home";
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
+	case "prop_tenant_info";
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
+	case "prop_rent_inv";
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
+	case "prop_rent_payment";
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_maint_inv";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_maint_payment";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 
 
 /*********************************************PROP Report******************************/		
 	case "prop_report_tenant_info";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_report_rent_inv";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_report_rent_payment";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_report_rent_overdue";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_report_maint_inv";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_report_maint_payment";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_report_maint_overdue";
-require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
-	break;
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	
 	
-	
+/*********************************************PROP Maintenance*************************/			
+	case "prop_mainten_rent_inv_generation";
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
+	case "prop_mainten_maint_inv_generation";
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
+		
 				
 			
 		

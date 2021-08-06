@@ -62,13 +62,9 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 									<label class="">Building :</label>
 								</span>
 								<span class="formInput">
-									<select name="general[build_id]" required class="ten">
-									<?php
-									echo '<option value=""'.' '.($general['build_id']  ==''?'selected':'').'>'.'Please select'.'</option>';
-									foreach ($arr_prop_build_master  as $master) { 
-									  echo '<option value="'.$master['build_id'].'"'.' '.($general['build_id']  == $master['build_id']?'selected':'').'>'.$master['eng_name'].'&nbsp;'.'('.$master['build_id'].')'.'</option>';
-									}
-									?>
+								<input type="hidden" name="general[build_id]"  value="<?php echo htmlspecialchars($general['build_id']);?>" />
+									<?php echo $general['build_eng_name']; ?>
+
 									</select>
 								</span>
 							</span>
@@ -82,7 +78,8 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 									<label class="">Tenant Code :</label>
 								</span>
 								<span class="formInput">
-										<input type="text" name="general[tenant_code]"  size="15" required class="four" value="<?php echo htmlspecialchars($general['tenant_code']);?>" />
+									<input type="hidden" name="general[tenant_code]"  value="<?php echo htmlspecialchars($general['tenant_code']);?>" />
+										<?php echo $general['tenant_code']; ?>
 								</span>
 							</span>
 							<span class="formRow">

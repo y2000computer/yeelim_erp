@@ -13,8 +13,10 @@ if ($IS_action=='new') {
 				</div>
 				<div class="sidebarContent">
 					<div class="sidebarContentCol">
-						<?php echo '<form class="fullWidthForm fullWidthForm-2col" action="'.actionURL('generate','').'" method="post" target="_blank" >';?>
+
+						<?php echo '<form class="fullWidthForm fullWidthForm-2col" action="'.actionURL('process','').'" method="post" onsubmit="return handle_confirm()"  >';?>
 						<input type="hidden" name="criteria[comp_id]"  value="<?php echo $_SESSION["target_comp_id"];?>" >
+
 						
 						<?php
 						if(isset($vlValidation)) {
@@ -31,8 +33,8 @@ if ($IS_action=='new') {
 						}	
 						?>						
 						
-				
-							<span class="formRow">
+
+						<span class="formRow">
 								<span class="formLabel">
 									<label class="">Building :</label>
 								</span>
@@ -48,66 +50,31 @@ if ($IS_action=='new') {
 								</span>
 							</span>
 							<span class="formRow">
-							</span>					
+							</span>	
+
+				
+							<span class="formRow">
+								<span class="formLabel">
+								</span>
+								<span class="formInput" >
+								</span>
+							</span>							
+							<span class="formRow">
+							</span>
+							
 						
-							
-
 							<span class="formRow">
 								<span class="formLabel">
-									<label class="">Tenant Code :</label>
-								</span>
-								<span class="formInput">
-										<input type="text" name="criteria[tenant_code]"  size="15" class="four" value="<?php echo htmlspecialchars($criteria['tenant_code']);?>" />
-								</span>
-							</span>
-							<span class="formRow">
-							</span>
-
-
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Invoice Date From :</label>
+									<label class="">Invoice Date:</label>
 								</span>
 								<span class="formInput" data-remarks="(dd/mm/yyyy)">
-									<input id="inv_date_from" class="datepicker" style="width: 140px" type="text" name="criteria[inv_date_from]" autocomplete="off" value="<?php echo $criteria['inv_date_from'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+									<input id="inv_date" class="datepicker" style="width: 140px" type="text" required name="criteria[inv_date]" autocomplete="off" value="<?php echo $general['inv+date'];?>" placeholder="dd/mm/yyyy" maxlength="10">
 								</span>
-							</span>
-							<span class="formRow">
 							</span>							
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Invoice Date To :</label>
-								</span>
-								<span class="formInput" data-remarks="(dd/mm/yyyy)">
-									<input id="inv_date_to" class="datepicker" style="width: 140px" type="text" name="criteria[inv_date_to]" autocomplete="off" value="<?php echo $criteria['inv_date_to'];?>" placeholder="dd/mm/yyyy" maxlength="10">
-								</span>
-							</span>
-							<span class="formRow">
-							</span>							
-
-
-							
-
-
-							<span class="formRow">
-								<span class="formLabel">
-									<label class="">Output To :</label>
-								</span>
-								<span class="formInput">
-										<select name="criteria[output]" id="output" required class="five">
-										<option value="screen" selected>Screen</option>
-										<option value="excel">Excel</option>
-										</select>								
-								</span>
-							</span>
 							<span class="formRow">
 							</span>
 							
-
-
-							
+						
 							<span class="formRow">
 							</span>
 							<span class="formRow">
@@ -117,7 +84,14 @@ if ($IS_action=='new') {
 								<span class="formLabel">
 								</span>
 								<span class="formInput">
-									<button type="submit">Generate</button>
+
+									<div id="formsubmitbutton">
+										<button type="submit">Confirm</button>
+									</div>	
+									<div id="buttonreplacement" style="margin-left:30px; display:none;">
+										<img src="/images/icons/preload.gif" alt="loading...">
+									</div>
+									
 								</span>
 							</span>
 							
@@ -131,7 +105,7 @@ if ($IS_action=='new') {
 				</div>
 			</div>
 		</div>
-
+		
 		<script>
 			$(document).ready
 			(
@@ -140,7 +114,63 @@ if ($IS_action=='new') {
 					$(".datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
 				}
 			);
-		</script>		
+		</script>
+		
+		
+		<script type="text/javascript">
+		/*
+		   Replacing Submit Button with 'Loading' Image
+		   Version 2.0
+		   December 18, 2012
+
+		   Will Bontrager Software, LLC
+		   https://www.willmaster.com/
+		   Copyright 2012 Will Bontrager Software, LLC
+
+		   This software is provided "AS IS," without 
+		   any warranty of any kind, without even any 
+		   implied warranty such as merchantability 
+		   or fitness for a particular purpose.
+		   Will Bontrager Software, LLC grants 
+		   you a royalty free license to use or 
+		   modify this software provided this 
+		   notice appears on all copies. 
+		*/
+		
+
+
+		function handle_confirm()
+		{
+			if ( !confirm ("Are your confirm, the process may take serveral minutes ? ") )
+			　　     {　
+					return false;
+					} else {
+						var s = TButtonClicked();
+					}			
+		}
+		
+		function TButtonClicked()
+		{
+		   document.getElementById("formsubmitbutton").style.display = "none"; // to undisplay
+		   document.getElementById("buttonreplacement").style.display = ""; // to display
+		   return true;
+		}
+		var FirstLoading = true;
+		function RestoreSubmitButton()
+		{
+		   if( FirstLoading )
+		   {
+			  FirstLoading = false;
+			  return;
+		   }
+		   document.getElementById("formsubmitbutton").style.display = ""; // to display
+		   document.getElementById("buttonreplacement").style.display = "none"; // to undisplay
+		}
+		// To disable restoring submit button, disable or delete next line.
+		document.onfocus = RestoreSubmitButton;
+		</script>
+		
+		
 <?php
 require __DIR__.'/../../../template/footer_inc.php';
 ?>

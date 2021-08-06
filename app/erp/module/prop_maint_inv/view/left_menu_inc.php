@@ -86,3 +86,13 @@
 							</span>
 						</form>
 					</div>
+
+		<script>
+			$(document).ready
+			(
+				function ()
+				{
+					$(".datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
+				}
+			);
+		</script>										

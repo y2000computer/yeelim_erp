@@ -108,7 +108,7 @@ require __DIR__.'/../../../func/check_session_func.php';
 							}
 							?>
 							<?php
-							if(in_array("PROP-REPORT-01-025", module_array())){ 
+							if(in_array("PROP-REPORT-01-030", module_array())){ 
 							echo '<li class="menu_group_item"><p>';  
 							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_report_maint_overdue/">'.'Maint. Overdue Report'.'&nbsp;'.'&raquo;'.'</a>';
 							echo '</P></li>';
@@ -122,6 +122,20 @@ require __DIR__.'/../../../func/check_session_func.php';
 					<div class="sidebarContentCol sidebarContentCol-3 maintenance" id="MaintenanceDiv">
 						<ul>
 							<li class="menu_group_headers alignCenter theme-blue"><span>Maintenance</span></li>
+							<?php
+							if(in_array("PROP-MAINT-01-001", module_array())){ 
+							echo '<li class="menu_group_item"><p>';  
+							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_mainten_rent_inv_generation/">'.'Rent Invoice Generation'.'&nbsp;'.'&raquo;'.'</a>';
+							echo '</p></li>';
+							}
+							?>		
+							<?php
+							if(in_array("PROP-MAINT-01-005", module_array())){ 
+							echo '<li class="menu_group_item"><p>';  
+							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_mainten_maint_inv_generation/">'.'Maint. Invoice Generation'.'&nbsp;'.'&raquo;'.'</a>';
+							echo '</p></li>';
+							}
+							?>													
 							<li class="menu_group_item">&nbsp;</li>
 							<li class="menu_group_item">&nbsp;</li>
 

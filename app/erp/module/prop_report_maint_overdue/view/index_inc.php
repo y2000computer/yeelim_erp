@@ -131,6 +131,16 @@ if ($IS_action=='new') {
 				</div>
 			</div>
 		</div>
+
+		<script>
+			$(document).ready
+			(
+				function ()
+				{
+					$(".datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
+				}
+			);
+		</script>		
 <?php
 require __DIR__.'/../../../template/footer_inc.php';
 ?>

@@ -203,8 +203,11 @@ class prop_tenant_info_model
 
     public function select($primary_id)
 	{
- 		$sql ="SELECT * FROM tbl_prop_tenant_info WHERE ".$this->primary_keyname. " = '$primary_id'";
-		//echo "<br>sql:".$sql."<br>";
+
+		 $sql ="SELECT T.*, B.eng_name AS 'build_eng_name' FROM tbl_prop_tenant_info AS T";
+		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON T.build_id = B.build_id ";
+		 $sql .= " WHERE T.".$this->primary_keyname. " = '$primary_id'";
+		 //echo "<br>sql:".$sql."<br>";
 				
 		$arr_record = array();
 		try {
