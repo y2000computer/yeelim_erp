@@ -57,6 +57,7 @@ class prop_maint_inv_model
 			$sql_filter .= " C.eng_name LIKE '%".addslashes($json['general']['eng_name'])."%'" ;
 		}
 
+		
 		//echo "<br>sql_filter:".$sql_filter."<br>";
 		
 		$sql = "SELECT ".$this->primary_keyname. " FROM tbl_prop_maint_inv AS INV ";

@@ -50,6 +50,9 @@ class prop_report_maint_payment_model
 			$sql_filter .= " date(PAY.payment_date) BETWEEN '". toYMD($json['criteria']['payment_date_from'])."' AND '". toYMD($json['criteria']['payment_date_to'])."'" ;
 		}			
 
+		if(!empty($sql_filter)) $sql_filter.=" AND ";
+		$sql_filter .= " PAY.status = 1" ;		
+
 
 		$sql = "SELECT PAY.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name', INV.inv_date, INV.inv_code, INV.period_date_from, INV.period_date_to ";
 		$sql .= "  ,INV.amount AS inv_amount, INV.balance AS inv_balance ";

@@ -1,5 +1,5 @@
 <?php
-class prop_report_rent_payment_model  
+class prop_report_rent_overdue_model  
 {
 	private $dbh;
 	private $primary_table;
@@ -34,7 +34,7 @@ class prop_report_rent_payment_model
 		$sql_filter = "";
 
 		if($json['criteria']['build_id']<>"") {
-			$sql_filter .= " PAY.build_id = '".addslashes($json['criteria']['build_id'])."'" ;
+			$sql_filter .= " INV.build_id = '".addslashes($json['criteria']['build_id'])."'" ;
 		}	
 		
 
@@ -43,28 +43,27 @@ class prop_report_rent_payment_model
 			$sql_filter .= " C.tenant_code LIKE '%".addslashes($json['criteria']['tenant_code'])."%'" ;
 		}		
 
-	
-
-		if($json['criteria']['payment_date_from']<>"") {
+		if($json['criteria']['inv_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " date(PAY.payment_date) BETWEEN '". toYMD($json['criteria']['payment_date_from'])."' AND '". toYMD($json['criteria']['payment_date_to'])."'" ;
+			$sql_filter .= " INV.inv_code LIKE '%".addslashes($json['criteria']['inv_code'])."%'" ;
+		}
+		
+
+		if($json['criteria']['inv_date_from']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " date(INV.inv_date) BETWEEN '". toYMD($json['criteria']['inv_date_from'])."' AND '". toYMD($json['criteria']['inv_date_to'])."'" ;
 		}			
 
 		if(!empty($sql_filter)) $sql_filter.=" AND ";
-		$sql_filter .= " PAY.status = 1" ;		
+		$sql_filter .= " INV.status = 1 AND INV.balance <> 0 " ;		
 
-
-		$sql = "SELECT PAY.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name', INV.inv_date, INV.inv_code, INV.period_date_from, INV.period_date_to ";
-		$sql .= "  ,INV.amount AS inv_amount, INV.balance AS inv_balance ";
-		$sql .= "  ,INV.ref_no, INV.shop_no ";
-		$sql .= "  FROM tbl_prop_rent_payment AS PAY ";
-		$sql .= "  LEFT JOIN  tbl_prop_rent_inv AS INV ON PAY.inv_id = INV.inv_id  ";
+		$sql = "SELECT INV.*, C.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_rent_inv AS INV ";
 		$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
-		$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON C.build_id = B.build_id  ";
+		$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id  ";
 		$sql .= "  WHERE ";
 		$sql .= " (1) " ;
 		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
-		$sql .= " ORDER  BY PAY.payment_date ASC ; ";
+		$sql .= " ORDER  BY INV.inv_date ASC ; ";
 		//echo "<br>sql:".$sql."<br>";
 		
 

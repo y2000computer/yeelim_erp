@@ -52,7 +52,10 @@ class prop_report_maint_inv_model
 		if($json['criteria']['inv_date_from']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
 			$sql_filter .= " date(INV.inv_date) BETWEEN '". toYMD($json['criteria']['inv_date_from'])."' AND '". toYMD($json['criteria']['inv_date_to'])."'" ;
-		}			
+		}	
+		
+		if(!empty($sql_filter)) $sql_filter.=" AND ";
+		$sql_filter .= " INV.status = 1" ;		
 
 		$sql = "SELECT INV.*, C.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_maint_inv AS INV ";
 		$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";

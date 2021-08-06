@@ -87,6 +87,13 @@ require __DIR__.'/../../../func/check_session_func.php';
 							}
 							?>
 							<?php
+							if(in_array("PROP-REPORT-01-025", module_array())){ 
+							echo '<li class="menu_group_item"><p>';  
+							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_report_rent_overdue/">'.'Rent Overdue Report'.'&nbsp;'.'&raquo;'.'</a>';
+							echo '</P></li>';
+							}
+							?>
+							<?php
 							if(in_array("PROP-REPORT-01-015", module_array())){ 
 							echo '<li class="menu_group_item"><p>';  
 							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_report_maint_inv/">'.'Maint. Invoice Report'.'&nbsp;'.'&raquo;'.'</a>';
@@ -97,6 +104,13 @@ require __DIR__.'/../../../func/check_session_func.php';
 							if(in_array("PROP-REPORT-01-020", module_array())){ 
 							echo '<li class="menu_group_item"><p>';  
 							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_report_maint_payment/">'.'Maint. Payment Report'.'&nbsp;'.'&raquo;'.'</a>';
+							echo '</P></li>';
+							}
+							?>
+							<?php
+							if(in_array("PROP-REPORT-01-025", module_array())){ 
+							echo '<li class="menu_group_item"><p>';  
+							echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_report_maint_overdue/">'.'Maint. Overdue Report'.'&nbsp;'.'&raquo;'.'</a>';
 							echo '</P></li>';
 							}
 							?>
