@@ -113,6 +113,9 @@ switch(IS_MODULE)
 	case "prop_report_tenant_info";
 		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
 		break;
+	case "prop_report_rent_debit_note";
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
 	case "prop_report_rent_inv";
 		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
 		break;
@@ -120,6 +123,9 @@ switch(IS_MODULE)
 		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
 		break;
 	case "prop_report_rent_overdue";
+		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
+		break;
+	case "prop_report_maint_debit_note";
 		require __DIR__.'/module/'.IS_MODULE.'/controller/'.IS_MODULE.'_controller.php';
 		break;
 	case "prop_report_maint_inv";
