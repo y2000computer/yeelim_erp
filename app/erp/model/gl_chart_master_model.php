@@ -31,12 +31,12 @@ class gl_chart_master_model
 	
 		$sql_filter = "";
 		if($json['general']['chart_code']<>"") {
-			$sql_filter .= " C.chart_code LIKE '%".addslashes($json['general']['chart_code'])."%'" ;
+			$sql_filter .= " C.chart_code LIKE '%".addslashes(trim($json['general']['chart_code']))."%'" ;
 		}
 
 		if($json['general']['chart_name']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.chart_name LIKE '%".addslashes($json['general']['chart_name'])."%'" ;
+			$sql_filter .= " C.chart_name LIKE '%".addslashes(trim($json['general']['chart_name']))."%'" ;
 		}
 
 		//echo "<br>sql_filter:".$sql_filter."<br>";

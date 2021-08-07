@@ -43,18 +43,18 @@ class prop_maint_payment_model
 		
 		if($json['general']['payment_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " PAY.payment_code LIKE '%".addslashes($json['general']['payment_code'])."%'" ;
+			$sql_filter .= " PAY.payment_code LIKE '%".addslashes(trim($json['general']['payment_code']))."%'" ;
 		}
 
 
 		if($json['general']['tenant_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.tenant_code LIKE '%".addslashes($json['general']['tenant_code'])."%'" ;
+			$sql_filter .= " C.tenant_code LIKE '%".addslashes(trim($json['general']['tenant_code']))."%'" ;
 		}
 
 		if($json['general']['eng_name']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " INV.eng_name LIKE '%".addslashes($json['general']['eng_name'])."%'" ;
+			$sql_filter .= " INV.eng_name LIKE '%".addslashes(trim($json['general']['eng_name']))."%'" ;
 		}
 
 
@@ -493,12 +493,12 @@ class prop_maint_payment_model
 		
 		if($json['general']['tenant_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.tenant_code LIKE '%".addslashes($json['general']['tenant_code'])."%'" ;
+			$sql_filter .= " C.tenant_code LIKE '%".addslashes(trim($json['general']['tenant_code']))."%'" ;
 		}
 
 		if($json['general']['inv_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " INV.inv_code LIKE '%".addslashes($json['general']['inv_code'])."%'" ;
+			$sql_filter .= " INV.inv_code LIKE '%".addslashes(trim($json['general']['inv_code']))."%'" ;
 		}
 
 

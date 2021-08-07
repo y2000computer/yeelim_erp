@@ -39,7 +39,7 @@ class gl_journal_entry_model
 		
 		if($json['general']['journal_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " JL.journal_code LIKE '%".addslashes($json['general']['journal_code'])."%'" ;
+			$sql_filter .= " JL.journal_code LIKE '%".addslashes(trim($json['general']['journal_code']))."%'" ;
 		}
 
 		//echo "<br>sql_filter:".$sql_filter."<br>";
@@ -123,23 +123,23 @@ class gl_journal_entry_model
 		
 		if($json['general']['journal_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " JL.journal_code LIKE '%".addslashes($json['general']['journal_code'])."%'" ;
+			$sql_filter .= " JL.journal_code LIKE '%".addslashes(trim($json['general']['journal_code']))."%'" ;
 		}
 
 		if($json['general']['chart_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.chart_code LIKE '%".addslashes($json['general']['chart_code'])."%'" ;
+			$sql_filter .= " C.chart_code LIKE '%".addslashes(trim($json['general']['chart_code']))."%'" ;
 		}
 
 		
 		if($json['general']['chart_name']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.chart_name LIKE '%".addslashes($json['general']['chart_name'])."%'" ;
+			$sql_filter .= " C.chart_name LIKE '%".addslashes(trim($json['general']['chart_name']))."%'" ;
 		}
 		
 		if($json['general']['description']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " DETAIL.description LIKE '%".addslashes($json['general']['description'])."%'" ;
+			$sql_filter .= " DETAIL.description LIKE '%".addslashes(trim($json['general']['description']))."%'" ;
 		}
 		
 		

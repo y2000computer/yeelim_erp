@@ -40,7 +40,7 @@ class prop_report_maint_payment_model
 
 		if($json['criteria']['tenant_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.tenant_code LIKE '%".addslashes($json['criteria']['tenant_code'])."%'" ;
+			$sql_filter .= " C.tenant_code LIKE '%".addslashes(trim($json['criteria']['tenant_code']))."%'" ;
 		}		
 
 	

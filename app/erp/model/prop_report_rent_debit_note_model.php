@@ -40,12 +40,12 @@ class prop_report_rent_debit_note_model
 
 		if($json['criteria']['tenant_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.tenant_code LIKE '%".addslashes($json['criteria']['tenant_code'])."%'" ;
+			$sql_filter .= " C.tenant_code LIKE '%".addslashes(trim($json['criteria']['tenant_code']))."%'" ;
 		}		
 
 		if($json['criteria']['inv_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " INV.inv_code LIKE '%".addslashes($json['criteria']['inv_code'])."%'" ;
+			$sql_filter .= " INV.inv_code LIKE '%".addslashes(trim($json['criteria']['inv_code']))."%'" ;
 		}
 		
 

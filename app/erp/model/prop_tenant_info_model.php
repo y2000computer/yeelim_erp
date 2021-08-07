@@ -35,12 +35,12 @@ class prop_tenant_info_model
 		}		
 		if($json['general']['tenant_code']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.tenant_code LIKE '%".addslashes($json['general']['tenant_code'])."%'" ;
+			$sql_filter .= " C.tenant_code LIKE '%".addslashes(trim($json['general']['tenant_code']))."%'" ;
 		}
 
 		if($json['general']['eng_name']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " C.eng_name LIKE '%".addslashes($json['general']['eng_name'])."%'" ;
+			$sql_filter .= " C.eng_name LIKE '%".addslashes(trim($json['general']['eng_name']))."%'" ;
 		}
 
 		//echo "<br>sql_filter:".$sql_filter."<br>";
