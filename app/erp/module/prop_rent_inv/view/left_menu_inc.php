@@ -1,4 +1,11 @@
 
+					<ul>
+						<li class="main_menu_selected"><span>Rent Invoice</span></li>
+						<li class="main_menu_unselected">
+						<?php echo '<a href="/'.IS_PORTAL.'/'.IS_LANG.'/prop_rent_inv/new">'.'Add Invoice'.'</a>'?></li>
+					</ul>
+
+
 
 
 					<div class="cardWrapper">
