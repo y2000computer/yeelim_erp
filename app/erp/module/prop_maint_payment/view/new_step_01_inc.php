@@ -61,7 +61,7 @@ if ($IS_action=='new') {
 									<label class="">Tenant Code :</label>
 								</span>
 								<span class="formInput">
-										<input type="text" name="general[tenant_code]"  size="15" class="four" value="<?php echo htmlspecialchars($general['tenant_code']);?>" />
+										<input type="text" name="general[tenant_code]"  size="15" class="four" required value="<?php echo htmlspecialchars($general['tenant_code']);?>" />
 								</span>
 							</span>
 							<span class="formRow">

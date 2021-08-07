@@ -379,6 +379,313 @@ class prop_maint_inv_model
 	
 
 	
+	public function search_tenant_info($jsondata)
+	{
+		$json = json_decode($jsondata, true);
+	
+		$sql_filter = "";
+		if($json['general']['build_id']<>"") {
+			$sql_filter .= " INFO.build_id = '".addslashes($json['general']['build_id'])."'" ;
+		}	
+		
+		if($json['general']['tenant_code']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " INFO.tenant_code LIKE '%".addslashes($json['general']['tenant_code'])."%'" ;
+		}
+
+
+
+		if(!empty($sql_filter)) {
+			$sql_filter.=" AND ";
+			$sql_filter .= " INFO.status = 1 " ;
+		}			
+
+		//echo "<br>sql_filter:".$sql_filter."<br>";
+		$sql = " SELECT INFO.tenant_id FROM  tbl_prop_tenant_info AS INFO ";
+		$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON INFO.build_id = B.build_id  ";
+		$sql .= "  WHERE ";
+		$sql .= " (1) " ;
+		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
+		$sql .= " ORDER BY "." INFO.tenant_id ". ";";
+		//echo "<br>sql:".$sql."<br>";
+		
+		$arr_primary_id =array();
+		try {
+			$rs = $this->dbh->query($sql);
+			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
+				$arr_primary_id[] = "'". addslashes($row['tenant_id']) ."'";
+				}
+			} catch (PDOException $e){
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}		
+		
+
+		$array_count = count($arr_primary_id);
+
+		if ($array_count > 0){	  
+			$result_id = implode(",", $arr_primary_id);
+		}
+		
+		$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
+
+		$this->dbh->beginTransaction();
+
+		$sql = 'INSERT INTO `tbl_sys_paging_control`(
+					`searchphrase`,
+					`lot_id`,
+					`result_id`,
+					`create_user`,
+					`create_datetime`
+					) VALUES (';
+		$sql.='\''.addslashes($jsondata).'\''.',';
+		$sql.='\''.addslashes($lot_id).'\''.',';
+		$sql.='\''.addslashes($result_id).'\''.',';
+		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
+		$sql.='now()'.')';
+
+		try {
+			$rows = $this->dbh->query($sql);
+			} catch (PDOException $e) {
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}
+		  
+		$this->dbh->commit();
+
+		return $lot_id;
+	}
+
+
+	public function retreive_content_tenant_info($lot_id,$page)
+	{
+
+		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
+		//echo "<br>sql:".$sql."<br>";
+		$arr_record = array();	
+		try {
+				$rs = $this->dbh->query($sql);
+				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
+					$arr_record[] = $row;
+					}
+				} catch (PDOException $e){
+					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+					die();
+					}		
+
+		$arr =  $arr_record[0];
+		$arr_primary_id = $arr['result_id']; 
+		
+		
+		if ($arr_primary_id != '')		
+		{
+			
+			$sql = "SELECT INFO.*, B.eng_name AS 'build_eng_name' FROM tbl_prop_tenant_info AS INFO ";
+			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON INFO.build_id = B.build_id  ";
+			if(!empty($arr_primary_id)) $sql .= "WHERE "." INFO.tenant_id ". " in (".$arr_primary_id.")" ;
+			$sql .= " ORDER BY " ." INFO.tenant_id " ;
+			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
+			//echo "<br>sql:".$sql."<br>";
+
+
+			$arr_record = array();	
+			try {
+					$rs = $this->dbh->query($sql);
+					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
+						$arr_record[] = $row;
+						}
+					} catch (PDOException $e){
+						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+						die();
+						}		
+			return $arr_record;
+		}
+		
+		return $arr_record;
+	}
+
+
+
+    public function tenant_info_select($primary_id)
+	{
+ 		
+		 $sql ="SELECT INFO.*, B.eng_name AS 'build_eng_name' FROM tbl_prop_tenant_info AS INFO ";
+		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON INFO.build_id = B.build_id ";
+		 $sql .= " WHERE INFO."." tenant_id ". " = '$primary_id'";
+		//echo "<br>sql:".$sql."<br>";
+				
+		$arr_record = array();
+		try {
+			$rows = $this->dbh->query($sql);
+			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+			  $arr_record[] = $row;
+			 }
+			} catch (PDOException $e) {
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}		
+		
+		return $arr_record[0];
+	}		
+	
+ 
+	public function create($general)
+	{
+		$build_id = addslashes($general['build_id']);
+		$tenant_id = addslashes($general['tenant_id']);
+		$inv_date = toYMD($general['inv_date']);
+		$period_date_from = toYMD($general['period_date_from']);
+		$period_date_to = toYMD($general['period_date_to']);
+		$amount = trim(addslashes($general['amount']));
+		$balance = $amount ;
+		$status = $general['status'];
+		
+		$create_user = $_SESSION['sUserID'];
+
+
+		//retreive all active tenant info and rent_amount >0
+		$sql ="SELECT INFO.*, B.eng_name AS 'build_eng_name' FROM tbl_prop_tenant_info AS INFO ";
+		$sql .= " LEFT JOIN  tbl_prop_build_master AS B ON INFO.build_id = B.build_id ";
+		$sql .= " WHERE INFO."." tenant_id ". " = '$tenant_id'";
+	 	//echo "<br>sql:".$sql."<br>";
+
+		$tenant_records = array();
+		
+		try {
+			$rows = $this->dbh->query($sql);
+			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+			  $tenant_records[] = $row;
+			 }
+			} catch (PDOException $e) {
+				print 'Error!: ' . $e->getMessage();
+				die();
+		  }				
+		  
+		$tenant_record = $tenant_records[0];
+		$eng_name = addslashes($tenant_record["eng_name"]);
+		$add_1 = addslashes($tenant_record["add_1"]);
+		$add_2 = addslashes($tenant_record["add_2"]);
+		$add_3 = addslashes($tenant_record["add_3"]);
+		$ref_no = addslashes($tenant_record["ref_no"]);
+		$shop_no = addslashes($tenant_record["shop_no"]);
+
+
+		$codel_prefix	='MV';
+
+		//Generate prefix
+		$YY =substr($inv_date,2,2);
+		$prefix_YY = $codel_prefix.$YY;
+		//echo '<br>prefix_YY ='.$prefix_YY.'<br>'	;
+		$sql = "SELECT MAX(inv_code) as max  FROM tbl_prop_maint_inv WHERE
+					build_id=".$build_id." and left(inv_code,4)='".$prefix_YY."'";
+		//echo '<br>'.$sql.'<br>';
+		$prefix_max ='';
+		try {
+			$rows = $this->dbh->query($sql);
+			while($now= $rows->fetch(PDO::FETCH_ASSOC)){				  
+				$prefix_max = $now['max'];
+				}
+			} catch (PDOException $e) {		
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}
+
+		//echo '<br>prefix_max ='.$prefix_max.'<br>'	;
+		
+		if($prefix_max ==null )	{
+			$prefix_max_no = 0;	  
+		} else {
+			$prefix_max_no = substr($prefix_max, 4, 5); 
+		}
+		
+		$prefix_max_no = $prefix_max_no+1;
+		//echo 'prefix_max_no ='.$prefix_max_no.'<br>'	;
+		$inv_code =$prefix_YY.str_pad($prefix_max_no,5,0,STR_PAD_LEFT);
+		//echo 'payment_code ='.$inv_code.'<br>'	;
+		
+		//<end>Generate prefix
+
+
+		$this->dbh->beginTransaction();
+		
+
+		$sql = "INSERT INTO `tbl_prop_maint_inv`(
+						`build_id`
+						,`tenant_id`
+						,`inv_code`
+						,`inv_date`
+						,`eng_name`
+						,`add_1`
+						,`add_2`
+						,`add_3`
+						,`ref_no`
+						,`shop_no`
+						,`period_date_from`
+						,`period_date_to`
+						,`amount`
+						,`balance`
+						,`print_is`
+						,`status`
+						,`create_user`
+						,`modify_user`
+						,`create_datetime`
+						,`modify_datetime`
+						) VALUES (
+							'$build_id'
+							,'$tenant_id'
+							,'$inv_code'
+							,'$inv_date'
+							,'$eng_name'
+							,'$add_1'
+							,'$add_2'
+							,'$add_3'
+							,'$ref_no'
+							,'$shop_no'
+							,'$period_date_from'
+							,'$period_date_to'
+							,'$amount'
+							,'$amount'
+							,'0'
+							,'1'
+							,'$create_user'
+							,'$create_user'
+							,now()
+							,now()
+							)";
+
+		//echo '<br>'.$sql.'<br>';		
+								
+		try {
+			$rows = $this->dbh->query($sql);
+			$last_insert_id = $this->dbh->lastInsertId(); 
+			} catch (PDOException $e) {		
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}		
+		
+		//Update Tenanct information 
+		$sql ='UPDATE  `tbl_prop_tenant_info` SET ';
+		$sql.=' `maint_date`='.'\''.$inv_date.'\'';
+		$sql.=' WHERE ';
+		$sql.='`'.'tenant_id'. '`='.'\''.addslashes($tenant_id).'\''.' ';
+		//echo '<br>'.$sql; // Debug used				
+	
+		try {
+			$rows = $this->dbh->query($sql);
+			} catch (PDOException $e) {		
+				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
+				die();
+				}	
+
+
+
+		$this->dbh->commit();
+			
+		return $last_insert_id;
+	}
+	
+
+	
 
 
     public function close()
