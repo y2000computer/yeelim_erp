@@ -99,6 +99,7 @@ if ($IS_action=='new') {
 										<select name="criteria[output]" id="output" required class="five">
 										<option value="screen" selected>Screen</option>
 										<option value="excel">Excel</option>
+										<option value="pdf">Pdf</option>
 										</select>								
 								</span>
 							</span>

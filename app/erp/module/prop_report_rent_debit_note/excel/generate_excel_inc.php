@@ -6,7 +6,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 
 $inputFileType = 'Xlsx';
-$inputFileName = 'prop_report_rent_inv_template_v01.xlsx';
+$inputFileName = 'prop_report_rent_debit_note_template_v01.xlsx';
 $sheetname = ['sheet1'];
 
 $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load(__DIR__."/".$inputFileName);
@@ -76,7 +76,7 @@ $sheet ->getStyle(('K'.$excel_row.':K'.$excel_row))->applyFromArray($styleArray)
 $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 $dt = new DateTime();
 $path = __DIR__.DIR_EXCEL_OUTPUT;
-$file_name = 'prop_report_rent_inv_'.$dt->format('Y-m-d_H_i_s').'.xlsx';
+$file_name = 'prop_report_rent_debit_note_'.$dt->format('Y-m-d_H_i_s').'.xlsx';
 $writer->save($path.$file_name);
 
 header ("Content-Type: application/x-msexcel");

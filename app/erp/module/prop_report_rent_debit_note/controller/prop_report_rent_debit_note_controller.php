@@ -39,7 +39,10 @@ switch($IS_action)
 						case "excel":
 							require __DIR__."'/../excel/generate_excel_inc.php";				
 							break;
-				}
+						case "pdf":
+							require __DIR__."'/../pdf/generate_pdf_inc.php";				
+							break;
+					}
 				
 			} else {
 				$json_searchphrase = json_encode($_POST);	
