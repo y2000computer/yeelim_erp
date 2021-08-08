@@ -71,6 +71,9 @@ $mpdf = new mPDF(
 		);
 */
 
+$mpdf->autoScriptToLang = true;
+$mpdf->autoLangToFont   = true;
+
 $mpdf->useAdobeCJK = true;		// Default setting in config.php
 
 $dir=DIR_PUBLIC_HTML.'/prop_rent_debit_note_output/';
@@ -106,6 +109,9 @@ foreach ($arr_report as $report):
 	$content = getHtml($data['content_file'],$report);
 	$footer = getHtml($data['footer_file'],$report);
 	
+	$content = iconv('UTF-8', 'UTF-8//IGNORE', $content);
+	$content = iconv('UTF-8', 'UTF-8//TRANSLIT', $content);
+
 
 	$mpdf->SetHTMLHeader($header);
 	$mpdf->SetHTMLFooter($footer);

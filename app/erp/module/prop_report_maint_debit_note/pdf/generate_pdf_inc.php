@@ -24,7 +24,24 @@ if (!class_exists('mPDF')) {
    } 
 //echo '<br> mpdf.php loaded';
 
-$mpdf = new mPDF('zh-HK',    // mode - default ''
+
+$config = [
+    'mode' => 'zh-HK', 
+	'format' => [185, 220],
+	'default_font_size' => 0,
+	'margin_left' => 5,
+	'margin_right' => 5,
+	'margin_top' => ($data['mar_top']?$data['mar_top']:88),
+	'margin_bottom' => ($data['mar_top']?$data['mar_bot']:88),
+	'orientation' => 'P',
+    'autoScriptToLang' => true,
+    'autoLangToFont' => true
+	];
+
+
+
+$mpdf = new mPDF(
+		   'zh-HK',    // mode - default ''
 		   [185, 220],    // format - A4, for example, default ''
 		   0,     // font size - default 0
 		   '',    // default font family
@@ -35,9 +52,31 @@ $mpdf = new mPDF('zh-HK',    // mode - default ''
 		   6,     // 9 margin header
 		   3 ,   // 9 margin footer
 		   'P');  // L - landscape, P - portrait
+
+
+/*
+$mpdf = new mPDF(
+		[
+		'mode' => 'zh-HK', 
+		'format' => [185, 220],
+		'default_font_size' => 0,
+		'margin_left' => 5,
+		'margin_right' => 5,
+		'margin_top' => ($data['mar_top']?$data['mar_top']:88),
+		'margin_bottom' => ($data['mar_top']?$data['mar_bot']:88),
+		'orientation' => 'P',
+		'autoScriptToLang' => true,
+		'autoLangToFont' => true
+		]
+		);
+*/
+
+$mpdf->autoScriptToLang = true;
+$mpdf->autoLangToFont   = true;
+
 $mpdf->useAdobeCJK = true;		// Default setting in config.php
 
-$dir=DIR_PUBLIC_HTML.'/prop_rent_debit_note_output/';
+$dir=DIR_PUBLIC_HTML.'/prop_maint_debit_note_output/';
 
 if (!is_dir($dir)) 	{
 	mkdir($dir,0777,true);
@@ -70,6 +109,9 @@ foreach ($arr_report as $report):
 	$content = getHtml($data['content_file'],$report);
 	$footer = getHtml($data['footer_file'],$report);
 	
+	$content = iconv('UTF-8', 'UTF-8//IGNORE', $content);
+	$content = iconv('UTF-8', 'UTF-8//TRANSLIT', $content);
+
 
 	$mpdf->SetHTMLHeader($header);
 	$mpdf->SetHTMLFooter($footer);
