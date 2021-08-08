@@ -47,6 +47,8 @@ switch($IS_action)
 			if($vlValidation->ValidateFormActionCreate($general)) {
 				$item_id=$dmGeneralModel->create($_POST['general']);
 				$general = $dmGeneralModel->select($item_id);
+				$general['rent_date'] = YMDtoDMY($general['rent_date']);
+				$general['maint_date'] = YMDtoDMY($general['maint_date']);
 				require __DIR__.'/../view/edit_inc.php';
 			} else {
 				require __DIR__.'/../view/new_inc.php';

@@ -188,6 +188,7 @@ class dataManager{
 				$fieldStructure[$arrayField['Field']]=$arrayField['Type'];
 			}
 			$this->result = $fieldStructure;
+			//var_dump($fieldStructure);
 		} catch (PDOException $e) {
 			echo 'dataManager->Connection error:'.$e->getMessage().'--Statement:'.$sql;
 		}
@@ -294,11 +295,9 @@ class dataManager{
 					break;
 					case 'datetime':
 						if ($value=='now()'){
-							$insertField[]='`'.$FieldName.'`';
-							$insertValue[]=$value;
+							$updateField[]="`".$FieldName."`=".$value ;
 						}else {
-							$insertField[]='`'.$FieldName.'`';
-							$insertValue[]="'".addslashes($value)."'";
+							$updateField[]="`".$FieldName."`='".addslashes($value)."'";
 						}
 					break;					
 					default:
