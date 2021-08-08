@@ -1,13 +1,24 @@
 <?php
-class prop_report_maint_overdue_model  
+class prop_report_maint_overdue_model  extends dataManager                   
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
+
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager	
+			
 	
 	public function __construct()
     {
+		parent::__construct();
+    	$this->errorMsg='PROP -> Report -> Maint. Overdue Report -> SQL error:';
+     	$this->setErrorMsg('PROP -> Report -> Maint. Overdue Report -> SQL error:');
+		
+	
 		$this->primary_keyname = 'tenant_id';
 		$this->primary_indexname = 'tenant_code';
 		try {
@@ -66,22 +77,9 @@ class prop_report_maint_overdue_model
 		$sql .= " ORDER  BY INV.inv_date ASC ; ";
 		//echo "<br>sql:".$sql."<br>";
 		
+		$record = $this->runSQLAssoc($sql);			
 
-		$record = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
-		  
+	  
 		return $record;
 	}	
 	
@@ -94,17 +92,7 @@ class prop_report_maint_overdue_model
 		$sql .= " ORDER BY build_id ASC; ";
 		
 		//echo '<br>'.$sql; // Debug used		
-		
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
+		$record = $this->runSQLAssoc($sql);			
 		
 		return $record;
 	}	
@@ -114,18 +102,9 @@ class prop_report_maint_overdue_model
 	{
  		$sql ="SELECT * FROM tbl_prop_build_master WHERE "." build_id ". " = '$primary_id'";
 		//echo "<br>sql:".$sql."<br>";
+		$arr_record = $this->runSQLAssoc($sql);			
 				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+
 		return $arr_record[0];
 	}	
 	

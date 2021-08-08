@@ -89,18 +89,6 @@ class prop_rent_payment_model extends dataManager
 			$arr_primary_id[] = "'". addslashes($row[$this->primary_keyname]) ."'";
 		endforeach; 
 
-		/*
-		$arr_primary_id =array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$arr_primary_id[] = "'". addslashes($row[$this->primary_keyname]) ."'";
-				}
-			} catch (PDOException $e){
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		*/
 
 		$array_count = count($arr_primary_id);
 
@@ -110,8 +98,6 @@ class prop_rent_payment_model extends dataManager
 		
 		$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
 
-
-		//$this->dbh->beginTransaction();
 
 		$sql = 'INSERT INTO `tbl_sys_paging_control`(
 					`searchphrase`,
@@ -128,16 +114,6 @@ class prop_rent_payment_model extends dataManager
 
 		$last_insert_id = $this->runSQLReturnID($sql);		
 
-		/*
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
-		  
-		$this->dbh->commit();
-		*/
 
 		return $lot_id;
 	}
@@ -150,18 +126,6 @@ class prop_rent_payment_model extends dataManager
 		//echo "<br>sql:".$sql."<br>";
 		$arr_record = $this->runSQLAssoc($sql);	
 
-		/*
-		$arr_record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-		*/
 
 		$arr =  $arr_record[0];
 		$arr_primary_id = $arr['result_id']; 
@@ -181,19 +145,7 @@ class prop_rent_payment_model extends dataManager
 			//echo "<br>sql:".$sql."<br>";
 			$arr_record = $this->runSQLAssoc($sql);	
 
-			/*
-			$arr_record = array();	
-			try {
-					$rs = $this->dbh->query($sql);
-					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-						$arr_record[] = $row;
-						}
-					} catch (PDOException $e){
-						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-						die();
-						}	
-			*/
-							
+		
 			return $arr_record;
 		}
 		
@@ -206,19 +158,6 @@ class prop_rent_payment_model extends dataManager
 		//echo "<br>sql:".$sql."<br>";
 		$arr_record = $this->runSQLAssoc($sql);	
 
-		/*
-		$arr_record = array();	
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-		*/
-
 		$result_id = $arr_record[0]['result_id'];
 
 		//$this->dbh->beginTransaction();
@@ -226,18 +165,6 @@ class prop_rent_payment_model extends dataManager
 		$sql ="UPDATE `tbl_sys_paging_control` SET modify_datetime =now()	WHERE lot_id ='$lot_id'";
 		//echo "<br>sql:".$sql."<br>";
 		$void = $this->runSQLReturnID($sql);		
-
-		/*			
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$this->dbh->commit();
-		*/
 
 		return $result_id;
 	}	
@@ -247,19 +174,6 @@ class prop_rent_payment_model extends dataManager
 		$sql = "SELECT searchphrase FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
 		$arr_record = $this->runSQLAssoc($sql);	
-
-		/*
-		$arr_record = array();	
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		*/
 
 		$searchphrase = $arr_record[0]['searchphrase'];
 		return $searchphrase;
@@ -280,19 +194,6 @@ class prop_rent_payment_model extends dataManager
 		 //echo "<br>sql:".$sql."<br>";
 		$arr_record = $this->runSQLAssoc($sql);	
 
-		/*
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		*/
-
 		return $arr_record[0];
 	}		
 	
@@ -307,19 +208,6 @@ class prop_rent_payment_model extends dataManager
 		$sql .=" AND $field_name = '$para'";
 		//echo '<br>'.$sql; // Debug used		
 		$arr_record = $this->runSQLAssoc($sql);	
-
-		/*	
-		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		*/
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
@@ -342,18 +230,6 @@ class prop_rent_payment_model extends dataManager
 		//echo '<br>'.$sql; // Debug used		
 		$arr_record = $this->runSQLAssoc($sql);	
 
-		/*
-		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		*/
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
@@ -372,19 +248,7 @@ class prop_rent_payment_model extends dataManager
 		//echo '<br>'.$sql; // Debug used		
 		$arr_record = $this->runSQLAssoc($sql);	
 
-		/*	
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}
-		*/			
-		
+	
 		return $arr_record;
 	}	
 
@@ -398,19 +262,6 @@ class prop_rent_payment_model extends dataManager
 		//echo '<br>'.$sql; // Debug used		
 		$arr_record = $this->runSQLAssoc($sql);	
 
-		/*
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}
-		*/			
-		
 		return $arr_record;
 	}	
 
@@ -446,19 +297,6 @@ class prop_rent_payment_model extends dataManager
 			$inv_row[] = $row;
 		endforeach; 
 		
-		/*
-		$inv_row = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $inv_row[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}
-		*/
-		
 		$inv_rs = $inv_row[0];
 		$inv_id = $inv_rs['inv_id'];
 		$inv_amount = $inv_rs['amount'];
@@ -472,19 +310,7 @@ class prop_rent_payment_model extends dataManager
 		foreach ($rows as $row): 
 			$payment_row[] = $row;
 		endforeach; 
-
-		/*
-		$payment_row = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $payment_row[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}
-		*/	
+	
 		
 		$payment_rs  = $payment_row[0];	
 		$payment_amount_before_update	= 0;
@@ -499,46 +325,6 @@ class prop_rent_payment_model extends dataManager
 		//echo '<br> sql : '.$sql.'<br>';
 		$this->runSql($sql);
 	
-		/*
-		$this->dbh->beginTransaction();
-	
-		$sql ='UPDATE  `tbl_prop_rent_payment` SET ';
-		$sql.=' `payment_date`='.'\''.$payment_date.'\'';
-		$sql.=',`amount`='.'\''.$amount.'\'';
-		$sql.=',`status`='.'\''.$status.'\'';
-		$sql.=',`modify_user`='.'\''.$modify_user.'\'';
-		$sql.=',`modify_datetime`=NOW()'.' ';
-		$sql.=' WHERE ';
-		$sql.='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';
-		//echo '<br>'.$sql; // Debug used				
-	
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$sql ='UPDATE  `tbl_prop_rent_payment` SET ';
-		$sql.=' `payment_date`='.'\''.$payment_date.'\'';
-		$sql.=',`amount`='.'\''.$amount.'\'';
-		$sql.=',`status`='.'\''.$status.'\'';
-		$sql.=',`modify_user`='.'\''.$modify_user.'\'';
-		$sql.=',`modify_datetime`=NOW()'.' ';
-		$sql.=' WHERE ';
-		$sql.='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';
-		//echo '<br>'.$sql; // Debug used				
-	
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}	
-		*/
-
 
 		$sql ='UPDATE  `tbl_prop_rent_inv` SET ';
 		$sql.=' `balance`='.'\''.$balance.'\'';
@@ -546,19 +332,7 @@ class prop_rent_payment_model extends dataManager
 		$sql.='`'.'inv_id'. '`='.'\''.addslashes($inv_id).'\''.' ';
 		//echo '<br>'.$sql; // Debug used				
 		$void = $this->runSQLReturnID($sql);	
-		
-		/*
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}	
-		
 
-		$this->dbh->commit();
-		*/
-		
 		return $last_insert_id;
 	}	
 	
@@ -610,19 +384,6 @@ class prop_rent_payment_model extends dataManager
 			$arr_primary_id[] = "'". addslashes($row['inv_id']) ."'";
 		endforeach; 
 
-		/*
-		$arr_primary_id =array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$arr_primary_id[] = "'". addslashes($row['inv_id']) ."'";
-				}
-			} catch (PDOException $e){
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		*/
-
 		$array_count = count($arr_primary_id);
 
 		if ($array_count > 0){	  
@@ -648,17 +409,6 @@ class prop_rent_payment_model extends dataManager
 
 		$last_insert_id = $this->runSQLReturnID($sql);		
 
-		/*
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
-		  
-		$this->dbh->commit();
-		*/
-
 		return $lot_id;
 	}
 
@@ -670,19 +420,6 @@ class prop_rent_payment_model extends dataManager
 		//echo "<br>sql:".$sql."<br>";
 		$arr_record = $this->runSQLAssoc($sql);	
 	
-		/*
-		$arr_record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-		*/
-
 		$arr =  $arr_record[0];
 		$arr_primary_id = $arr['result_id']; 
 		
@@ -699,18 +436,7 @@ class prop_rent_payment_model extends dataManager
 			//echo "<br>sql:".$sql."<br>";
 			$arr_record = $this->runSQLAssoc($sql);	
 
-			/*
-			$arr_record = array();	
-			try {
-					$rs = $this->dbh->query($sql);
-					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-						$arr_record[] = $row;
-						}
-					} catch (PDOException $e){
-						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-						die();
-						}		
-			*/			
+			
 			return $arr_record;
 		}
 		
@@ -729,18 +455,6 @@ class prop_rent_payment_model extends dataManager
 		//echo "<br>sql:".$sql."<br>";
 		$arr_record = $this->runSQLAssoc($sql);	
 
-		/*
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		*/
 
 		return $arr_record[0];
 	}		
@@ -784,18 +498,6 @@ class prop_rent_payment_model extends dataManager
 			$prefix_max = $now['max'];
 		endforeach;	
 		
-		/*
-		try {
-			$rows = $this->dbh->query($sql);
-			while($now= $rows->fetch(PDO::FETCH_ASSOC)){				  
-				$prefix_max = $now['max'];
-				}
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
-		*/		
-
 		//echo '<br>prefix_max ='.$prefix_max.'<br>'	;
 		
 		if($prefix_max ==null )	{
@@ -818,43 +520,6 @@ class prop_rent_payment_model extends dataManager
 		$last_insert_id = $this->runSQLReturnID($sql);	
 	
 
-		/*
-		$this->dbh->beginTransaction();
-		
-		$sql = "INSERT INTO `tbl_prop_rent_payment`(
-						`build_id`
-						,`inv_id`
-						,`payment_code`
-						,`payment_date`
-						,`amount`
-						,`status`
-						,`create_user`
-						,`modify_user`
-						,`create_datetime`
-						,`modify_datetime`
-						) VALUES (
-							'$build_id'
-							,'$inv_id'
-							,'$payment_code'
-							,'$payment_date'
-							,'$amount'
-							,'$status'
-							,'$create_user'
-							,'$create_user'
-							,now()
-							,now()
-							)";
-
-		//echo '<br>'.$sql.'<br>';		
-								
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		*/
 
 		//Update invoice
 		$sql ="SELECT * FROM tbl_prop_rent_inv ";
@@ -866,19 +531,7 @@ class prop_rent_payment_model extends dataManager
 			$inv_row[] = $row;
 		endforeach;
 	
-		/*
-		$inv_row = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $inv_row[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}
-		*/
-		
+
 		$inv_rs = $inv_row[0];
 		$inv_amount = $inv_rs['amount'];
 		$balance = $inv_rs['balance'];
@@ -895,21 +548,6 @@ class prop_rent_payment_model extends dataManager
 		//echo '<br>'.$sql; // Debug used				
 		$void = $this->runSQLReturnID($sql);	
 
-
-		/*	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}	
-
-
-
-
-
-		$this->dbh->commit();
-		*/
 			
 		return $last_insert_id;
 	}

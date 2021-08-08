@@ -1,13 +1,22 @@
 <?php
-class prop_report_tenant_info_model  
+class prop_report_tenant_info_model  extends dataManager    
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager	
+
 	public function __construct()
     {
+		parent::__construct();
+    	$this->errorMsg='PROP -> Report -> Tenant Information -> SQL error:';
+     	$this->setErrorMsg('PROP -> Report -> Tenant Information -> SQL error:');
+
 		$this->primary_keyname = 'tenant_id';
 		$this->primary_indexname = 'tenant_code';
 		try {
@@ -42,21 +51,8 @@ class prop_report_tenant_info_model
 		
 		//echo '<br>'.$sql.'<br>';
 
+		$record = $this->runSQLAssoc($sql);	
 
-		$record = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
 		  
 		return $record;
 	}	
@@ -70,18 +66,9 @@ class prop_report_tenant_info_model
 		$sql .= " ORDER BY build_id ASC; ";
 		
 		//echo '<br>'.$sql; // Debug used		
-		
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
-		
+		$record = $this->runSQLAssoc($sql);	
+	
+
 		return $record;
 	}	
 	
@@ -91,16 +78,8 @@ class prop_report_tenant_info_model
  		$sql ="SELECT * FROM tbl_prop_build_master WHERE "." build_id ". " = '$primary_id'";
 		//echo "<br>sql:".$sql."<br>";
 				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$arr_record = $this->runSQLAssoc($sql);	
+
 		
 		return $arr_record[0];
 	}	

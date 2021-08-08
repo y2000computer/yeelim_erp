@@ -1,13 +1,26 @@
 <?php
-class prop_maint_inv_model
+class prop_maint_inv_model extends dataManager
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager
+
 	public function __construct()
     {
+		parent::__construct();
+    	$this->errorMsg='PROP -> Transaction -> Maint Invoice -> SQL error:';
+    	$this->mainTable='tbl_prop_maint_inv';
+    	$this->setTable('tbl_prop_maint_inv');
+    	$this->setErrorMsg('PROP -> Transaction -> Maint Invoice -> SQL error:');
+    	$this->logField= null;
+    	$this->table_field=$this->getTableField();
+
 		$this->primary_keyname = 'inv_id';
 		$this->primary_indexname = 'inv_code';
 		try {
@@ -57,7 +70,7 @@ class prop_maint_inv_model
 			$sql_filter .= " C.eng_name LIKE '%".addslashes(trim($json['general']['eng_name']))."%'" ;
 		}
 
-		
+
 		//echo "<br>sql_filter:".$sql_filter."<br>";
 		
 		$sql = "SELECT ".$this->primary_keyname. " FROM tbl_prop_maint_inv AS INV ";
@@ -70,16 +83,11 @@ class prop_maint_inv_model
 		//echo "<br>sql:".$sql."<br>";
 		
 		$arr_primary_id =array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$arr_primary_id[] = "'". addslashes($row[$this->primary_keyname]) ."'";
-				}
-			} catch (PDOException $e){
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_primary_id[] = "'". addslashes($row[$this->primary_keyname]) ."'";
+		endforeach; 
+
 
 		$array_count = count($arr_primary_id);
 
@@ -89,7 +97,6 @@ class prop_maint_inv_model
 		
 		$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
 
-		$this->dbh->beginTransaction();
 
 		$sql = 'INSERT INTO `tbl_sys_paging_control`(
 					`searchphrase`,
@@ -104,14 +111,8 @@ class prop_maint_inv_model
 		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
 		$sql.='now()'.')';
 
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
-		  
-		$this->dbh->commit();
+		$last_insert_id = $this->runSQLReturnID($sql);		
+
 
 		return $lot_id;
 	}
@@ -122,16 +123,7 @@ class prop_maint_inv_model
 
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$arr_record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
+		$arr_record = $this->runSQLAssoc($sql);	
 
 		$arr =  $arr_record[0];
 		$arr_primary_id = $arr['result_id']; 
@@ -141,23 +133,13 @@ class prop_maint_inv_model
 		{
 			$sql = "SELECT INV.*, C.tenant_code, INV.eng_name AS 'tenant_eng_name' , B.eng_name AS 'build_eng_name' FROM tbl_prop_maint_inv AS INV ";
 			$sql .= "  LEFT JOIN  tbl_prop_tenant_info AS C ON INV.tenant_id = C.tenant_id  ";
-			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON C.build_id = B.build_id  ";
+			$sql .= "  LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id  ";
 			if(!empty($arr_primary_id)) $sql .= "WHERE ".$this->primary_keyname. " in (".$arr_primary_id.")" ;
 			$sql .= " ORDER BY " .$this->primary_indexname ;
 			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
 			//echo "<br>sql:".$sql."<br>";
-			
-			$arr_record = array();	
-			try {
-					$rs = $this->dbh->query($sql);
-					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-						$arr_record[] = $row;
-						}
-					} catch (PDOException $e){
-						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-						die();
-						}		
-			return $arr_record;
+			$arr_record = $this->runSQLAssoc($sql);	
+
 		}
 		
 		return $arr_record;
@@ -167,33 +149,17 @@ class prop_maint_inv_model
 	{
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$arr_record = array();	
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-		  
+		$arr_record = $this->runSQLAssoc($sql);	
+
 		$result_id = $arr_record[0]['result_id'];
 
-		$this->dbh->beginTransaction();
+		//$this->dbh->beginTransaction();
 
 		$sql ="UPDATE `tbl_sys_paging_control` SET modify_datetime =now()	WHERE lot_id ='$lot_id'";
+		//echo "<br>sql:".$sql."<br>";
+		$void = $this->runSQLReturnID($sql);		
 
 
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$this->dbh->commit();		
 		return $result_id;
 	}	
 
@@ -201,17 +167,8 @@ class prop_maint_inv_model
 	{
 		$sql = "SELECT searchphrase FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		
-		$arr_record = array();	
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$arr_record = $this->runSQLAssoc($sql);	
+
 
 		$searchphrase = $arr_record[0]['searchphrase'];
 		return $searchphrase;
@@ -220,23 +177,15 @@ class prop_maint_inv_model
 
     public function select($primary_id)
 	{
+ 		
 		 $sql ="SELECT INV.*, T.tenant_code, B.eng_name AS 'build_eng_name' FROM tbl_prop_maint_inv AS INV";
 		 $sql .= " LEFT JOIN  tbl_prop_tenant_info AS T ON INV.tenant_id = T.tenant_id ";
-		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON T.build_id = B.build_id ";
+		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id ";
 		 $sql .= " WHERE INV.".$this->primary_keyname. " = '$primary_id'";
 		 //echo "<br>sql:".$sql."<br>";
-				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$arr_record = $this->runSQLAssoc($sql);	
+
+	
 		return $arr_record[0];
 	}		
 	
@@ -250,17 +199,8 @@ class prop_maint_inv_model
 		$sql .= " build_id = ". $build_id ;
 		$sql .=" AND $field_name = '$para'";
 		//echo '<br>'.$sql; // Debug used		
+		$arr_record = $this->runSQLAssoc($sql);	
 			
-		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
@@ -281,17 +221,9 @@ class prop_maint_inv_model
 		$sql .=" AND $field_name = '$field_para' AND ".$this->primary_keyname. "<>'$myself_id_para' ";
 		
 		//echo '<br>'.$sql; // Debug used		
-			
-		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$arr_record = $this->runSQLAssoc($sql);	
+
+		
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
@@ -308,19 +240,9 @@ class prop_maint_inv_model
 		$sql .= " ORDER BY build_id ASC; ";
 		
 		//echo '<br>'.$sql; // Debug used		
-		
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
-		
-		return $record;
+		$arr_record = $this->runSQLAssoc($sql);	
+
+		return $arr_record;
 	}	
 
     public function prop_tenant_info_viewall($build_id)
@@ -331,19 +253,9 @@ class prop_maint_inv_model
 		$sql .= " ORDER BY tenant_id ASC; ";
 		
 		//echo '<br>'.$sql; // Debug used		
-		
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
-		
-		return $record;
+		$arr_record = $this->runSQLAssoc($sql);	
+
+		return $arr_record;
 	}	
 
 
@@ -351,34 +263,22 @@ class prop_maint_inv_model
 	public function update($primary_id, $general)
 	{
 		$status = $general['status'];
-		
 		$modify_user = $_SESSION['sUserID'];
 
-		$this->dbh->beginTransaction();
-	
-		$sql ='UPDATE  `tbl_prop_maint_inv` SET ';
-		$sql.=' `status`='.'\''.$status.'\'';
-		$sql.=',`modify_user`='.'\''.$modify_user.'\'';
-		$sql.=',`modify_datetime`=NOW()'.' ';
-		$sql.=' WHERE ';
-		$sql.='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';
-		//echo '<br>'.$sql; // Debug used				
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$ar_fields=array();
+		$ar_fields['status'] = $status;
+		$ar_fields['modify_user'] = $modify_user;
+		$ar_fields['modify_datetime'] = 'now()';
+
+		$sql= $this->createUpdateSql($ar_fields,$this->table_field,$this->mainTable,$this->primary_keyname,$primary_id);
+		//echo '<br> sql : '.$sql.'<br>';
+		$this->runSql($sql);
+
 		
-		$this->dbh->commit();
-		
-		return $last_insert_id;
+		return true;
 	}	
 	
 
-	
 	public function search_tenant_info($jsondata)
 	{
 		$json = json_decode($jsondata, true);
@@ -408,18 +308,12 @@ class prop_maint_inv_model
 		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
 		$sql .= " ORDER BY "." INFO.tenant_id ". ";";
 		//echo "<br>sql:".$sql."<br>";
-		
+
 		$arr_primary_id =array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$arr_primary_id[] = "'". addslashes($row['tenant_id']) ."'";
-				}
-			} catch (PDOException $e){
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_primary_id[] = "'". addslashes($row['tenant_id']) ."'";
+		endforeach; 
 
 		$array_count = count($arr_primary_id);
 
@@ -444,14 +338,8 @@ class prop_maint_inv_model
 		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
 		$sql.='now()'.')';
 
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
-		  
-		$this->dbh->commit();
+		$last_insert_id = $this->runSQLReturnID($sql);		
+
 
 		return $lot_id;
 	}
@@ -462,16 +350,8 @@ class prop_maint_inv_model
 
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$arr_record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
+		$arr_record = $this->runSQLAssoc($sql);	
+
 
 		$arr =  $arr_record[0];
 		$arr_primary_id = $arr['result_id']; 
@@ -487,17 +367,8 @@ class prop_maint_inv_model
 			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
 			//echo "<br>sql:".$sql."<br>";
 
-
-			$arr_record = array();	
-			try {
-					$rs = $this->dbh->query($sql);
-					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-						$arr_record[] = $row;
-						}
-					} catch (PDOException $e){
-						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-						die();
-						}		
+			$arr_record = $this->runSQLAssoc($sql);	
+				
 			return $arr_record;
 		}
 		
@@ -513,18 +384,9 @@ class prop_maint_inv_model
 		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON INFO.build_id = B.build_id ";
 		 $sql .= " WHERE INFO."." tenant_id ". " = '$primary_id'";
 		//echo "<br>sql:".$sql."<br>";
-				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$arr_record = $this->runSQLAssoc($sql);	
+			
+
 		return $arr_record[0];
 	}		
 	
@@ -539,35 +401,50 @@ class prop_maint_inv_model
 		$amount = trim(addslashes($general['amount']));
 		$balance = $amount ;
 		$status = $general['status'];
-		
 		$create_user = $_SESSION['sUserID'];
 
+		$ar_fields=array();
+		$ar_fields['build_id'] = $build_id;
+		$ar_fields['tenant_id'] = $tenant_id;
+		$ar_fields['inv_date'] = $inv_date;
+		$ar_fields['period_date_from'] = $period_date_from;
+		$ar_fields['period_date_to'] = $period_date_to;
+		$ar_fields['amount'] = $amount;
+		$ar_fields['balance'] = $amount;
+		$ar_fields['status'] = $status;
+		$ar_fields['create_user'] = $create_user;
+		$ar_fields['modify_user'] = $create_user;
+		$ar_fields['create_datetime'] = 'now()';
+		$ar_fields['modify_datetime'] = 'now()';
 
-		//retreive all active tenant info and rent_amount >0
+
+		//retreive all active tenant info and maint_amount >0
 		$sql ="SELECT INFO.*, B.eng_name AS 'build_eng_name' FROM tbl_prop_tenant_info AS INFO ";
 		$sql .= " LEFT JOIN  tbl_prop_build_master AS B ON INFO.build_id = B.build_id ";
 		$sql .= " WHERE INFO."." tenant_id ". " = '$tenant_id'";
 	 	//echo "<br>sql:".$sql."<br>";
 
-		$tenant_records = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $tenant_records[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
+		 $rows = $this->runSQLAssoc($sql);	
+		 foreach ($rows as $row): 
+			$tenant_records[] = $row;
+		 endforeach;	
+
+
 		$tenant_record = $tenant_records[0];
-		$eng_name = addslashes($tenant_record["eng_name"]);
-		$add_1 = addslashes($tenant_record["add_1"]);
-		$add_2 = addslashes($tenant_record["add_2"]);
-		$add_3 = addslashes($tenant_record["add_3"]);
-		$ref_no = addslashes($tenant_record["ref_no"]);
-		$shop_no = addslashes($tenant_record["shop_no"]);
+
+		$eng_name = $tenant_record["eng_name"];
+		$add_1 = $tenant_record["add_1"];
+		$add_2 = $tenant_record["add_2"];
+		$add_3 = $tenant_record["add_3"];
+		$ref_no = $tenant_record["ref_no"];
+		$shop_no = $tenant_record["shop_no"];
+
+		$ar_fields['eng_name'] = $eng_name;
+		$ar_fields['add_1'] = $add_1;
+		$ar_fields['add_2'] = $add_2;
+		$ar_fields['add_3'] = $add_3;
+		$ar_fields['ref_no'] = $ref_no;
+		$ar_fields['shop_no'] = $shop_no;
 
 
 		$codel_prefix	='MV';
@@ -580,15 +457,12 @@ class prop_maint_inv_model
 					build_id=".$build_id." and left(inv_code,4)='".$prefix_YY."'";
 		//echo '<br>'.$sql.'<br>';
 		$prefix_max ='';
-		try {
-			$rows = $this->dbh->query($sql);
-			while($now= $rows->fetch(PDO::FETCH_ASSOC)){				  
-				$prefix_max = $now['max'];
-				}
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
+
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$prefix_max = $row['max'];
+		endforeach;
+		
 
 		//echo '<br>prefix_max ='.$prefix_max.'<br>'	;
 		
@@ -605,63 +479,12 @@ class prop_maint_inv_model
 		
 		//<end>Generate prefix
 
+		$ar_fields['inv_code'] = $inv_code;
 
-		$this->dbh->beginTransaction();
-		
-
-		$sql = "INSERT INTO `tbl_prop_maint_inv`(
-						`build_id`
-						,`tenant_id`
-						,`inv_code`
-						,`inv_date`
-						,`eng_name`
-						,`add_1`
-						,`add_2`
-						,`add_3`
-						,`ref_no`
-						,`shop_no`
-						,`period_date_from`
-						,`period_date_to`
-						,`amount`
-						,`balance`
-						,`print_is`
-						,`status`
-						,`create_user`
-						,`modify_user`
-						,`create_datetime`
-						,`modify_datetime`
-						) VALUES (
-							'$build_id'
-							,'$tenant_id'
-							,'$inv_code'
-							,'$inv_date'
-							,'$eng_name'
-							,'$add_1'
-							,'$add_2'
-							,'$add_3'
-							,'$ref_no'
-							,'$shop_no'
-							,'$period_date_from'
-							,'$period_date_to'
-							,'$amount'
-							,'$amount'
-							,'0'
-							,'1'
-							,'$create_user'
-							,'$create_user'
-							,now()
-							,now()
-							)";
-
-		//echo '<br>'.$sql.'<br>';		
-								
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$sql= $this->createInsertSql($ar_fields,$this->table_field,$this->mainTable);
+		//echo '<br> sql : '.$sql.'<br>';
+		$last_insert_id = $this->runSQLReturnID($sql);	
+	
 		
 		//Update Tenanct information 
 		$sql ='UPDATE  `tbl_prop_tenant_info` SET ';
@@ -669,17 +492,9 @@ class prop_maint_inv_model
 		$sql.=' WHERE ';
 		$sql.='`'.'tenant_id'. '`='.'\''.addslashes($tenant_id).'\''.' ';
 		//echo '<br>'.$sql; // Debug used				
+		$void = $this->runSQLReturnID($sql);	
 	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}	
 
-
-
-		$this->dbh->commit();
 			
 		return $last_insert_id;
 	}

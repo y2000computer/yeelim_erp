@@ -1,13 +1,26 @@
 <?php
-class prop_maint_payment_model
+class prop_maint_payment_model extends dataManager
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager
+
 	public function __construct()
     {
+		parent::__construct();
+    	$this->errorMsg='PROP -> Transaction -> Maint Payment -> SQL error:';
+    	$this->mainTable='tbl_prop_maint_payment';
+    	$this->setTable('tbl_prop_maint_payment');
+    	$this->setErrorMsg('PROP -> Transaction -> Maint Payment -> SQL error:');
+    	$this->logField= null;
+    	$this->table_field=$this->getTableField();
+
 		$this->primary_keyname = 'payment_id';
 		$this->primary_indexname = 'payment_code';
 		try {
@@ -57,8 +70,6 @@ class prop_maint_payment_model
 			$sql_filter .= " INV.eng_name LIKE '%".addslashes(trim($json['general']['eng_name']))."%'" ;
 		}
 
-
-
 		//echo "<br>sql_filter:".$sql_filter."<br>";
 		
 		$sql = "SELECT ".$this->primary_keyname. " FROM tbl_prop_maint_payment AS PAY ";
@@ -71,17 +82,12 @@ class prop_maint_payment_model
 		$sql .= " ORDER BY ".$this->primary_indexname.  ";";
 		//echo "<br>sql:".$sql."<br>";
 		
+
 		$arr_primary_id =array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$arr_primary_id[] = "'". addslashes($row[$this->primary_keyname]) ."'";
-				}
-			} catch (PDOException $e){
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_primary_id[] = "'". addslashes($row[$this->primary_keyname]) ."'";
+		endforeach; 
 
 		$array_count = count($arr_primary_id);
 
@@ -91,7 +97,6 @@ class prop_maint_payment_model
 		
 		$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
 
-		$this->dbh->beginTransaction();
 
 		$sql = 'INSERT INTO `tbl_sys_paging_control`(
 					`searchphrase`,
@@ -106,14 +111,8 @@ class prop_maint_payment_model
 		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
 		$sql.='now()'.')';
 
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
-		  
-		$this->dbh->commit();
+		$last_insert_id = $this->runSQLReturnID($sql);		
+
 
 		return $lot_id;
 	}
@@ -124,16 +123,8 @@ class prop_maint_payment_model
 
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$arr_record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
+		$arr_record = $this->runSQLAssoc($sql);	
+
 
 		$arr =  $arr_record[0];
 		$arr_primary_id = $arr['result_id']; 
@@ -151,17 +142,9 @@ class prop_maint_payment_model
 			$sql .= " ORDER BY " .$this->primary_indexname ;
 			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
 			//echo "<br>sql:".$sql."<br>";
-			
-			$arr_record = array();	
-			try {
-					$rs = $this->dbh->query($sql);
-					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-						$arr_record[] = $row;
-						}
-					} catch (PDOException $e){
-						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-						die();
-						}		
+			$arr_record = $this->runSQLAssoc($sql);	
+
+							
 			return $arr_record;
 		}
 		
@@ -172,33 +155,17 @@ class prop_maint_payment_model
 	{
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$arr_record = array();	
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-		  
+		$arr_record = $this->runSQLAssoc($sql);	
+
 		$result_id = $arr_record[0]['result_id'];
 
-		$this->dbh->beginTransaction();
+		//$this->dbh->beginTransaction();
 
 		$sql ="UPDATE `tbl_sys_paging_control` SET modify_datetime =now()	WHERE lot_id ='$lot_id'";
+		//echo "<br>sql:".$sql."<br>";
+		$void = $this->runSQLReturnID($sql);		
 
 
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$this->dbh->commit();		
 		return $result_id;
 	}	
 
@@ -206,17 +173,7 @@ class prop_maint_payment_model
 	{
 		$sql = "SELECT searchphrase FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		
-		$arr_record = array();	
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$arr_record = $this->runSQLAssoc($sql);	
 
 		$searchphrase = $arr_record[0]['searchphrase'];
 		return $searchphrase;
@@ -235,18 +192,8 @@ class prop_maint_payment_model
 		$sql .= "  WHERE ".$this->primary_keyname. " = '$primary_id'";
 
 		 //echo "<br>sql:".$sql."<br>";
-				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$arr_record = $this->runSQLAssoc($sql);	
+
 		return $arr_record[0];
 	}		
 	
@@ -260,17 +207,7 @@ class prop_maint_payment_model
 		$sql .= " build_id = ". $build_id ;
 		$sql .=" AND $field_name = '$para'";
 		//echo '<br>'.$sql; // Debug used		
-			
-		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$arr_record = $this->runSQLAssoc($sql);	
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
@@ -291,17 +228,8 @@ class prop_maint_payment_model
 		$sql .=" AND $field_name = '$field_para' AND ".$this->primary_keyname. "<>'$myself_id_para' ";
 		
 		//echo '<br>'.$sql; // Debug used		
-			
-		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$arr_record = $this->runSQLAssoc($sql);	
+
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
@@ -318,19 +246,9 @@ class prop_maint_payment_model
 		$sql .= " ORDER BY build_id ASC; ";
 		
 		//echo '<br>'.$sql; // Debug used		
+		$arr_record = $this->runSQLAssoc($sql);	
 		
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
-		
-		return $record;
+		return $arr_record;
 	}	
 
     public function prop_tenant_info_viewall($build_id)
@@ -341,19 +259,10 @@ class prop_maint_payment_model
 		$sql .= " ORDER BY tenant_id ASC; ";
 		
 		//echo '<br>'.$sql; // Debug used		
-		
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
-		
-		return $record;
+		$arr_record = $this->runSQLAssoc($sql);	
+
+
+		return $arr_record;
 	}	
 
 
@@ -363,8 +272,15 @@ class prop_maint_payment_model
 		$payment_date = toYMD($general['payment_date']);
 		$amount = (double) ($general['amount']);
 		$status = $general['status'];
-		
 		$modify_user = $_SESSION['sUserID'];
+
+		$ar_fields=array();
+		$ar_fields['payment_date'] = $payment_date;
+		$ar_fields['amount'] = $amount;
+		$ar_fields['status'] = $status;
+		$ar_fields['modify_user'] = $modify_user;
+		$ar_fields['modify_datetime'] = 'now()';
+
 
 
 		$sql ="SELECT * FROM tbl_prop_maint_inv ";
@@ -376,18 +292,10 @@ class prop_maint_payment_model
 		$sql .= "  ) ";
 		//echo '<br>'.$sql; // Debug used				
 
-	
-		$inv_row = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $inv_row[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$inv_row[] = $row;
+		endforeach; 
 		
 		$inv_rs = $inv_row[0];
 		$inv_id = $inv_rs['inv_id'];
@@ -398,21 +306,12 @@ class prop_maint_payment_model
 		$sql .= " WHERE ";
 		$sql .='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';		
 		//echo '<br>'.$sql; // Debug used				
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$payment_row[] = $row;
+		endforeach; 
 
 
-		
-		$payment_row = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $payment_row[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}
-
-		
 		$payment_rs  = $payment_row[0];	
 		$payment_amount_before_update	= 0;
 		if($payment_rs['status'] == 1) $payment_amount_before_update = $payment_rs['amount'];
@@ -421,44 +320,10 @@ class prop_maint_payment_model
 		$balance = $balance + $payment_amount_before_update;
 		if($status == 1) $balance = $balance - $amount;
 
-	
-		$this->dbh->beginTransaction();
-	
-		$sql ='UPDATE  `tbl_prop_maint_payment` SET ';
-		$sql.=' `payment_date`='.'\''.$payment_date.'\'';
-		$sql.=',`amount`='.'\''.$amount.'\'';
-		$sql.=',`status`='.'\''.$status.'\'';
-		$sql.=',`modify_user`='.'\''.$modify_user.'\'';
-		$sql.=',`modify_datetime`=NOW()'.' ';
-		$sql.=' WHERE ';
-		$sql.='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';
-		//echo '<br>'.$sql; // Debug used				
-	
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$sql ='UPDATE  `tbl_prop_maint_payment` SET ';
-		$sql.=' `payment_date`='.'\''.$payment_date.'\'';
-		$sql.=',`amount`='.'\''.$amount.'\'';
-		$sql.=',`status`='.'\''.$status.'\'';
-		$sql.=',`modify_user`='.'\''.$modify_user.'\'';
-		$sql.=',`modify_datetime`=NOW()'.' ';
-		$sql.=' WHERE ';
-		$sql.='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';
-		//echo '<br>'.$sql; // Debug used				
-	
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}	
+
+		$sql= $this->createUpdateSql($ar_fields,$this->table_field,$this->mainTable,$this->primary_keyname,$primary_id);
+		//echo '<br> sql : '.$sql.'<br>';
+		$this->runSql($sql);
 
 
 		$sql ='UPDATE  `tbl_prop_maint_inv` SET ';
@@ -466,16 +331,8 @@ class prop_maint_payment_model
 		$sql.=' WHERE ';
 		$sql.='`'.'inv_id'. '`='.'\''.addslashes($inv_id).'\''.' ';
 		//echo '<br>'.$sql; // Debug used				
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}	
+		$void = $this->runSQLReturnID($sql);	
 		
-
-		$this->dbh->commit();
 		
 		return $last_insert_id;
 	}	
@@ -523,16 +380,11 @@ class prop_maint_payment_model
 		//echo "<br>sql:".$sql."<br>";
 		
 		$arr_primary_id =array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$arr_primary_id[] = "'". addslashes($row['inv_id']) ."'";
-				}
-			} catch (PDOException $e){
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_primary_id[] = "'". addslashes($row['inv_id']) ."'";
+		endforeach; 
+
 
 		$array_count = count($arr_primary_id);
 
@@ -557,14 +409,9 @@ class prop_maint_payment_model
 		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
 		$sql.='now()'.')';
 
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
-		  
-		$this->dbh->commit();
+		$last_insert_id = $this->runSQLReturnID($sql);		
+
+
 
 		return $lot_id;
 	}
@@ -575,17 +422,8 @@ class prop_maint_payment_model
 
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$arr_record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-
+		$arr_record = $this->runSQLAssoc($sql);	
+	
 		$arr =  $arr_record[0];
 		$arr_primary_id = $arr['result_id']; 
 		
@@ -600,18 +438,9 @@ class prop_maint_payment_model
 			$sql .= " ORDER BY " ." INV.inv_id " ;
 			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
 			//echo "<br>sql:".$sql."<br>";
+			$arr_record = $this->runSQLAssoc($sql);	
 
-
-			$arr_record = array();	
-			try {
-					$rs = $this->dbh->query($sql);
-					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-						$arr_record[] = $row;
-						}
-					} catch (PDOException $e){
-						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-						die();
-						}		
+	
 			return $arr_record;
 		}
 		
@@ -628,18 +457,9 @@ class prop_maint_payment_model
 		 $sql .= " LEFT JOIN  tbl_prop_build_master AS B ON INV.build_id = B.build_id ";
 		 $sql .= " WHERE INV."." inv_id ". " = '$primary_id'";
 		//echo "<br>sql:".$sql."<br>";
-				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$arr_record = $this->runSQLAssoc($sql);	
+
+
 		return $arr_record[0];
 	}		
 	
@@ -652,8 +472,18 @@ class prop_maint_payment_model
 		$payment_date = toYMD($general['payment_date']);
 		$amount = trim(addslashes($general['amount']));
 		$status = $general['status'];
-		
 		$create_user = $_SESSION['sUserID'];
+
+		$ar_fields=array();
+		$ar_fields['build_id'] = $build_id;
+		$ar_fields['inv_id'] = $inv_id;
+		$ar_fields['payment_date'] = $payment_date;
+		$ar_fields['amount'] = $amount;
+		$ar_fields['status'] = $status;
+		$ar_fields['create_user'] = $create_user;
+		$ar_fields['modify_user'] = $create_user;
+		$ar_fields['create_datetime'] = 'now()';
+		$ar_fields['modify_datetime'] = 'now()';
 
 
 		$codel_prefix	='MP';
@@ -666,15 +496,12 @@ class prop_maint_payment_model
 					build_id=".$build_id." and left(payment_code,4)='".$prefix_YY."'";
 		//echo '<br>'.$sql.'<br>';
 		$prefix_max ='';
-		try {
-			$rows = $this->dbh->query($sql);
-			while($now= $rows->fetch(PDO::FETCH_ASSOC)){				  
-				$prefix_max = $now['max'];
-				}
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
+
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$prefix_max = $now['max'];
+		endforeach;	
+		
 
 		//echo '<br>prefix_max ='.$prefix_max.'<br>'	;
 		
@@ -691,61 +518,23 @@ class prop_maint_payment_model
 		
 		//<end>Generate prefix
 
+		$ar_fields['payment_code'] = $payment_code;
 
-		$this->dbh->beginTransaction();
-		
-		$sql = "INSERT INTO `tbl_prop_maint_payment`(
-						`build_id`
-						,`inv_id`
-						,`payment_code`
-						,`payment_date`
-						,`amount`
-						,`status`
-						,`create_user`
-						,`modify_user`
-						,`create_datetime`
-						,`modify_datetime`
-						) VALUES (
-							'$build_id'
-							,'$inv_id'
-							,'$payment_code'
-							,'$payment_date'
-							,'$amount'
-							,'$status'
-							,'$create_user'
-							,'$create_user'
-							,now()
-							,now()
-							)";
+		$sql= $this->createInsertSql($ar_fields,$this->table_field,$this->mainTable);
+		//echo '<br> sql : '.$sql.'<br>';
+		$last_insert_id = $this->runSQLReturnID($sql);	
+	
 
-		//echo '<br>'.$sql.'<br>';		
-								
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
 		//Update invoice
 		$sql ="SELECT * FROM tbl_prop_maint_inv ";
 		$sql .= " WHERE ";
 		$sql .= " inv_id = ". $inv_id. ";";
 		//echo '<br>'.$sql; // Debug used				
-
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$inv_row[] = $row;
+		endforeach;
 	
-		$inv_row = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $inv_row[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}
-		
 		
 		$inv_rs = $inv_row[0];
 		$inv_amount = $inv_rs['amount'];
@@ -761,19 +550,8 @@ class prop_maint_payment_model
 		$sql.=' WHERE ';
 		$sql.='`'.'inv_id'. '`='.'\''.addslashes($inv_id).'\''.' ';
 		//echo '<br>'.$sql; // Debug used				
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}	
+		$void = $this->runSQLReturnID($sql);	
 
-
-
-
-
-		$this->dbh->commit();
 			
 		return $last_insert_id;
 	}
