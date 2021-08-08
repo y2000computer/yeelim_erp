@@ -292,6 +292,15 @@ class dataManager{
 					case 'decimal':
 						$updateField[]="`".$FieldName."`='".addslashes($value)."'";
 					break;
+					case 'datetime':
+						if ($value=='now()'){
+							$insertField[]='`'.$FieldName.'`';
+							$insertValue[]=$value;
+						}else {
+							$insertField[]='`'.$FieldName.'`';
+							$insertValue[]="'".addslashes($value)."'";
+						}
+					break;					
 					default:
 						$updateField[]='`'.$FieldName.'`='.$value;
 

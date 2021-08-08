@@ -15,7 +15,7 @@ class gl_chart_master_model extends dataManager
     {
 
 		parent::__construct();
-    	$this->errorMsg='ERP->Inventory->Product->Imformation->SQL error:';
+    	$this->errorMsg='GL -> Maintenance -> Chart Master -> SQL error:';
     	$this->mainTable='tbl_gl_chart_master';
     	$this->setTable('tbl_gl_chart_master');
     	$this->setErrorMsg('ERP->Inventory->Product->Imformation->SQL error:');
