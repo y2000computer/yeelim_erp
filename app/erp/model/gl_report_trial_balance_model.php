@@ -1,13 +1,22 @@
 <?php
-class gl_report_trial_balance_model  
+class gl_report_trial_balance_model extends dataManager      
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
+
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager	
 	
 	public function __construct()
     {
+		parent::__construct();
+    	$this->errorMsg='GL -> Report -> Trial Balance -> SQL error:';
+    	$this->setErrorMsg('GL -> Report -> Trial Balance -> SQL error:');
+
 		$this->primary_keyname = 'chart_id';
 		$this->primary_indexname = 'chart_code';
 		try {
@@ -46,21 +55,7 @@ class gl_report_trial_balance_model
 		
 		//echo '<br>'.$sql.'<br>';
 
-
-		$record = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
+		$record = $this->runSQLAssoc($sql);	
 		  
 		return $record;
 	}	
@@ -85,19 +80,8 @@ class gl_report_trial_balance_model
 		
 		//echo '<br>'.$sql.'<br>';
 
-		
-		$record = array();
+		$record = $this->runSQLAssoc($sql);	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }		
-		
 		$current_period_balance =0;
 		if($record[0]['current_period_balance']<>null) $current_period_balance = $record[0]['current_period_balance'];
 		
@@ -124,20 +108,8 @@ class gl_report_trial_balance_model
 		
 		//echo '<br>'.$sql.'<br>';
 
-		
-		$record = array();
+		$record = $this->runSQLAssoc($sql);	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-
-		  }		
-		
 		$balance =0;
 		if($record[0]['balance']<>null) $balance = $record[0]['balance'];
 		

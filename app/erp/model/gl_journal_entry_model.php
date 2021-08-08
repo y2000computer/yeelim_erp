@@ -15,10 +15,10 @@ class gl_journal_entry_model  extends dataManager
     {
 
 		parent::__construct();
-    	$this->errorMsg='GL -> Report -> Journal Entry -> SQL error:';
+    	$this->errorMsg='GL -> Transaction -> GL Entry -> SQL error:';
     	$this->mainTable='tbl_gl_journal_entry';
     	$this->setTable('tbl_gl_journal_entry');
-    	$this->setErrorMsg('ERP->Inventory->Product->Imformation->SQL error:');
+    	$this->setErrorMsg('GL -> Transaction -> GL Entry -> SQL error:');
     	$this->logField= null;
     	$this->table_field=$this->getTableField();
 

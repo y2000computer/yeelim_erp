@@ -1,13 +1,22 @@
 <?php
-class gl_report_profit_loss_model  
+class gl_report_profit_loss_model extends dataManager     
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager
+		
 	public function __construct()
     {
+		parent::__construct();
+    	$this->errorMsg='GL -> Report -> Profit & Loss -> SQL error:';
+    	$this->setErrorMsg('GL -> Report -> Profit & Loss -> SQL error:');
+	
 		$this->primary_keyname = 'chart_id';
 		$this->primary_indexname = 'chart_code';
 		try {
@@ -43,22 +52,9 @@ class gl_report_profit_loss_model
 		
 		//echo '<br>'.$sql.'<br>';
 
+		$record = $this->runSQLAssoc($sql);	
 
-		$record = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
-		  
+ 	  
 		return $record;
 	}	
 	
@@ -80,19 +76,10 @@ class gl_report_profit_loss_model
 		
 		//echo '<br>'.$sql.'<br>';
 		
+		$record = $this->runSQLAssoc($sql);	
+
 		$record = array();
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-
-		  }		
-		
 		$balance =0;
 		if($record[0]['balance']<>null) $balance = $record[0]['balance'];
 		
@@ -118,21 +105,8 @@ class gl_report_profit_loss_model
 		
 		//echo '<br>'.$sql.'<br>';
 
-		
-		$record = array();
+		$record = $this->runSQLAssoc($sql);	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print "Error!: " . $e->getMessage() . "<br/>";
-				$sNewLog = new LoggerManager( 'error_sql', '1' );
-				$sNewLog -> add( ('SQL error:'.$e->getMessage().'--Statement:'.$sql) );
-				die();
-		  }		
-		
 		$current_period_balance =0;
 		if($record[0]['current_period_balance']<>null) $current_period_balance = $record[0]['current_period_balance'];
 		
@@ -161,22 +135,9 @@ class gl_report_profit_loss_model
 		
 		//echo '<br>'.$sql.'<br>';
 
+		$record = $this->runSQLAssoc($sql);	
 
-		$record = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
-		  
+	  
 		return $record;
 	}	
 	

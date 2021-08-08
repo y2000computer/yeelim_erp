@@ -1,13 +1,22 @@
 <?php
-class gl_report_general_ledger_model  
+class gl_report_general_ledger_model extends dataManager    
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager
+		
 	public function __construct()
     {
+		parent::__construct();
+		$this->errorMsg='GL -> Report -> General ledger -> SQL error:';
+    	$this->setErrorMsg('GL -> Report -> General ledger -> SQL error:');
+
 		$this->primary_keyname = 'chart_id';
 		$this->primary_indexname = 'chart_code';
 		try {
@@ -56,20 +65,8 @@ class gl_report_general_ledger_model
 		//echo '<br>'.$sql.'<br>';
 
 
-		$record = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
+		$record = $this->runSQLAssoc($sql);	
+ 		  
 		  
 		return $record;
 	}	

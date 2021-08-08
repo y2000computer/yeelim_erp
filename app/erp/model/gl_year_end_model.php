@@ -1,13 +1,22 @@
 <?php
-class gl_year_end_model  
+class gl_year_end_model extends dataManager        
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
+
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager		
 	
 	public function __construct()
     {
+		parent::__construct();
+    	$this->errorMsg='GL -> Maintenance -> Year End -> SQL error:';
+    	$this->setErrorMsg('GL -> Maintenance -> Year End -> SQL error:');
+
 		$this->primary_keyname = 'chart_id';
 		$this->primary_indexname = 'chart_code';
 		try {
@@ -46,21 +55,10 @@ class gl_year_end_model
 		
 		//echo '<br>'.$sql.'<br>';
 
+		$record = $this->runSQLAssoc($sql);	
 
 		$record = array();
 		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
 		  
 		return $record;
 	}	
@@ -70,7 +68,6 @@ class gl_year_end_model
 	{
 		$modify_user = $_SESSION['sUserID'];
 
-		$this->dbh->beginTransaction();
 	
 		$sql ='UPDATE  `tbl_gl_chart_master` SET ';
 		$sql.='`brought_forward`= '. $brought_forward  ;
@@ -80,14 +77,7 @@ class gl_year_end_model
 		$sql.='`'.'chart_id'. '`='.'\''.addslashes($chart_id).'\''.' ';
 		//echo '<br>'.$sql; // Debug used				
 	
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$this->dbh->commit();
+		$void = $this->runSQLReturnID($sql);
 		
 		return true;
 	}	
@@ -103,14 +93,8 @@ class gl_year_end_model
 		$sql .= " AND  date(journal_date) BETWEEN '". toYMD($journal_date_from_dmy)."' AND '". toYMD($journal_date_to_dmy)."'" ;
 		//echo '<br>'.$sql; // Debug used				
 
-
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}	
-				
+		$void = $this->runSQLReturnID($sql);
+	
 				
 		return true;
 	}		
