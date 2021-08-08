@@ -9,16 +9,13 @@ class prop_maint_payment_model extends dataManager
 	private $table_field;  // variable for dataManager
 	private $errorMsg;   // variable for dataManager
 	private $mainTable;   // variable for dataManager
-	private $logField;   // variable for dataManager
 
 	public function __construct()
     {
 		parent::__construct();
-    	$this->errorMsg='PROP -> Transaction -> Maint Payment -> SQL error:';
     	$this->mainTable='tbl_prop_maint_payment';
-    	$this->setTable('tbl_prop_maint_payment');
+    	$this->setTable($this->mainTable);
     	$this->setErrorMsg('PROP -> Transaction -> Maint Payment -> SQL error:');
-    	$this->logField= null;
     	$this->table_field=$this->getTableField();
 
 		$this->primary_keyname = 'payment_id';

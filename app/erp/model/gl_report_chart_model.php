@@ -9,14 +9,12 @@ class gl_report_chart_model  extends dataManager
 	private $table_field;  // variable for dataManager
 	private $errorMsg;   // variable for dataManager
 	private $mainTable;   // variable for dataManager
-	private $logField;   // variable for dataManager	
-
+	
 	public function __construct()
     {
 
 		parent::__construct();
-    	$this->errorMsg='GL -> Report -> Chart of Account -> SQL error:';
-     	$this->setErrorMsg('GL -> Report -> Chart of Account -> SQL error:');
+    	$this->setErrorMsg('GL -> Report -> Chart of Account -> SQL error:');
 
 
 		$this->primary_keyname = 'chart_id';

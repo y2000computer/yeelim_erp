@@ -1,13 +1,20 @@
 <?php
-class gl_report_balance_sheet_model  
+class gl_report_balance_sheet_model   extends dataManager
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+
 	public function __construct()
     {
+		parent::__construct();
+		$this->setErrorMsg('GL -> Report -> Balance Sheet -> SQL error:');
+
 		$this->primary_keyname = 'chart_id';
 		$this->primary_indexname = 'chart_code';
 		try {
@@ -44,23 +51,8 @@ class gl_report_balance_sheet_model
 		$sql .= " ORDER  BY C.chart_code ASC ; ";
 		
 		//echo '<br>'.$sql.'<br>';
-
-
-		$record = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
-		  
+		$record = $this->runSQLAssoc($sql);	
+ 		  
 		return $record;
 	}	
 	
@@ -82,21 +74,8 @@ class gl_report_balance_sheet_model
 		$sql .= " AND  date(J.journal_date) < '". toYMD($criteria['journal_date_from'])."'" ;
 		
 		//echo '<br>'.$sql.'<br>';
-
-		
-		$record = array();
-
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-
-		  }		
-		
+		$record = $this->runSQLAssoc($sql);	
+ 
 		$balance =0;
 		if($record[0]['balance']<>null) $balance = $record[0]['balance'];
 		
@@ -121,22 +100,8 @@ class gl_report_balance_sheet_model
 		$sql .= " AND  date(J.journal_date) BETWEEN '". toYMD($criteria['journal_date_from'])."' AND '". toYMD($criteria['journal_date_to'])."'" ;
 		
 		//echo '<br>'.$sql.'<br>';
-
-		
-		$record = array();
-
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print "Error!: " . $e->getMessage() . "<br/>";
-				$sNewLog = new LoggerManager( 'error_sql', '1' );
-				$sNewLog -> add( ('SQL error:'.$e->getMessage().'--Statement:'.$sql) );
-				die();
-		  }		
-		
+		$record = $this->runSQLAssoc($sql);	
+ 
 		$current_period_balance =0;
 		if($record[0]['current_period_balance']<>null) $current_period_balance = $record[0]['current_period_balance'];
 		
@@ -164,22 +129,8 @@ class gl_report_balance_sheet_model
 		$sql .= " ORDER  BY C.chart_code ASC ; ";
 		
 		//echo '<br>'.$sql.'<br>';
+		$record = $this->runSQLAssoc($sql);	
 
-
-		$record = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
-		  
-		  
-		  
 		  
 		return $record;
 	}	

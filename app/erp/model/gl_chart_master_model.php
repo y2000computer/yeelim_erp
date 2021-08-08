@@ -9,17 +9,14 @@ class gl_chart_master_model extends dataManager
 	private $table_field;  // variable for dataManager
 	private $errorMsg;   // variable for dataManager
 	private $mainTable;   // variable for dataManager
-	private $logField;   // variable for dataManager
-
+	
 	public function __construct()
     {
 
 		parent::__construct();
-    	$this->errorMsg='GL -> Maintenance -> Chart Master -> SQL error:';
     	$this->mainTable='tbl_gl_chart_master';
-    	$this->setTable('tbl_gl_chart_master');
+    	$this->setTable($this->mainTable);
     	$this->setErrorMsg('GL -> Maintenance -> Chart Master -> SQL error:');
-    	$this->logField= null;
     	$this->table_field=$this->getTableField();
 
 		$this->primary_keyname = 'chart_id';

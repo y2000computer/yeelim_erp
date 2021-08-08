@@ -9,13 +9,11 @@ class prop_report_maint_overdue_model  extends dataManager
 	private $table_field;  // variable for dataManager
 	private $errorMsg;   // variable for dataManager
 	private $mainTable;   // variable for dataManager
-	private $logField;   // variable for dataManager	
 			
 	
 	public function __construct()
     {
 		parent::__construct();
-    	$this->errorMsg='PROP -> Report -> Maint. Overdue Report -> SQL error:';
      	$this->setErrorMsg('PROP -> Report -> Maint. Overdue Report -> SQL error:');
 		
 	

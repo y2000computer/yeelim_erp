@@ -9,17 +9,13 @@ class prop_mainten_rent_inv_generation_model extends dataManager
 	private $table_field;  // variable for dataManager
 	private $errorMsg;   // variable for dataManager
 	private $mainTable;   // variable for dataManager
-	private $logField;   // variable for dataManager
-
 
 	public function __construct()
     {
 		parent::__construct();
-    	$this->errorMsg='PROP -> Maintenance -> Rent Invoice Generation -> SQL error:';
-		$this->mainTable='tbl_prop_rent_inv';
-    	$this->setTable('tbl_prop_rent_inv');
+    	$this->mainTable='tbl_prop_rent_inv';
+    	$this->setTable($this->mainTable);
     	$this->setErrorMsg('PROP -> Maintenance -> Rent Invoice Generation -> SQL error:');
-    	$this->logField= null;
     	$this->table_field=$this->getTableField();
 		
 		$this->primary_keyname = 'tenant_id';

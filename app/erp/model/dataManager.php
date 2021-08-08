@@ -132,7 +132,7 @@ class dataManager{
 		
 			try {
 				$rows = $this->data->query($sql);
-				
+				//echo '<br>sql:'.$sql.'<br>';
 				
 				} catch (PDOException $e) {		
 					print "Error!: " . $e->getMessage() . "<br/>";
@@ -310,7 +310,7 @@ class dataManager{
 						join(' , ',$updateField).' '.
 						"where ".$idField."='".$idvalue."'";
 						
-						
+			//var_dump($result);			
 			$this->result=$result;
 		}
 

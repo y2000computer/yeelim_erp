@@ -9,12 +9,10 @@ class gl_report_trial_balance_model extends dataManager
 	private $table_field;  // variable for dataManager
 	private $errorMsg;   // variable for dataManager
 	private $mainTable;   // variable for dataManager
-	private $logField;   // variable for dataManager	
 	
 	public function __construct()
     {
 		parent::__construct();
-    	$this->errorMsg='GL -> Report -> Trial Balance -> SQL error:';
     	$this->setErrorMsg('GL -> Report -> Trial Balance -> SQL error:');
 
 		$this->primary_keyname = 'chart_id';

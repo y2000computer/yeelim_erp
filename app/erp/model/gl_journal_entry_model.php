@@ -9,17 +9,14 @@ class gl_journal_entry_model  extends dataManager
 	private $table_field;  // variable for dataManager
 	private $errorMsg;   // variable for dataManager
 	private $mainTable;   // variable for dataManager
-	private $logField;   // variable for dataManager
-
+	
 	public function __construct()
     {
 
 		parent::__construct();
-    	$this->errorMsg='GL -> Transaction -> GL Entry -> SQL error:';
     	$this->mainTable='tbl_gl_journal_entry';
-    	$this->setTable('tbl_gl_journal_entry');
+    	$this->setTable($this->mainTable);
     	$this->setErrorMsg('GL -> Transaction -> GL Entry -> SQL error:');
-    	$this->logField= null;
     	$this->table_field=$this->getTableField();
 
 		$this->primary_keyname = 'journal_id';
