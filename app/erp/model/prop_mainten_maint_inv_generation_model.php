@@ -1,13 +1,27 @@
 <?php
-class prop_mainten_maint_inv_generation_model  
+class prop_mainten_maint_inv_generation_model extends dataManager  
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
-	
+
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager
+
+
 	public function __construct()
     {
+		parent::__construct();
+    	$this->errorMsg='PROP -> Maintenance -> Maint. Invoice Generation -> SQL error:';
+		$this->mainTable='tbl_prop_maint_inv';
+    	$this->setTable('tbl_prop_maint_inv');
+    	$this->setErrorMsg('PROP -> Maintenance -> Maint. Invoice Generation -> SQL error:');
+    	$this->logField= null;
+    	$this->table_field=$this->getTableField();
+		
 		$this->primary_keyname = 'tenant_id';
 		$this->primary_indexname = 'tenant_code';
 		try {
@@ -53,18 +67,9 @@ class prop_mainten_maint_inv_generation_model
 		$sql .= " ORDER BY C.tenant_id ;" ;
 		//echo "<br>sql:".$sql."<br>";
 		
+		$tenant_records = $this->runSQLAssoc($sql);			
 
-		$tenant_records = array();
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $tenant_records[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage();
-				die();
-		  }				
+
 		  
 		foreach ($tenant_records as $tenant_record): 
 
@@ -78,16 +83,12 @@ class prop_mainten_maint_inv_generation_model
 						build_id=".$build_id." and left(inv_code,4)='".$prefix_YY."'";
 			//echo '<br>'.$sql.'<br>';
 			$prefix_max ='';
-			try {
-				$rows = $this->dbh->query($sql);
-				while($now= $rows->fetch(PDO::FETCH_ASSOC)){				  
-					$prefix_max = $now['max'];
-					}
-				} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}
-	
+
+			$rows = $this->runSQLAssoc($sql);	
+			foreach ($rows as $row): 
+				$prefix_max = $row['max'];
+			endforeach;
+			
 			//echo '<br>prefix_max ='.$prefix_max.'<br>'	;
 			
 			if($prefix_max ==null )	{
@@ -104,92 +105,58 @@ class prop_mainten_maint_inv_generation_model
 			//<end>Generate prefix
 	
 				
-			$this->dbh->beginTransaction();
+			//$this->dbh->beginTransaction();
 		
 			$tenant_id = $tenant_record["tenant_id"];
-			$eng_name = addslashes($tenant_record["eng_name"]);
-			$add_1 = addslashes($tenant_record["add_1"]);
-			$add_2 = addslashes($tenant_record["add_2"]);
-			$add_3 = addslashes($tenant_record["add_3"]);
-			$ref_no = addslashes($tenant_record["ref_no"]);
-			$shop_no = addslashes($tenant_record["shop_no"]);
-			$amount = addslashes($tenant_record["maint_amount"]);
+			$eng_name = $tenant_record["eng_name"];
+			$add_1 = $tenant_record["add_1"];
+			$add_2 = $tenant_record["add_2"];
+			$add_3 = $tenant_record["add_3"];
+			$ref_no = $tenant_record["ref_no"];
+			$shop_no = $tenant_record["shop_no"];
+			$amount = $tenant_record["maint_amount"];
 
-			$sql = "INSERT INTO `tbl_prop_maint_inv`(
-							`build_id`
-							,`tenant_id`
-							,`inv_code`
-							,`inv_date`
-							,`eng_name`
-							,`add_1`
-							,`add_2`
-							,`add_3`
-							,`ref_no`
-							,`shop_no`
-							,`period_date_from`
-							,`period_date_to`
-							,`amount`
-							,`balance`
-							,`print_is`
-							,`status`
-							,`create_user`
-							,`modify_user`
-							,`create_datetime`
-							,`modify_datetime`
-							) VALUES (
-								'$build_id'
-								,'$tenant_id'
-								,'$inv_code'
-								,'$inv_date_ymd'
-								,'$eng_name'
-								,'$add_1'
-								,'$add_2'
-								,'$add_3'
-								,'$ref_no'
-								,'$shop_no'
-								,'$period_date_from_ymd'
-								,'$period_date_to_ymd'
-								,'$amount'
-								,'$amount'
-								,'0'
-								,'1'
-								,'$create_user'
-								,'$create_user'
-								,now()
-								,now()
-								)";
+			$ar_fields=array();
+			$ar_fields['build_id'] = $build_id;
+			$ar_fields['tenant_id'] = $tenant_id;
+			$ar_fields['eng_name'] = $eng_name;
+			$ar_fields['add_1'] = $add_1;
+			$ar_fields['add_2'] = $add_2;
+			$ar_fields['add_3'] = $add_3;
+			$ar_fields['ref_no'] = $ref_no;
+			$ar_fields['shop_no'] = $shop_no;
+			$ar_fields['amount'] = $amount;
+			$ar_fields['status'] = 1 ;
+			$ar_fields['create_user'] = $create_user;
+			$ar_fields['modify_user'] = $create_user;
+			$ar_fields['create_datetime'] = 'now()';
+			$ar_fields['modify_datetime'] = 'now()';
+
+			$ar_fields['inv_date'] = $inv_date_ymd;
 	
-			//echo '<br>'.$sql.'<br>';		
-									
-			try {
-				$rows = $this->dbh->query($sql);
-				//$last_insert_id = $this->dbh->lastInsertId(); 
-				} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-			
+			$ar_fields['period_date_from'] = $period_date_from_ymd;
+			$ar_fields['period_date_to'] = $period_date_to_ymd;
+			$ar_fields['amount'] = $amount;
+			$ar_fields['balance'] = $amount;
+			$ar_fields['print_is'] = 0;
 	
+
+		
+			$ar_fields['inv_code'] = $inv_code;
+
+			$sql= $this->createInsertSql($ar_fields,$this->table_field,$this->mainTable);
+			//echo '<br> sql : '.$sql.'<br>';
+			$last_insert_id = $this->runSQLReturnID($sql);	
+
+
+
 			//update tenant info
 			$sql ='UPDATE  `tbl_prop_tenant_info` SET ';
 			$sql.=' `maint_date`='.'\''.$inv_date_ymd.'\'';
 			$sql.=' WHERE ';
 			$sql.='`'.'tenant_id'. '`='.'\''.addslashes($tenant_id).'\''.' ';
 			//echo '<br>'.$sql; // Debug used				
-		
-			try {
-				$rows = $this->dbh->query($sql);
-				} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}	
-	
-				
-			
-
-
-			$this->dbh->commit();
-
+			$void = $this->runSQLReturnID($sql);	
 
 
 		endforeach;		  
@@ -209,18 +176,9 @@ class prop_mainten_maint_inv_generation_model
 		$sql .= " ORDER BY build_id ASC; ";
 		
 		//echo '<br>'.$sql; // Debug used		
-		
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
-		
+		$record = $this->runSQLAssoc($sql);			
+
+
 		return $record;
 	}	
 	
