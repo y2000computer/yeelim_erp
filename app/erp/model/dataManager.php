@@ -93,7 +93,9 @@ class dataManager{
 		return $record;
 	}
 
-	public function runSQLAssoc($sql){
+	public function runSQLAssoc($sql, $debug=false){
+
+		if($debug) echo '<br>dataManage:runSQLAssoc() para: sql :'.$sql.'<br>';
 		$record = array();	
 		try {
 				$rs = $this->data->query($sql);
@@ -186,7 +188,6 @@ class dataManager{
 				$fieldStructure[$arrayField['Field']]=$arrayField['Type'];
 			}
 			$this->result = $fieldStructure;
-
 		} catch (PDOException $e) {
 			echo 'dataManager->Connection error:'.$e->getMessage().'--Statement:'.$sql;
 		}

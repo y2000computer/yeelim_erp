@@ -1,13 +1,27 @@
 <?php
-class gl_chart_master_model
+class gl_chart_master_model extends dataManager
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+	private $logField;   // variable for dataManager
+
 	public function __construct()
     {
+
+		parent::__construct();
+    	$this->errorMsg='ERP->Inventory->Product->Imformation->SQL error:';
+    	$this->mainTable='tbl_gl_chart_master';
+    	$this->setTable('tbl_gl_chart_master');
+    	$this->setErrorMsg('ERP->Inventory->Product->Imformation->SQL error:');
+    	$this->logField= null;
+    	$this->table_field=$this->getTableField();
+
 		$this->primary_keyname = 'chart_id';
 		$this->primary_indexname = 'chart_code';
 		try {
@@ -50,16 +64,10 @@ class gl_chart_master_model
 		//echo "<br>sql:".$sql."<br>";
 		
 		$arr_primary_id =array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$arr_primary_id[] = "'". addslashes($row[$this->primary_keyname]) ."'";
-				}
-			} catch (PDOException $e){
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_primary_id[] = "'". addslashes($row[$this->primary_keyname]) ."'";
+		endforeach; 	
 
 		$array_count = count($arr_primary_id);
 
@@ -69,8 +77,7 @@ class gl_chart_master_model
 		
 		$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
 
-		$this->dbh->beginTransaction();
-
+	
 		$sql = 'INSERT INTO `tbl_sys_paging_control`(
 					`searchphrase`,
 					`lot_id`,
@@ -84,14 +91,9 @@ class gl_chart_master_model
 		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
 		$sql.='now()'.')';
 
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}
-		  
-		$this->dbh->commit();
+		//echo "<br>sql:".$sql."<br>";
+		$last_insert_id = $this->runSQLReturnID($sql);		
+
 
 		return $lot_id;
 	}
@@ -102,16 +104,7 @@ class gl_chart_master_model
 
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$arr_record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
+		$arr_record = $this->runSQLAssoc($sql);	
 
 		$arr =  $arr_record[0];
 		$arr_primary_id = $arr['result_id']; 
@@ -126,17 +119,8 @@ class gl_chart_master_model
 			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
 			//echo "<br>sql:".$sql."<br>";
 			
-			$arr_record = array();	
-			try {
-					$rs = $this->dbh->query($sql);
-					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-						$arr_record[] = $row;
-						}
-					} catch (PDOException $e){
-						print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-						die();
-						}		
-			return $arr_record;
+			$arr_record = $this->runSQLAssoc($sql);	
+
 		}
 		
 		return $arr_record;
@@ -146,33 +130,14 @@ class gl_chart_master_model
 	{
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$arr_record = array();	
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-					}
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-		  
+		$arr_record = $this->runSQLAssoc($sql);	
+
 		$result_id = $arr_record[0]['result_id'];
 
-		$this->dbh->beginTransaction();
-
 		$sql ="UPDATE `tbl_sys_paging_control` SET modify_datetime =now()	WHERE lot_id ='$lot_id'";
-
-
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$this->dbh->commit();		
+		//echo "<br>sql:".$sql."<br>";
+		$void = $this->runSQLReturnID($sql);
+	
 		return $result_id;
 	}	
 
@@ -181,16 +146,7 @@ class gl_chart_master_model
 		$sql = "SELECT searchphrase FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
 		
-		$arr_record = array();	
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$arr_record = $this->runSQLAssoc($sql);	
 
 		$searchphrase = $arr_record[0]['searchphrase'];
 		return $searchphrase;
@@ -201,18 +157,9 @@ class gl_chart_master_model
 	{
  		$sql ="SELECT * FROM tbl_gl_chart_master WHERE ".$this->primary_keyname. " = '$primary_id'";
 		//echo "<br>sql:".$sql."<br>";
-				
-		$arr_record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_record[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
 		
+		$arr_record = $this->runSQLAssoc($sql);	
+
 		return $arr_record[0];
 	}		
 	
@@ -220,91 +167,56 @@ class gl_chart_master_model
 	public function create($general)
 	{
 		//$comp_id = $_SESSION["target_comp_id"];
-		$comp_id = addslashes($general['comp_id']);
-		//$comp_id = $_SESSION["target_comp_id"];
-		$chart_code = trim(addslashes($general['chart_code']));
-		$chart_name = trim(addslashes($general['chart_name']));
-		$type_code = addslashes($general['type_code']);
-		$brought_forward = addslashes($general['brought_forward']);
+		$comp_id = $general['comp_id'];
+		$chart_code = $general['chart_code'];
+		$chart_name = $general['chart_name'];
+		$type_code = $general['type_code'];
+		$brought_forward = $general['brought_forward'];
 		$status = $general['status'];
-		
 		$create_user = $_SESSION['sUserID'];
 
-		$this->dbh->beginTransaction();
-		
-		$sql = "INSERT INTO `tbl_gl_chart_master`(
-						`comp_id`
-						,`chart_code`
-						,`chart_name`
-						,`type_code`
-						,`brought_forward`
-						,`status`
-						,`create_user`
-						,`modify_user`
-						,`create_datetime`
-						,`modify_datetime`
-						) VALUES (
-							'$comp_id'
-							,'$chart_code'
-							,'$chart_name'
-							,'$type_code'
-							,'$brought_forward'
-							,'$status'
-							,'$create_user'
-							,'$create_user'
-							,now()
-							,now()
-							)";
 
-		//echo '<br>'.$sql.'<br>';		
-								
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$this->dbh->commit();
-			
+		$ar_fields=array();
+		$ar_fields['comp_id'] = $comp_id;
+		$ar_fields['chart_code'] = $chart_code;
+		$ar_fields['chart_name'] = $chart_name;
+		$ar_fields['type_code'] = $type_code;
+		$ar_fields['brought_forward'] = $brought_forward;
+		$ar_fields['status'] = $status;
+		$ar_fields['create_user'] = $create_user;
+		$ar_fields['modify_user'] = $create_user;
+		$ar_fields['create_datetime'] = 'now()';
+		$ar_fields['modify_datetime'] = 'now()';
+
+		$sql= $this->createInsertSql($ar_fields,$this->table_field,$this->mainTable);
+		//echo '<br> sqal : '.$sql.'<br>';
+		$last_insert_id = $this->runSQLReturnID($sql);	
+	
 		return $last_insert_id;
 	}
 	
 	
 	public function update($primary_id, $general)
 	{
-		$chart_name = addslashes($general['chart_name']);
-		$type_code = addslashes($general['type_code']);
-		$brought_forward = addslashes($general['brought_forward']);
+		$chart_name = $general['chart_name'];
+		$type_code = $general['type_code'];
+		$brought_forward = $general['brought_forward'];
 		$status = $general['status'];
-
 		$modify_user = $_SESSION['sUserID'];
 
-		$this->dbh->beginTransaction();
-	
-		$sql ='UPDATE  `tbl_gl_chart_master` SET ';
-		$sql.='`chart_name`='.'\''.trim($chart_name).'\'';
-		$sql.=',`type_code`='.'\''.$type_code.'\'';
-		$sql.=',`brought_forward`='.'\''.$brought_forward.'\'';
-		$sql.=',`status`='.'\''.$status.'\'';
-		$sql.=',`modify_user`='.'\''.$modify_user.'\'';
-		$sql.=',`modify_datetime`=NOW()'.' ';
-		$sql.=' WHERE ';
-		$sql.='`'.$this->primary_keyname. '`='.'\''.addslashes($primary_id).'\''.' ';
-		//echo '<br>'.$sql; // Debug used				
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		$this->dbh->commit();
-		
-		return $last_insert_id;
+		$ar_fields=array();
+		$ar_fields['chart_name'] = $chart_name;
+		$ar_fields['type_code'] = $type_code;
+		$ar_fields['brought_forward'] = $brought_forward;
+		$ar_fields['status'] = $status;
+		$ar_fields['modify_user'] = $modify_user;
+		$ar_fields['modify_datetime'] = 'now()';
+
+		$sql= $this->createUpdateSql($ar_fields,$this->table_field,$this->mainTable,$this->primary_keyname,$primary_id);
+		//echo '<br> sqal : '.$sql.'<br>';
+		$this->runSql($sql);
+
+		return true;
 	}	
 
 	
@@ -316,17 +228,8 @@ class gl_chart_master_model
 		$sql .= " comp_id = ". $_SESSION["target_comp_id"] ;
 		$sql .=" AND $field_name = '$para'";
 		//echo '<br>'.$sql; // Debug used		
-			
-		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		
+		$arr_record = $this->runSQLAssoc($sql);	
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
@@ -347,18 +250,8 @@ class gl_chart_master_model
 		$sql .=" AND $field_name = '$field_para' AND ".$this->primary_keyname. "<>'$myself_id_para' ";
 		
 		//echo '<br>'.$sql; // Debug used		
-			
-		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-
+		$arr_record = $this->runSQLAssoc($sql);	
+		
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
 		
@@ -370,18 +263,9 @@ class gl_chart_master_model
 		$sql ="SELECT * FROM tbl_gl_chart_type_master ORDER BY type_code;";
 		//echo '<br>'.$sql; // Debug used		
 		
-		$record = array();
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
-		
-		return $record;
+		$arr_record = $this->runSQLAssoc($sql);	
+
+		return $arr_record;
 	}		
 
 
@@ -392,19 +276,15 @@ class gl_chart_master_model
 		$sql .= " comp_id = ". $_SESSION["target_comp_id"] ;
 		
 		//echo '<br>'.$sql; // Debug used		
-		
+
 		$brought_forward_ttl = 0;
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $brought_forward_ttl = $row['brought_forward_ttl'];
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-			}		
-		
-		
+	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$brought_forward_ttl = $row['brought_forward_ttl'];
+		endforeach; 	
+
+	
 		return $brought_forward_ttl;
 	}		
 
