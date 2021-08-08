@@ -13,6 +13,7 @@ class prop_tenant_info_model extends dataManager
 	public function __construct()
     {
 		parent::__construct();
+		$this->mainTable='tbl_prop_tenant_info';
     	$this->setTable($this->mainTable);
     	$this->setErrorMsg('PROP -> Transaction -> Tenant Information -> SQL error:');
     	$this->table_field=$this->getTableField();

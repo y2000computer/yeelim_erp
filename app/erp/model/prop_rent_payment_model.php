@@ -13,6 +13,7 @@ class prop_rent_payment_model extends dataManager
 	public function __construct()
     {
 		parent::__construct();
+		$this->mainTable='tbl_prop_rent_payment';
     	$this->setTable($this->mainTable);
     	$this->setErrorMsg('PROP -> Transaction -> Rent Payment -> SQL error:');
    	$this->table_field=$this->getTableField();
