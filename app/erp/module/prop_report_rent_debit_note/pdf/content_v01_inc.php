@@ -22,45 +22,45 @@
 
 
 	<tr style="">
-		<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="90%" style="FONT-SIZE:16px">&nbsp;</td> 
+		<td align="left" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="left" width="95%" style="FONT-SIZE:16px">&nbsp;</td> 
 	</tr>
 
 	<tr style="">
-		<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="90%" style="FONT-SIZE:16px">&nbsp;</td> 
+		<td align="left" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="left" width="95%" style="FONT-SIZE:16px">&nbsp;</td> 
 	</tr>
 
 	<tr style="">
-		<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="90%" style="FONT-SIZE:16px">&nbsp;</td> 
+		<td align="left" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="left" width="95%" style="FONT-SIZE:16px">&nbsp;</td> 
 	</tr>
 
 	
 	<tr style="">
-		<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="90%" style='FONT-SIZE:16px'>
+		<td align="left" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="left" width="95%" style='FONT-SIZE:16px'>
 			<?php echo $report['eng_name']; ?>
 		</td>
 	</tr>
 
 	<tr style="">
-	<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="90%" style='FONT-SIZE:16px'>
+	<td align="left" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="left" width="95%" style='FONT-SIZE:16px'>
 			<?php echo $report['add_1']; ?>
 		</td>
 	</tr>	
 
 	<tr style="">
-	<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="90%" style='FONT-SIZE:18px'>
+	<td align="left" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="left" width="95%" style='FONT-SIZE:18px'>
 			<?php echo $report['add_2']; ?>
 		</td>
 	</tr>	
 
 	<tr style="">
-	<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="90%" style='FONT-SIZE:16px'>
+	<td align="left" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="left" width="95%" style='FONT-SIZE:16px'>
 			<?php echo $report['add_3']; ?>
 		</td>
 	</tr>		
