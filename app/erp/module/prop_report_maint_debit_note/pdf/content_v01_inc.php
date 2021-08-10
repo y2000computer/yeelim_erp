@@ -121,8 +121,8 @@
 	<tr style="">
 		<td align="left" width="20%" style="FONT-SIZE:16px"> &nbsp;</td>
 		<td align="left" width="" style='FONT-SIZE:16px'>&nbsp;</td>
-		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="right" width="20%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="right" width="24%" style="FONT-SIZE:16px"> &nbsp;</td>
 		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
 	</tr>
 
@@ -134,9 +134,9 @@
 			&nbsp;&nbsp; - &nbsp;&nbsp;
 			<?php echo YMDtoDMY($report['period_date_to']); ?>
 		</td>
-		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="right" width="20%" style="FONT-SIZE:16px"> 
-			<?php echo '&nbsp;&nbsp;&nbsp;HK$ &nbsp;&nbsp;'. number_format($report['amount'],2);?>
+		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="right" width="24%" style="FONT-SIZE:16px"> 
+			<?php echo '&nbsp;HK$&nbsp;'. number_format($report['amount'],2);?>
 		</td>
 		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
 	</tr>		
@@ -145,8 +145,8 @@
 	<tr style="">
 		<td align="left" width="20%" style="FONT-SIZE:16px"> &nbsp;</td>
 		<td align="left" width="" style='FONT-SIZE:16px'>&nbsp;</td>
-		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="right" width="20%" style="FONT-SIZE:16px"> 
+		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="right" width="24%" style="FONT-SIZE:16px"> 
 			==========
 		</td>
 		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
