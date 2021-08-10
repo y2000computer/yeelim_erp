@@ -2,8 +2,8 @@
 
 
 	<tr style="">
-		<td align="left" width="15%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="15%" style='FONT-SIZE:16px'>
+		<td align="left" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="left" width="25%" style='FONT-SIZE:16px'>
 			<?php echo YMDtoDMY($report['inv_date']); ?>
 		</td>
 		<td align="left" width="40%" style="FONT-SIZE:16px"> &nbsp;</td>
@@ -23,44 +23,44 @@
 
 	<tr style="">
 		<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="85%" style="FONT-SIZE:16px">&nbsp;</td> 
+		<td align="left" width="90%" style="FONT-SIZE:16px">&nbsp;</td> 
 	</tr>
 
 	<tr style="">
 		<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="85%" style="FONT-SIZE:16px">&nbsp;</td> 
+		<td align="left" width="90%" style="FONT-SIZE:16px">&nbsp;</td> 
 	</tr>
 
 	<tr style="">
 		<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="85%" style="FONT-SIZE:16px">&nbsp;</td> 
+		<td align="left" width="90%" style="FONT-SIZE:16px">&nbsp;</td> 
 	</tr>
 
 	
 	<tr style="">
 		<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="85%" style='FONT-SIZE:16px'>
+		<td align="left" width="90%" style='FONT-SIZE:16px'>
 			<?php echo $report['eng_name']; ?>
 		</td>
 	</tr>
 
 	<tr style="">
 	<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="85%" style='FONT-SIZE:16px'>
+		<td align="left" width="90%" style='FONT-SIZE:16px'>
 			<?php echo $report['add_1']; ?>
 		</td>
 	</tr>	
 
 	<tr style="">
 	<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="85%" style='FONT-SIZE:18px'>
+		<td align="left" width="90%" style='FONT-SIZE:18px'>
 			<?php echo $report['add_2']; ?>
 		</td>
 	</tr>	
 
 	<tr style="">
 	<td align="left" width="2%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="left" width="85%" style='FONT-SIZE:16px'>
+		<td align="left" width="90%" style='FONT-SIZE:16px'>
 			<?php echo $report['add_3']; ?>
 		</td>
 	</tr>		
@@ -122,8 +122,8 @@
 		<td align="left" width="20%" style="FONT-SIZE:16px"> &nbsp;</td>
 		<td align="left" width="" style='FONT-SIZE:16px'>&nbsp;</td>
 		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="right" width="24%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="right" width="30%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
 	</tr>
 
 
@@ -135,10 +135,10 @@
 			<?php echo YMDtoDMY($report['period_date_to']); ?>
 		</td>
 		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="right" width="24%" style="FONT-SIZE:16px"> 
+		<td align="right" width="30%" style="FONT-SIZE:16px"> 
 			<?php echo '&nbsp;HK$&nbsp;'. number_format($report['amount'],2);?>
 		</td>
-		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
 	</tr>		
 
 
@@ -146,10 +146,10 @@
 		<td align="left" width="20%" style="FONT-SIZE:16px"> &nbsp;</td>
 		<td align="left" width="" style='FONT-SIZE:16px'>&nbsp;</td>
 		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
-		<td align="right" width="24%" style="FONT-SIZE:16px"> 
+		<td align="right" width="30%" style="FONT-SIZE:16px"> 
 			==========
 		</td>
-		<td align="right" width="5%" style="FONT-SIZE:16px"> &nbsp;</td>
+		<td align="right" width="1%" style="FONT-SIZE:16px"> &nbsp;</td>
 	</tr>		
 
 
