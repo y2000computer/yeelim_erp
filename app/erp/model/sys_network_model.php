@@ -1,10 +1,19 @@
 <?php
-class sys_network_model
+class sys_network_model extends dataManager
 {
 	private $dbh;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+
+
 	public function __construct()
     {
+
+		parent::__construct();
+		$this->setErrorMsg('System -> Transaction -> Network Information -> SQL error:');
+
 		try {
 			$this->dbh = new PDO(DB_CONNECTION_STRING,DB_USERNAME,DB_PASSWORD);
 			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -42,17 +51,11 @@ class sys_network_model
 		$sql .= " ORDER BY network_id;";
 		
 		//echo "<br>sql:".$sql."<br>";
-		$sql_search_result_id = array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$sql_search_result_id[] = "'". addslashes($row['network_id']) ."'";
-				}
-			} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
+		$sql_search_result_id =array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$sql_search_result_id[] = "'". addslashes($row['network_id']) ."'";
+		endforeach; 	
 
 		  
 	$array_count = count($sql_search_result_id);
@@ -63,7 +66,7 @@ class sys_network_model
 		//Save result_id into paging control table 
 		$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
 
-		$this->dbh->beginTransaction();
+		//$this->dbh->beginTransaction();
 
 		$sql = 'INSERT INTO `tbl_sys_paging_control`(
 					`searchphrase`,
@@ -78,14 +81,8 @@ class sys_network_model
 		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
 		$sql.='now()'.')';
 
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
+		$void = $this->runSQLReturnID($sql);	
+
 
 	return $lot_id;
 }
@@ -98,16 +95,14 @@ class sys_network_model
 
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$record = array();	
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$record[] = $row;
-				 }
-			} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-			  }		
+
+		$record = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 	
+
+  
 
 		$arr =  $record[0];
 		$record_id_set = $arr['result_id']; 
@@ -122,19 +117,14 @@ class sys_network_model
 		$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
 		
 		//echo "<br>sql:".$sql."<br>";
-		$record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$record[] = $row;
-				 }
-			} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-			  }		
-						return $record;
+		$record = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 	
+
 		}
-		
+
 		return $record;
 	}
 
@@ -142,36 +132,21 @@ class sys_network_model
 	{
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$record = array();	
+		$record = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$record[] = $row;
-			 }
-			} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		  
+
 		$result_id = $record[0]['result_id'];
 
-		$this->dbh->beginTransaction();
+		//$this->dbh->beginTransaction();
 
 		$sql ="UPDATE `tbl_sys_paging_control` SET modify_datetime =now()
 		WHERE lot_id ='$lot_id'";
+		$void = $this->runSQLReturnID($sql);	
 
-
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-			
-			$this->dbh->commit();		
-		
 		return $result_id;
 		}	
 
@@ -179,17 +154,12 @@ class sys_network_model
 	{
 		$sql = "SELECT searchphrase FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$record = array();	
+		$record = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
 
 		$searchphrase = $record[0]['searchphrase'];
 		return $searchphrase;
@@ -200,18 +170,13 @@ class sys_network_model
     public function find($id)
 	{
  		$sql ="SELECT * FROM tbl_sys_network WHERE network_id = '$id'";
-				
 		$record = array();
-
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-		  }		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 	
+	 
+	
 		
 		return $record;
 	}		
@@ -229,9 +194,10 @@ class sys_network_model
 		$status = $network_arr['status'];
 		
 
-		$this->dbh->beginTransaction();
+		//$this->dbh->beginTransaction();
+
 		$eng_name = addslashes($eng_name);
-		$query = "INSERT INTO `tbl_sys_network`(
+		$sql = "INSERT INTO `tbl_sys_network`(
 						`eng_name`,
 						`net_type`,
 						`fixed_ip`,
@@ -256,18 +222,9 @@ class sys_network_model
 							'$user_id',
 							now())";
 
-			//echo '<br>'.$query.'<br>';		
-			//die;
-								
-			try {
-				$rows = $this->dbh->query($query);
-				$last_insert_id = $this->dbh->lastInsertId(); 
-				} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-			
-			$this->dbh->commit();
+			//echo '<br>'.$query.'<br>';
+			$last_insert_id = $this->runSQLReturnID($sql);
+
 			
 			return $last_insert_id;
 	}
@@ -275,7 +232,7 @@ class sys_network_model
 	
 	public function update($network_arr,$sUserID,$id)
 	{
-		$this->dbh->beginTransaction();
+		//$this->dbh->beginTransaction();
 
 		$sql ='UPDATE  `tbl_sys_network` SET ';
 		$sql.='`eng_name`='.'\''.addslashes($network_arr['eng_name']).'\''.',';
@@ -289,20 +246,11 @@ class sys_network_model
 		$sql.='`last_modify_user`='.'\''.addslashes($sUserID).'\''.' ';
 		$sql.=' WHERE ';
 		$sql.='`network_id`='.'\''.addslashes($id).'\''.' ';
-		//echo '<br>'.$sql; // Debug used		
-		//die();
-	
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
+		//echo '<br>'.$sql; // Debug used	
+		$void = $this->runSQLReturnID($sql);
 		
-		$this->dbh->commit();
 		
-		return $last_insert_id;
+		return true;
 	}	
 	
 	

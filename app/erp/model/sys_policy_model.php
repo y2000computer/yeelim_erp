@@ -1,10 +1,19 @@
 <?php
-class sys_policy_model
+class sys_policy_model extends dataManager
 {
 	private $dbh;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+
+
 	public function __construct()
     {
+
+		parent::__construct();
+		$this->setErrorMsg('System -> Transaction -> Security Policy Information -> SQL error:');
+
 		try {
 			$this->dbh = new PDO(DB_CONNECTION_STRING,DB_USERNAME,DB_PASSWORD);
 			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -30,6 +39,13 @@ class sys_policy_model
 		
 		//echo '<br>'.$sql.'<br>';
 		$sql_search_result_id =array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$sql_search_result_id[] = "'". addslashes($row['policy_id']) ."'";
+		endforeach; 	
+
+		/*
+		$sql_search_result_id =array();
 		try {
 			$rs = $this->dbh->query($sql);
 			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
@@ -40,7 +56,7 @@ class sys_policy_model
 				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
 				die();
 				}		
-		
+		*/
 
 		$array_count = count($sql_search_result_id);
 	
@@ -50,7 +66,7 @@ class sys_policy_model
 		//$lot_id = strtotime(date("Y-m-d H:i:s"));
 		$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
 
-		$this->dbh->beginTransaction();
+		//$this->dbh->beginTransaction();
 
 		$sql = 'INSERT INTO `tbl_sys_paging_control`(
 					`searchphrase`,
@@ -65,6 +81,8 @@ class sys_policy_model
 		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
 		$sql.='now()'.')';
 
+		$void = $this->runSQLReturnID($sql);
+		/*
 		try {
 			$rows = $this->dbh->query($sql);
 			} catch (PDOException $e) {
@@ -73,6 +91,7 @@ class sys_policy_model
 				}		
 				
 		$this->dbh->commit();
+		*/
 
 	return $lot_id;
 }
@@ -102,7 +121,14 @@ class sys_policy_model
 		$sql .= " ORDER BY network_id;";
 		
 
+		$sql_search_result_id = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$sql_search_result_id[] = $row;
+		endforeach; 	
 
+
+		/*
 		try {
 			$rs = $this->dbh->query($sql);
 			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
@@ -113,7 +139,7 @@ class sys_policy_model
 				die();
 				}		
 		
-
+		*/		
 		  
 	$array_count = count($sql_search_result_id);
 
@@ -122,7 +148,7 @@ class sys_policy_model
 	}
 		$lot_id = strtotime(date("Y-m-d H:i:s"));
 
-		$this->dbh->beginTransaction();
+		//$this->dbh->beginTransaction();
 
 		$sql = 'INSERT INTO `tbl_sys_paging_control`(
 					`searchphrase`,
@@ -137,6 +163,9 @@ class sys_policy_model
 		$sql.='\''.addslashes($_SESSION["sUserID"]).'\''.',';
 		$sql.='now()'.')';
 
+		$void = $this->runSQLReturnID($sql);	
+
+		/*
 		try {
 			$rows = $this->dbh->query($sql);
 			} catch (PDOException $e) {
@@ -145,6 +174,7 @@ class sys_policy_model
 				}		
 		
 		$this->dbh->commit();
+		*/
 
 	return $lot_id;
 	}

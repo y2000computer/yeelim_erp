@@ -1,11 +1,19 @@
 <?php
 
-class sys_log_url_model
+class sys_log_url_model extends dataManager
 {
 	private $dbh;
 	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+
+
 	public function __construct()
     {
+		parent::__construct();
+		$this->setErrorMsg('SYS -> Security -> Log url -> SQL error:');
+
 		try {
 			$this->dbh = new PDO(DB_CONNECTION_STRING,DB_USERNAME,DB_PASSWORD);
 			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -27,8 +35,7 @@ class sys_log_url_model
 		$session_id = addslashes($session_id);
 		$time = addslashes($time);
 		
-		$this->dbh->beginTransaction();
-
+	
 		$sql = 'INSERT INTO tbl_sys_log_url (
 					url,
 					source_browser,
@@ -39,18 +46,9 @@ class sys_log_url_model
 		$sql .= '"'.$browser_type.'"'.',';
 		$sql .= '"'.$source_ip.'"'.',';
 		$sql .= '"'.$time.'"'.');';
-	
-		
 		//echo $sql;
-		try {
-			$rows = $this->dbh->query($sql);
-			//Nothing to do
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
+		$void = $this->runSQLReturnID($sql);	
+
 		
 		return true;
 	}	

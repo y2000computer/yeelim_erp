@@ -1,13 +1,20 @@
 <?php
-class sys_log_login_model
+class sys_log_login_model extends dataManager
 {
 	private $dbh;
+	
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
 	
 	public function __construct()
     {
 
 		try {
 			
+			parent::__construct();
+			$this->setErrorMsg('SYS -> Security -> Login -> SQL error:');
+	
 			$this->dbh = new PDO(DB_CONNECTION_STRING,DB_USERNAME,DB_PASSWORD);
 			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->dbh->query("set names utf8");
@@ -39,19 +46,12 @@ class sys_log_login_model
 		$sql ='SELECT COUNT(*) AS RecordCount FROM tbl_sys_user
 					WHERE email=\''.$sUserID.'\'';
 		//echo '<br>'.$sql.'<br>';
-		
 		$arr_security_item = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_security_item[] = $row;
+		endforeach; 	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				  $arr_security_item[] = $row;
-				}
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-			}		
-		  
 		$security_item  = $arr_security_item[0];
 		
 		if($security_item['RecordCount'] == 1) $hasFind = true;	 		
@@ -70,20 +70,13 @@ class sys_log_login_model
  		$sql ="SELECT COUNT(*) AS RecordCount, last_visit_date, concat(last_name,' ',last_name) as eng_name ,email
 		FROM tbl_sys_user WHERE email='$sUserID' AND  Password='$sPassword' ";
 		//echo '<br>'.$sql.'<br>';
-		
 		$arr_security_item = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_security_item[] = $row;
+		endforeach; 	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_security_item[] = $row;
-				}
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-	
+
 		$security_item  = $arr_security_item[0];
 		$last_visit_date  = $security_item[1];
 
@@ -111,19 +104,13 @@ class sys_log_login_model
  		$sql ='SELECT status AS status FROM tbl_sys_user 
 					WHERE email=\''.$sUserID.'\'';
 		//echo '<br>'.$sql.'<br>';
-		
 		$arr_security_item = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_security_item[] = $row;
+		endforeach; 	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_security_item[] = $row;
-				}
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-			}		
-		
+
 		$security_item  = $arr_security_item[0];
 		
 		if($security_item['status'] == 1) $isBlock = false;	 
@@ -140,28 +127,28 @@ class sys_log_login_model
 		$fromtime = date('Y-m-d H:i:s', $fromtime);
 		$totime = date('Y-m-d H:i:s', strtotime($time));
 
- 		$query ="SELECT count(*) as counter FROM tbl_sys_log_login 
+ 		$sql ="SELECT count(*) as counter FROM tbl_sys_log_login 
 					WHERE inputted_email='$sUserID' AND log_datetime BETWEEN '$fromtime' AND '$totime'";
-		//echo $query;
-
-		$rows = $this->dbh->query($query);
-			
-		while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+		//echo $sql;
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
 			$counter = $row["counter"];
-		}
+		endforeach; 	
+
 		if ($counter > 10){
-			$query ="UPDATE tbl_sys_user SET status = 0 where email = '$sUserID'";
-			//echo $query;
-			$rows = $this->dbh->query($query);	
+			$sql ="UPDATE tbl_sys_user SET status = 0 where email = '$sUserID'";
+			//echo $sql;
+			$void = $this->runSQLReturnID($sql);			
+			//$rows = $this->dbh->query($sql);	
 			return true;
-		} 
+		} 		
+
 
 		return true;
 	}	
 	
    public function updateLastVisitDate($security)
 	{
-		$this->dbh->beginTransaction();
 		$now = date("Y-m-d H:i:s");
 		
 		$sql ='UPDATE  `tbl_sys_user` SET ';
@@ -169,16 +156,9 @@ class sys_log_login_model
 		$sql.=' WHERE ';
 		$sql.='`email`='.'\''.addslashes($security['sUserID']).'\''.' ';
 
-		try {
-			$rows = $this->dbh->query($sql);
-			//Nothing to do
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-		  }		
-		
-		$this->dbh->commit();
-		
+		$void = $this->runSQLReturnID($sql);			
+
+	
 		return true;
 	}
 
@@ -192,8 +172,7 @@ class sys_log_login_model
 		$url = addslashes($url);
 		$time = addslashes($time);
 	
-		$this->dbh->beginTransaction();
-
+	
 		$sql = 'INSERT INTO tbl_sys_log_login (
 					inputted_email,
 					auth_status,
@@ -211,17 +190,8 @@ class sys_log_login_model
 		$sql .= '"'.$time.'"'.');';
 	
 		//echo '<br>'.$sql.'<br>';
-
-		try {
-			$rows = $this->dbh->query($sql);
-			//Nothing to do
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
-		
+		$void = $this->runSQLReturnID($sql);			
+	
 		return true;
 	}
 	
@@ -234,8 +204,8 @@ class sys_log_login_model
 		$browser_type = addslashes($browser_type);
 		$url = addslashes($url);
 		$time = addslashes($time);
-		$this->dbh->beginTransaction();
-
+		
+	
 		$sql = 'INSERT INTO tbl_sys_log_login (
 					inputted_email,
 					auth_status,
@@ -253,17 +223,8 @@ class sys_log_login_model
 		$sql .= '"'.$time.'"'.');';
 	
 		//echo '<br>'.$sql.'<br>';
-				
-		try {
-			$rows = $this->dbh->query($sql);
-			//Nothing to do
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
-		
+		$void = $this->runSQLReturnID($sql);			
+
 		return true;
 	}
 	
@@ -283,13 +244,14 @@ class sys_log_login_model
 		(SELECT user_id FROM `tbl_sys_user` WHERE email = '$username') )";
 		
 		//echo $sql;
+
+
+		$arr_policy_module = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_policy_module[] = $row;
+		endforeach; 	
 		
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			$arr_policy_module[] = $row;	
-			}
-	 
 			$count_arr =  count($arr_policy_module);
 			for($x=0; $x<$count_arr; $x++)
 				{
@@ -299,13 +261,8 @@ class sys_log_login_model
 			$inside_arr = implode(",",$arr_module);
 		 	$_SESSION["policy_module"] = $inside_arr;
 	
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}			
-		
-		$this->dbh->commit();
-		
+
+
 		return true;
 	}	
 
@@ -398,8 +355,6 @@ class sys_log_login_model
 		$password= addslashes($general['new_password']);
 
 		
-		$this->dbh->beginTransaction();
-		
 		$sql ='UPDATE  tbl_sys_user SET ';
 		$sql.='password='.'\''.$password.'\''.',';
 		$sql.='modify_user='.'\''.addslashes($sUserID).'\''.',';
@@ -408,17 +363,9 @@ class sys_log_login_model
 		$sql.='email='.'\''.addslashes($sUserID).'\''.' ';
 		
 		//echo '<br>'.$sql; // Debug used		
+		$void = $this->runSQLReturnID($sql);			
 
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-				
-		$this->dbh->commit();
-		
+
 		return true;
 	}		
 	
@@ -435,21 +382,12 @@ class sys_log_login_model
 		FROM tbl_sys_user 
 		WHERE email='$sUserID' AND  Password='$sPassword' ";
 		//echo '<br>'.$sql.'<br>';
-		//die;
-		
 		$arr_security_item = array();
-
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_security_item[] = $row;
-				}
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-				//	print_r($arr_security_item);
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_security_item[] = $row;
+		endforeach; 	
+	
 
 	$array_count = count($arr_security_item);
 
@@ -471,19 +409,12 @@ class sys_log_login_model
 					, tbl_sys_user AS c WHERE  a.comp_id = b.comp_id AND a. user_id = c.user_id AND c.email= '$sUserID' ORDER BY default_is DESC LIMIT 1 ";
 
 		//echo '<br>'.$sql.'<br>';
-
 		$arr_rs = array();
-		try 
-		{		
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-					$arr_rs[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_rs[] = $row;
+		endforeach; 	
+
 
 		return $arr_rs;
 	
@@ -496,19 +427,11 @@ class sys_log_login_model
 					, tbl_sys_user AS c WHERE  a.comp_id = b.comp_id AND a. user_id = c.user_id AND c.email= '$sUserID' ORDER BY default_is DESC LIMIT 1000 ";
 
 		//echo '<br>'.$sql.'<br>';
-
 		$arr_rs = array();
-		try 
-		{		
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-					$arr_rs[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_rs[] = $row;
+		endforeach; 
 
 		return $arr_rs;
 	

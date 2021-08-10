@@ -1,13 +1,23 @@
 <?php
-class sys_user_model
+class sys_user_model extends dataManager
 {
 	private $dbh;
 	private $primary_table;
 	private $primary_keyname;
 	private $primary_indexname;
-	
+
+	private $table_field;  // variable for dataManager
+	private $errorMsg;   // variable for dataManager
+	private $mainTable;   // variable for dataManager
+
+
 	public function __construct()
     {
+
+		parent::__construct();
+		$this->setErrorMsg('System -> Transaction -> User Information -> SQL error:');
+
+
 		$this->primary_keyname = 'user_id';
 		$this->primary_indexname = 'user_id';
 		try {
@@ -24,20 +34,12 @@ class sys_user_model
 	{
  		$sql ='SELECT * FROM tbl_sys_depart_master where status = 1 order by sorting ASC';
 		//echo '<br>'.$sql.'<br>';
-
 		$arr_depart = array();
-		try 
-		{		
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-					$arr_depart[] = $row;
-			 }
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
-		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_depart[] = $row;
+		endforeach; 	
+
 		return $arr_depart;
 	}	
 	
@@ -59,16 +61,11 @@ class sys_user_model
 		$sql .= " ORDER BY user_id";
 		
 		//echo '<br>'.$sql.'<br>';
-		$sql_search_result_id =array();
-		try {
-			$rs = $this->dbh->query($sql);
-			while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$sql_search_result_id[] = "'". addslashes($row['user_id']) ."'";
-				}
-			} catch (PDOException $e){
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$sql_search_result_id = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$sql_search_result_id[] = "'". addslashes($row['user_id']) ."'";
+		endforeach; 	
 
 		  
 		$array_count = count($sql_search_result_id);
@@ -80,8 +77,7 @@ class sys_user_model
 			//$lot_id = strtotime(date("Y-m-d H:i:s"));
 			$lot_id = strtotime(date("Y-m-d H:i:s")).rand(0, 10);;
 
-			$this->dbh->beginTransaction();
-
+	
 			$sql = 'INSERT INTO `tbl_sys_paging_control`(
 						`searchphrase`,
 						`lot_id`,
@@ -96,15 +92,8 @@ class sys_user_model
 			$sql.='now()'.')';
 
 			//echo '<br>'.$sql.'<br>';
-			
-			try {
-				$rows = $this->dbh->query($sql);
-				} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-					
-		$this->dbh->commit();
+			$void = $this->runSQLReturnID($sql);
+
 
 		return $lot_id;
 	}
@@ -116,16 +105,12 @@ class sys_user_model
 
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
-		$record = array();	
-		try {
-				$rs = $this->dbh->query($sql);
-				while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-				$record[] = $row;
-				 }
-			} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
+		$record = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 
+
 
 		$arr =  $record[0];
 		$record_id_set = $arr['result_id']; 
@@ -138,20 +123,15 @@ class sys_user_model
 			$sql .= " ORDER BY user_id ";
 			$sql .= " LIMIT ". SYSTEM_PAGE_ROW_LIMIT . " OFFSET  ".($page-1)*SYSTEM_PAGE_ROW_LIMIT ;
 			
-		/*	echo "<br>sql:".$sql."<br>";
-			die();*/
-			$record = array();	
-			try {
-					$rs = $this->dbh->query($sql);
-					while($row = $rs->fetch(PDO::FETCH_ASSOC)){
-					$record[] = $row;
-					 }
-				} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-					}		
-	
-				return $record;
+			//echo "<br>sql:".$sql."<br>";
+			$record = array();
+			$rows = $this->runSQLAssoc($sql);	
+			foreach ($rows as $row): 
+				$record[] = $row;
+			endforeach; 
+
+
+			return $record;
 		}
 		
 
@@ -163,32 +143,18 @@ class sys_user_model
 		$sql = "SELECT * FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
 		$record = array();	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$record[] = $row;
-			 }
-			} catch (PDOException $e){
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
 		  
 		$result_id = $record[0]['result_id'];
-		$this->dbh->beginTransaction();
-
+	
 		$sql ="UPDATE `tbl_sys_paging_control` SET modify_datetime =now() WHERE lot_id ='$lot_id'";
 		//echo "<br>sql:".$sql."<br>";
-
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-				
-		$this->dbh->commit();		
+		$void = $this->runSQLReturnID($sql);			
+		
 		
 		return $result_id;
 	}	
@@ -198,16 +164,11 @@ class sys_user_model
 		$sql = "SELECT searchphrase FROM tbl_sys_paging_control WHERE lot_id = '".$lot_id."' AND create_user =	'".$_SESSION['sUserID']."';";
 		//echo "<br>sql:".$sql."<br>";
 		$record = array();	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
 
 		$searchphrase = $record[0]['searchphrase'];
 		return $searchphrase;
@@ -219,18 +180,12 @@ class sys_user_model
 	{
  		$sql ="SELECT * FROM tbl_sys_user WHERE user_id = '$id'";
 		//echo "<br>sql:".$sql."<br>";
-				
-		$record = array();
-
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $record[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
+		$record = array();	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$record[] = $row;
+		endforeach; 
+		
 		
 		return $record;
 	}		
@@ -240,18 +195,11 @@ class sys_user_model
 	{
  		$query ="SELECT * FROM tbl_sys_user_policy_grant WHERE user_id = '$id'";
 		//echo '<br>'.$query.'<br>';
-
-		$arr_policy_module = array();
-
-		try {
-			$rows = $this->dbh->query($query);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_policy_module[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
+		$arr_policy_module = array();	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_policy_module[] = $row;
+		endforeach; 
 
 		return $arr_user_policy;
 	}	
@@ -262,20 +210,12 @@ class sys_user_model
 		FROM tbl_sys_user_policy_grant AS a, tbl_sys_policy AS b 
 		WHERE  a.policy_id = b.policy_id AND a.user_id= '$id'";
 		//echo '<br>'.$sql.'<br>';
+		$arr_user_policy = array();	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_user_policy[] = $row;
+		endforeach; 
 
-		$arr_user_policy = array();
-		try 
-		{		
-
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-					$arr_user_policy[] = $row;
-				}
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
 		
 		return $arr_user_policy;
 	}	
@@ -287,20 +227,12 @@ class sys_user_model
 		 WHERE user_id = '$id' )
 		 ORDER BY policy_id ASC";
 		//echo '<br>'.$sql.'<br>';
-	
-		$arr_user_policy = array();
-		try 
-		{		
+		$arr_user_policy = array();	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_user_policy[] = $row;
+		endforeach; 
 
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_user_policy[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
 		
 		return $arr_user_policy;
 	}	
@@ -312,19 +244,12 @@ class sys_user_model
 		 WHERE user_id = '$id' )
 		 ORDER BY network_id ASC";
 		//echo '<br>'.$sql.'<br>';
-	
-		$arr_ava_network = array();
-		try 
-		{		
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-					$arr_ava_network[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
+		$arr_ava_network = array();	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_ava_network[] = $row;
+		endforeach; 
+
 		
 		return $arr_ava_network;
 	}
@@ -335,19 +260,12 @@ class sys_user_model
  		$sql ="SELECT a.irow_id, b.eng_name , a.status FROM tbl_sys_user_network_grant AS a, tbl_sys_network AS b 
 		WHERE  a.network_id = b.network_id AND a.user_id= '$id'";
 		//echo '<br>'.$sql.'<br>';
-	
-		$arr_user_network = array();
-		try 
-		{		
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-					$arr_user_network[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
+		$arr_user_network = array();	
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_user_network[] = $row;
+		endforeach; 
+
 
 		return $arr_user_network;
 	}		
@@ -357,7 +275,7 @@ class sys_user_model
 	public function create($email,$password,$last_name,$first_name,$depart_code,$status,$sUserID)
 	{
 	
-		$this->dbh->beginTransaction();
+	
 		$email = addslashes($email);
 		$password = addslashes($password);
 		$staff_no = addslashes($staff_no);
@@ -389,16 +307,8 @@ class sys_user_model
 						'$sUserID',
 						now())";
 		//echo '<br>'.$sql.'<br>';
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
+		$last_insert_id = $this->runSQLReturnID($sql);	
+
 		
 		return $last_insert_id;
 	}
@@ -406,8 +316,7 @@ class sys_user_model
 	
 	public function update_user($user,$sUserID,$id)
 	{
-		$this->dbh->beginTransaction();
-
+	
 		$sql ='UPDATE  `tbl_sys_user` SET ';
 		$sql.='`email`='.'\''.addslashes($user['email']).'\''.',';	
 		$sql.='`password`='.'\''.addslashes($user['password']).'\''.',';
@@ -419,20 +328,11 @@ class sys_user_model
 		$sql.='`modify_user`='.'\''.addslashes($sUserID).'\''.' ';
 		$sql.=' WHERE ';
 		$sql.='`user_id`='.'\''.addslashes($id).'\''.' ';
-		/*	echo '<br>'.$sql; // Debug used		
-		die();
-		*/
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
-		
-		return $last_insert_id;
+		//echo '<br>'.$sql; // Debug used		
+		$void = $this->runSQLReturnID($sql);	
+
+			
+		return true;
 	}	
 	
 	public function checkduplicatepolicy($user)
@@ -444,19 +344,12 @@ class sys_user_model
  		$sql ='SELECT COUNT(*) AS RecordCount FROM tbl_sys_user 
 					WHERE email=\''.$email.'\'';
 		//echo '<br>'.$sql.'<br>'; 	
-		
 		$arr_user_item = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_user_item[] = $row;
+		endforeach; 	
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_user_item[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		  
 
 		$user_item  = $arr_user_item[0];
 		
@@ -474,17 +367,12 @@ class sys_user_model
 					WHERE policy_module_id = '.$id ;
 
 		$arr_policy = array();
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_policy[] = $row;
+		endforeach;
 
-		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-			  $arr_policy[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
+
 		return $arr_policy;
 	}		
 
@@ -493,7 +381,6 @@ class sys_user_model
 	public function add_policy($policy_select,$user,$IS_para_id)
 	{
 
-		$this->dbh->beginTransaction();
 
 		$sql = "INSERT INTO `tbl_sys_user_policy_grant`(
 					`user_id`,
@@ -508,23 +395,14 @@ class sys_user_model
 					'$user',
 					NOW())";
 
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-		  }		
-		
-		$this->dbh->commit();
-		
+		$last_insert_id = $this->runSQLReturnID($sql);			
+
 		return $IS_para_id;
 	}
 	
 	public function add_network($network_select,$user,$IS_para_id)
 	{
-		$this->dbh->beginTransaction();
-
+	
 		$sql = "INSERT INTO `tbl_sys_user_network_grant`(
 					`user_id`,
 					`network_id`,
@@ -539,18 +417,9 @@ class sys_user_model
 					now())";
 			//echo '<br>'.$sql; // Debug used		
 			//exit;
-					
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
-		
-		
+		$last_insert_id = $this->runSQLReturnID($sql);			
+
+
 		return $IS_para_id;
 	}	
 	
@@ -560,14 +429,13 @@ class sys_user_model
 		$status = $policy_grant_status;
 	 
 
-		$this->dbh->beginTransaction();
-			if($status == 1){
-			$changestatus = 0;
-			}
-			if($status == 0){
-			$changestatus = 1;
-			}
-			$sUserID = $_SESSION["sUserID"];
+		if($status == 1){
+		$changestatus = 0;
+		}
+		if($status == 0){
+		$changestatus = 1;
+		}
+		$sUserID = $_SESSION["sUserID"];
 		
 		$sql ="UPDATE  `tbl_sys_user_network_grant` 
 		SET status = '$changestatus',
@@ -575,15 +443,8 @@ class sys_user_model
 		modify_datetime = NOW()		
 		WHERE irow_id ='$policy_grant_id'";
 	    //echo '<br>'.$sql; 
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
+		$void = $this->runSQLReturnID($sql);			
+
 
 		return true;
 	}	
@@ -593,14 +454,14 @@ class sys_user_model
 
 		$status = $policy_grant_status;
 
-		$this->dbh->beginTransaction();
-			if($status == 1){
-			$changestatus = 0;
-			}
-			if($status == 0){
-			$changestatus = 1;
-			}
-			$sUserID = $_SESSION["sUserID"];
+	
+		if($status == 1){
+		$changestatus = 0;
+		}
+		if($status == 0){
+		$changestatus = 1;
+		}
+		$sUserID = $_SESSION["sUserID"];
 		
 		$sql ="UPDATE  `tbl_sys_user_policy_grant` 
 		SET status = '$changestatus',
@@ -609,14 +470,9 @@ class sys_user_model
 		WHERE irow_id ='$policy_grant_id'";
 		
 		//echo '<br>'.$sql; 
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
+		$void = $this->runSQLReturnID($sql);			
+
+
 
 		return true;
 	}		
@@ -630,17 +486,11 @@ class sys_user_model
 		//echo '<br>'.$sql.'<br>';
 	
 		$arr_ava_network = array();
-		try 
-		{		
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-					$arr_ava_network[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_ava_network[] = $row;
+		endforeach; 	
+
 		
 		return $arr_ava_network;
 	}
@@ -651,19 +501,12 @@ class sys_user_model
  		$sql ="SELECT a.irow_id, b.name_eng , a.status FROM tbl_sys_user_company_grant AS a, tbl_sys_company_master AS b 
 		WHERE  a.comp_id = b.comp_id AND a.user_id= '$id'";
 		//echo '<br>'.$sql.'<br>';
-	
 		$arr_user_network = array();
-		try 
-		{		
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-					$arr_user_network[] = $row;
-			 }
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_user_network[] = $row;
+		endforeach; 	
+
 
 		return $arr_user_network;
 	}		
@@ -671,8 +514,7 @@ class sys_user_model
   
 	public function add_company($company_select,$user,$IS_para_id)
 	{
-		$this->dbh->beginTransaction();
-
+	
 		$sql = "INSERT INTO `tbl_sys_user_company_grant`(
 					`user_id`,
 					`comp_id`,
@@ -687,18 +529,9 @@ class sys_user_model
 					now())";
 			//echo '<br>'.$sql; // Debug used		
 			//exit;
-					
-		try {
-			$rows = $this->dbh->query($sql);
-			$last_insert_id = $this->dbh->lastInsertId(); 
-			} catch (PDOException $e) {		
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
 		
-		$this->dbh->commit();
-		
-		
+		$last_insert_id = $this->runSQLReturnID($sql);			
+
 		return $IS_para_id;
 	}	
   
@@ -709,30 +542,22 @@ class sys_user_model
 		$status = $policy_grant_status;
 	 
 
-		$this->dbh->beginTransaction();
-			if($status == 1){
-			$changestatus = 0;
-			}
-			if($status == 0){
-			$changestatus = 1;
-			}
-			$sUserID = $_SESSION["sUserID"];
-		
+		if($status == 1){
+		$changestatus = 0;
+		}
+		if($status == 0){
+		$changestatus = 1;
+		}
+		$sUserID = $_SESSION["sUserID"];
+	
 		$sql ="UPDATE  `tbl_sys_user_company_grant` 
 		SET status = '$changestatus',
 		modify_user = '$sUserID',
 		modify_datetime = NOW()		
 		WHERE irow_id ='$policy_grant_id'";
 	    //echo '<br>'.$sql; 
-		
-		try {
-			$rows = $this->dbh->query($sql);
-			} catch (PDOException $e) {
-					print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-					die();
-				}		
-		
-		$this->dbh->commit();
+		$void = $this->runSQLReturnID($sql);	
+
 
 		return true;
 	}	
@@ -746,17 +571,13 @@ class sys_user_model
 		$sql .= "  WHERE ";
 		$sql .="  $field_name = '$para'";
 		//echo '<br>'.$sql; // Debug used		
-			
 		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_record[] = $row;
+		endforeach; 
+
+			
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
@@ -776,17 +597,12 @@ class sys_user_model
 		$sql .="  $field_name = '$field_para' AND ".$this->primary_keyname. "<>'$myself_id_para' ";
 		
 		//echo '<br>'.$sql; // Debug used		
-			
 		$arr_record = array();
- 		try {
-			$rows = $this->dbh->query($sql);
-			while($row = $rows->fetch(PDO::FETCH_ASSOC)){
-				$arr_record[] = $row;
-				}
-			} catch (PDOException $e) {
-				print 'Error!: ' . $e->getMessage() . '<br>Script:'.$sql.'<br>';
-				die();
-				}		
+		$rows = $this->runSQLAssoc($sql);	
+		foreach ($rows as $row): 
+			$arr_record[] = $row;
+		endforeach; 
+		
 
 		$is_find = false;
 		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
