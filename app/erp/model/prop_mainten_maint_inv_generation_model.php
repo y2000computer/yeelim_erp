@@ -147,8 +147,11 @@ class prop_mainten_maint_inv_generation_model extends dataManager
 
 
 			//update tenant info
+			$time_next_month = strtotime("+1 month", $time) ;
+			$next_bill_date  = date("Y-m-d", $time_next_month);
+
 			$sql ='UPDATE  `tbl_prop_tenant_info` SET ';
-			$sql.=' `maint_date`='.'\''.$inv_date_ymd.'\'';
+			$sql.=' `maint_date`='.'\''.$next_bill_date.'\'';
 			$sql.=' WHERE ';
 			$sql.='`'.'tenant_id'. '`='.'\''.addslashes($tenant_id).'\''.' ';
 			//echo '<br>'.$sql; // Debug used				
