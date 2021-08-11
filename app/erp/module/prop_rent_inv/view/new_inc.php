@@ -40,6 +40,7 @@ if ($IS_action=='new') {
 								<span class="formLabel">
 									<label class="">Building :</label>
 								</span>
+
 								<span class="formInput">
 									<select name="general[build_id]" required class="ten">
 									<?php

@@ -21,9 +21,20 @@
 								<?php
 									//set default
 									foreach ($arr_prop_build_master  as $prop_build_master) {
+										/*
 										if($json_search_items['general']['build_id']==''){
 											$json_search_items['general']['build_id'] = $prop_build_master['build_id'];	
 										}
+										*/
+										if($json_search_items['general']['build_id']==''){
+											/*
+											$json_search_items['general']['build_id'] = $prop_build_master['build_id'];	
+											*/
+											if($_SESSION["target_build_id"]<>'') {
+												$json_search_items['general']['build_id'] = $_SESSION["target_build_id"];	
+											}
+										}
+										
 									}
 									?>
 

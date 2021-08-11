@@ -15,11 +15,13 @@ $arr_prop_build_master = $dmGeneralModel->prop_build_master_viewall($_SESSION["t
 switch($IS_action)
 {
 	case "/";
+
 		require __DIR__.'/../view/index_inc.php';
 		break;
 
 	case "search";
 		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+				$_SESSION["target_build_id"] = $_POST['general']['build_id'];	
 				$page=1;
 				$json_searchphrase = json_encode($_POST);	
 				$lot_id=$dmGeneralModel->search($json_searchphrase);
@@ -28,6 +30,8 @@ switch($IS_action)
 				$page=$_GET["page"];		
 				$json_searchphrase = $dmGeneralModel->searchphrase($lot_id);
 				}
+				
+				
 		$result_id=$dmGeneralModel->paging_config($lot_id);
 		$paging = new PagingManger($result_id,SYSTEM_PAGE_ROW_LIMIT);
 		$arr_general_model=array();

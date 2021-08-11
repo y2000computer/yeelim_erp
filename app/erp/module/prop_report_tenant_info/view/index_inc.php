@@ -37,11 +37,16 @@ if ($IS_action=='new') {
 									<label class="">Building :</label>
 								</span>
 								<span class="formInput">
+									<?php
+									if($_SESSION["target_build_id"]<>'') {
+									$criteria['build_id'] = $_SESSION["target_build_id"];	
+									}
+									?>	
 									<select name="criteria[build_id]" required class="ten">
 									<?php
 									echo '<option value=""'.' '.($criteria['build_id']  ==''?'selected':'').'>'.'Please select'.'</option>';
 									foreach ($arr_prop_build_master  as $master) { 
-									  echo '<option value="'.$master['build_id'].'"'.' '.($general['build_id']  == $master['build_id']?'selected':'').'>'.$master['eng_name'].'&nbsp;'.'('.$master['build_id'].')'.'</option>';
+									  echo '<option value="'.$master['build_id'].'"'.' '.($criteria['build_id']  == $master['build_id']?'selected':'').'>'.$master['eng_name'].'&nbsp;'.'('.$master['build_id'].')'.'</option>';
 									}
 									?>
 									</select>

@@ -20,6 +20,7 @@ switch($IS_action)
 
 	case "search";
 		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+				$_SESSION["target_build_id"] = $_POST['general']['build_id'];	
 				$page=1;
 				$json_searchphrase = json_encode($_POST);	
 				$lot_id=$dmGeneralModel->search($json_searchphrase);

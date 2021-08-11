@@ -37,6 +37,11 @@ if ($IS_action=='new') {
 									<label class="">Building :</label>
 								</span>
 								<span class="formInput">
+									<?php
+									if($_SESSION["target_build_id"]<>'') {
+									$criteria['build_id'] = $_SESSION["target_build_id"];	
+									}
+									?>	
 									<select name="criteria[build_id]" required class="ten">
 									<?php
 									echo '<option value=""'.' '.($criteria['build_id']  ==''?'selected':'').'>'.'Please select'.'</option>';

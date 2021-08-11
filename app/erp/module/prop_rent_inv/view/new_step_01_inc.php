@@ -41,6 +41,11 @@ if ($IS_action=='new') {
 									<label class="">Building :</label>
 								</span>
 								<span class="formInput">
+									<?php
+										if($_SESSION["target_build_id"]<>'') {
+											$general['build_id'] = $_SESSION["target_build_id"];	
+										}
+									?>
 									<select name="general[build_id]" required class="ten">
 									<?php
 									echo '<option value=""'.' '.($general['build_id']  ==''?'selected':'').'>'.'Please select'.'</option>';
