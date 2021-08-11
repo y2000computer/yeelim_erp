@@ -26,13 +26,19 @@ $styleArray = array(
 	),
 );
 
-
+$rent_amount_report_ttl = 0;
+$maint_amount_report_ttl = 0;
 $i_count=1;
 $excel_row = 5;
 foreach ($arr_report as $report): 
 	
 	$excel_row++;
 	
+	$rent_amount_report_ttl += $report['rent_amount'];
+	$rent_amount_report_ttl = round($rent_amount_report_ttl,2);
+	$maint_amount_report_ttl += $report['maint_amount'];
+	$maint_amount_report_ttl = round($maint_amount_report_ttl,2);
+
 	$sheet->setCellValue(('A'.$excel_row), $i_count++);
 	$sheet->setCellValue(('B'.$excel_row), ($report['build_eng_name']));
 	$sheet->setCellValue(('C'.$excel_row), ($report['tenant_code']));	
@@ -68,8 +74,14 @@ foreach ($arr_report as $report):
 endforeach; 	
 
 //Print report balance:
-
 $excel_row++;
+$sheet->setCellValue(('J'.$excel_row), ('Report Total:'));	
+$sheet->setCellValue(('K'.$excel_row), ($rent_amount_report_ttl));	
+$sheet->setCellValue(('M'.$excel_row), ($maint_amount_report_ttl));	
+
+$sheet ->getStyle(('J'.$excel_row.':J'.$excel_row))->applyFromArray($styleArray);
+$sheet ->getStyle(('K'.$excel_row.':K'.$excel_row))->applyFromArray($styleArray);
+$sheet ->getStyle(('M'.$excel_row.':M'.$excel_row))->applyFromArray($styleArray);
 
 
 

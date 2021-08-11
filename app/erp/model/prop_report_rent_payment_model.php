@@ -52,6 +52,11 @@ class prop_report_rent_payment_model  extends dataManager
 		}		
 
 	
+		if($json['criteria']['payment_code_from']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " PAY.payment_code BETWEEN '". $json['criteria']['payment_code_from']."' AND '". $json['criteria']['payment_code_to']."'" ;
+		}
+
 
 		if($json['criteria']['payment_date_from']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";

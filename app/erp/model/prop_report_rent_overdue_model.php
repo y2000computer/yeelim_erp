@@ -51,9 +51,10 @@ class prop_report_rent_overdue_model   extends dataManager
 			$sql_filter .= " C.tenant_code LIKE '%".addslashes(trim($json['criteria']['tenant_code']))."%'" ;
 		}		
 
-		if($json['criteria']['inv_code']<>"") {
+		
+		if($json['criteria']['inv_code_from']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
-			$sql_filter .= " INV.inv_code LIKE '%".addslashes(trim($json['criteria']['inv_code']))."%'" ;
+			$sql_filter .= " INV.inv_code BETWEEN '". $json['criteria']['inv_code_from']."' AND '". $json['criteria']['inv_code_to']."'" ;
 		}
 		
 

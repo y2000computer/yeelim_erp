@@ -66,6 +66,31 @@ if ($IS_action=='new') {
 
 							<span class="formRow">
 								<span class="formLabel">
+									<label class="">Payment No. From :</label>
+								</span>
+								<span class="formInput">
+										<input type="text" name="criteria[payment_code_from]"  size="15" class="three" value="<?php echo htmlspecialchars($criteria['payment_code_from']);?>" />
+								</span>
+							</span>
+							<span class="formRow">
+							</span>
+
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Payment No. To :</label>
+								</span>
+								<span class="formInput">
+										<input type="text" name="criteria[payment_code_to]"  size="15" class="three" value="<?php echo htmlspecialchars($criteria['payment_code_to']);?>" />
+								</span>
+							</span>
+							<span class="formRow">
+							</span>
+
+
+
+
+							<span class="formRow">
+								<span class="formLabel">
 									<label class="">Payment Date From :</label>
 								</span>
 								<span class="formInput" data-remarks="(dd/mm/yyyy)">

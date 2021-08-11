@@ -64,6 +64,29 @@ if ($IS_action=='new') {
 							</span>
 
 
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Invoice No. From :</label>
+								</span>
+								<span class="formInput">
+										<input type="text" name="criteria[inv_code_from]"  size="15" class="three" value="<?php echo htmlspecialchars($criteria['inv_code_from']);?>" />
+								</span>
+							</span>
+							<span class="formRow">
+							</span>
+
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Invoice No. To :</label>
+								</span>
+								<span class="formInput">
+										<input type="text" name="criteria[inv_code_to]"  size="15" class="three" value="<?php echo htmlspecialchars($criteria['inv_code_to']);?>" />
+								</span>
+							</span>
+							<span class="formRow">
+							</span>
+
+							
 
 							<span class="formRow">
 								<span class="formLabel">
