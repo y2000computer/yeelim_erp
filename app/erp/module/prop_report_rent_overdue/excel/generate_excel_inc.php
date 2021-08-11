@@ -6,7 +6,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 
 $inputFileType = 'Xlsx';
-$inputFileName = 'prop_report_rent_overdue_template_v01.xlsx';
+$inputFileName = 'prop_report_rent_overdue_template_v02.xlsx';
 $sheetname = ['sheet1'];
 
 $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load(__DIR__."/".$inputFileName);
@@ -26,6 +26,9 @@ $styleArray = array(
 	),
 );
 
+$last_tenant_code ='';
+$tenant_row_newcol_is = false;
+$tenant_row_balance_ttl = 0;
 $report_ttl = 0;
 $i_count=1;
 $excel_row = 5;
@@ -36,14 +39,40 @@ foreach ($arr_report as $report):
 	$report_ttl += $report['balance'];
 	$report_ttl = round($report_ttl,2);
 	
+	if ($last_tenant_code == '') {
+		$last_tenant_code = trim($report['tenant_code']);
+		$tenant_row_newcol_is = true;
+	}
+
+	if ($last_tenant_code <> trim($report['tenant_code'])) {
+		//print empty col 
+		//$excel_row++;
+
+		$sheet->setCellValue(('K'.$excel_row), ('Grand Total:'));	
+		$sheet->setCellValue(('L'.$excel_row), ($tenant_row_balance_ttl));	
+		$sheet ->getStyle(('K'.$excel_row.':K'.$excel_row))->applyFromArray($styleArray);
+		$sheet ->getStyle(('L'.$excel_row.':L'.$excel_row))->applyFromArray($styleArray);
+
+		
+		//skip two  empty col 
+		$excel_row++;
+		$excel_row++;
+
+		$tenant_row_balance_ttl = 0;
+		$last_tenant_code = trim($report['tenant_code']);
+		
+	}
+
+    $tenant_row_balance_ttl += $report['balance'];
+
 	$sheet->setCellValue(('A'.$excel_row), $i_count++);
 	$sheet->setCellValue(('B'.$excel_row), ($report['build_eng_name']));
-	$sheet->setCellValue(('C'.$excel_row), (YMDtoDMY($report['inv_date'])));	
-	$sheet->setCellValue(('D'.$excel_row), ($report['inv_code']));	
-	$sheet->setCellValue(('E'.$excel_row), ($report['tenant_code']));	
-	$sheet->setCellValue(('F'.$excel_row), ($report['eng_name']));	
-	$sheet->setCellValue(('G'.$excel_row), ($report['ref_no']));	
-	$sheet->setCellValue(('H'.$excel_row), ($report['shop_no']));	
+	$sheet->setCellValue(('C'.$excel_row), ($report['tenant_code']));	
+	$sheet->setCellValue(('D'.$excel_row), ($report['eng_name']));	
+	$sheet->setCellValue(('E'.$excel_row), ($report['ref_no']));	
+	$sheet->setCellValue(('F'.$excel_row), ($report['shop_no']));	
+	$sheet->setCellValue(('G'.$excel_row), (YMDtoDMY($report['inv_date'])));	
+	$sheet->setCellValue(('H'.$excel_row), ($report['inv_code']));	
 	$sheet->setCellValue(('I'.$excel_row), (YMDtoDMY($report['period_date_from'])));	
 	$sheet->setCellValue(('J'.$excel_row), (YMDtoDMY($report['period_date_to'])));	
 	$sheet->setCellValue(('K'.$excel_row), ($report['amount']));	
@@ -65,6 +94,19 @@ foreach ($arr_report as $report):
 
 	
 endforeach; 	
+
+//print last tenant col sum 
+$excel_row++;
+$sheet->setCellValue(('K'.$excel_row), ('Grand Total:'));	
+$sheet->setCellValue(('L'.$excel_row), ($tenant_row_balance_ttl));	
+$sheet ->getStyle(('K'.$excel_row.':K'.$excel_row))->applyFromArray($styleArray);
+$sheet ->getStyle(('L'.$excel_row.':L'.$excel_row))->applyFromArray($styleArray);
+
+
+//skip two  empty col 
+$excel_row++;
+$excel_row++;
+
 
 //Print report balance:
 $excel_row++;

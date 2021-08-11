@@ -24,12 +24,12 @@ echo '<DIV id="BodyDiv">';
 		<tr>
 		<th style="text-align:left" width ="5%'"><?php echo _t("No");?></th>
 		<th style="text-align:left" width ="15%">Building</th>
-		<th style="text-align:left" width ="8%">Invoice Date</th>
-		<th style="text-align:left" width ="8%">Invoice No.</th>
 		<th style="text-align:left" width ="8%">Tenant Code</th>
 		<th style="text-align:left" width ="">Name</th>
 		<th style="text-align:left" width ="8%">Ref No.</th>
 		<th style="text-align:left" width ="8%">Shop No.</th>
+		<th style="text-align:left" width ="8%">Invoice Date</th>
+		<th style="text-align:left" width ="8%">Invoice No.</th>
 		<th style="text-align:left" width ="8%">Period Date From</th>
 		<th style="text-align:left" width ="8%">Period Date To</th>
 		<th style="text-align:right" width ="8%">Amount</th>
@@ -43,12 +43,12 @@ echo '<DIV id="BodyDiv">';
 				echo '<tr>';
 				echo '<td>'.$i_count++.'</td>';
 				echo '<td>'.htmlspecialchars($report['build_eng_name']).'</td>';
-				echo '<td>'.htmlspecialchars(YMDtoDMY($report['inv_date'])).'</td>';
-				echo '<td>'.htmlspecialchars($report['inv_code']).'</td>';
 				echo '<td>'.htmlspecialchars($report['tenant_code']).'</td>';
 				echo '<td>'.htmlspecialchars($report['eng_name']).'</td>';
 				echo '<td>'.htmlspecialchars($report['ref_no']).'</td>';
-				echo '<td>'.htmlspecialchars($report['shop_no']).'</td>';
+				echo '<td>'.htmlspecialchars($report['shop_no']).'</td>';				
+				echo '<td>'.htmlspecialchars(YMDtoDMY($report['inv_date'])).'</td>';
+				echo '<td>'.htmlspecialchars($report['inv_code']).'</td>';
 				echo '<td>'.htmlspecialchars(YMDtoDMY($report['period_date_from'])).'</td>';
 				echo '<td>'.htmlspecialchars(YMDtoDMY($report['period_date_to'])).'</td>';
 				echo '<td style="text-align:right" >'.htmlspecialchars($report['amount']).'</td>';

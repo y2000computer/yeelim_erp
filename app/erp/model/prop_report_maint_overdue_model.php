@@ -72,7 +72,7 @@ class prop_report_maint_overdue_model  extends dataManager
 		$sql .= "  WHERE ";
 		$sql .= " (1) " ;
 		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
-		$sql .= " ORDER  BY INV.inv_date ASC ; ";
+		$sql .= " ORDER  BY C.tenant_code, INV.inv_date ASC ; ";
 		//echo "<br>sql:".$sql."<br>";
 		
 		$record = $this->runSQLAssoc($sql);			
