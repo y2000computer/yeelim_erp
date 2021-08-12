@@ -47,6 +47,7 @@ switch($IS_action)
 
 		$general = $_POST['general'] ;
 		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+			$_SESSION["target_build_id"] = $_POST['general']['build_id'];	
 			$vlValidation = new general_validation('create',$dmGeneralModel);
 			if($vlValidation->ValidateFormActionCreate($general)) {
 				$item_id=$dmGeneralModel->create($_POST['general']);

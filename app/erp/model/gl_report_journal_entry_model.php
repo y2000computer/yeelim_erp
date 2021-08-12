@@ -41,6 +41,12 @@ class gl_report_journal_entry_model extends dataManager
 		
 		$sql_filter = "";
 		
+
+		if($json['criteria']['journal_code_from']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " J.journal_code BETWEEN '". $json['criteria']['journal_code_from']."' AND '". $json['criteria']['journal_code_to']."'" ;
+		}	
+
 		if($json['criteria']['journal_date_from']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
 			$sql_filter .= " date(J.journal_date) BETWEEN '". toYMD($json['criteria']['journal_date_from'])."' AND '". toYMD($json['criteria']['journal_date_to'])."'" ;

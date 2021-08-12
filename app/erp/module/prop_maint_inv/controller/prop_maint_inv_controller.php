@@ -41,7 +41,8 @@ switch($IS_action)
 		break;	
 
 	case "new_step_02";
-		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+			if ($_SERVER['REQUEST_METHOD'] == "POST") {
+			$_SESSION["target_build_id"] = $_POST['general']['build_id'];				
 				$page=1;
 				$json_searchphrase = json_encode($_POST);	
 				$lot_id=$dmGeneralModel->search_tenant_info($json_searchphrase);

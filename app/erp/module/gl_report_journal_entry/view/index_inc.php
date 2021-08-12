@@ -42,6 +42,30 @@ if ($IS_action=='new') {
 							<span class="formRow">
 							</span>
 							
+
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Journal Code From :</label>
+								</span>
+								<span class="formInput">
+										<input type="text" name="criteria[journal_code_from]"  size="15" class="four" value="<?php echo htmlspecialchars($criteria['journal_code_from']);?>" />
+								</span>
+							</span>
+							<span class="formRow">
+							</span>
+
+							<span class="formRow">
+								<span class="formLabel">
+									<label class="">Journal Code To :</label>
+								</span>
+								<span class="formInput">
+										<input type="text" name="criteria[journal_code_to]"  size="15" class="four" value="<?php echo htmlspecialchars($criteria['journal_code_to']);?>" />
+								</span>
+							</span>
+							<span class="formRow">
+							</span>
+							
+														
 						
 							<span class="formRow">
 								<span class="formLabel">

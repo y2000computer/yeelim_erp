@@ -40,6 +40,12 @@ class gl_report_general_ledger_model extends dataManager
 		$comp_id = $json['criteria']['comp_id'];
 		
 		$sql_filter = "";
+
+		if($json['criteria']['chart_code_from']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " C.chart_code BETWEEN '". $json['criteria']['chart_code_from']."' AND '". $json['criteria']['chart_code_to']."'" ;
+		}			
+
 		
 		if($json['criteria']['journal_date_from']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
