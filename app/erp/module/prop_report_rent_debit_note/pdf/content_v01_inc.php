@@ -36,25 +36,25 @@
 	
 	<tr style="">
 		<td align="left" width="95%" style='FONT-SIZE:16px'>
-			<?php echo $report['eng_name']; ?>
+			<?php echo $report['eng_name']; ?>&nbsp;
 		</td>
 	</tr>
 
 	<tr style="">
 		<td align="left" width="95%" style='FONT-SIZE:16px'>
-			<?php echo $report['add_1']; ?>
+			<?php echo $report['add_1']; ?>&nbsp;
 		</td>
 	</tr>	
 
 	<tr style="">
 		<td align="left" width="95%" style='FONT-SIZE:18px'>
-			<?php echo $report['add_2']; ?>
+			<?php echo $report['add_2']; ?>&nbsp;
 		</td>
 	</tr>	
 
 	<tr style="">
 		<td align="left" width="95%" style='FONT-SIZE:16px'>
-			<?php echo $report['add_3']; ?>
+			<?php echo $report['add_3']; ?>&nbsp;
 		</td>
 	</tr>		
 
@@ -66,7 +66,7 @@
 	<tr style="">
 		<td align="left" width="30%" style="FONT-SIZE:16px"> &nbsp;</td>
 		<td align="left" style='FONT-SIZE:16px'>
-			<?php echo $report['shop_no']; ?>
+			<?php echo $report['shop_no']; ?>&nbsp;
 		</td>
 	</tr>	
 
@@ -79,7 +79,7 @@
 	<tr style="">
 		<td align="left" width="30%" style="FONT-SIZE:16px"> &nbsp;</td>
 		<td align="left" style='FONT-SIZE:16px'>
-			<?php echo $report['ref_no']; ?>
+			<?php echo $report['ref_no']; ?>&nbsp;
 		</td>
 	</tr>		
 

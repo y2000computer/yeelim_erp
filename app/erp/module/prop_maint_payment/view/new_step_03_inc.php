@@ -3,7 +3,8 @@ require __DIR__.'/../../../template/header_inc.php';
 ?>
 <?php
 if ($IS_action=='new_step_03') {
-	$general['amount'] = 0;
+	//$general['amount'] = 0;
+	$general['amount'] = $general['inv_amount'];
 	$general['status'] = 1;
 }
 ?>
