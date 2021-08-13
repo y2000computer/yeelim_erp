@@ -74,19 +74,19 @@ endforeach;
 //Print report balance:
 
 $excel_row++;
-$sheet->setCellValue(('G'.$excel_row), ('Dr. Total::'));	
+$sheet->setCellValue(('G'.$excel_row), ('Dr. Total:'));	
 $sheet->setCellValue(('H'.$excel_row), ($dr_report_ttl));	
 $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
 
 $excel_row++;
-$sheet->setCellValue(('G'.$excel_row), ('Cr. Total::'));	
+$sheet->setCellValue(('G'.$excel_row), ('Cr. Total:'));	
 $sheet->setCellValue(('H'.$excel_row), ($cr_report_ttl));	
 $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
 
 $excel_row++;
-$sheet->setCellValue(('G'.$excel_row), ('Balance Total::'));	
+$sheet->setCellValue(('G'.$excel_row), ('Balance Total:'));	
 $sheet->setCellValue(('H'.$excel_row), ($report_ttl));	
 $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
