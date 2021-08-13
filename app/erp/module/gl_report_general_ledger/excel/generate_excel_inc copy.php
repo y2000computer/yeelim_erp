@@ -6,7 +6,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 
 $inputFileType = 'Xlsx';
-$inputFileName = 'gl_report_journal_entry_template_v01.xlsx';
+$inputFileName = 'gl_report_general_ledger_template_v01.xlsx';
 $sheetname = ['sheet1'];
 
 $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load(__DIR__."/".$inputFileName);
@@ -44,16 +44,16 @@ foreach ($arr_report as $report):
 		$dr_report_ttl += $report['amount'];
 		$dr_report_ttl = round($dr_report_ttl,2);
 	} else {
-		$cr_report_ttl += ($report['amount'] );
+		$cr_report_ttl += ($report['amount'] * -1);
 		$cr_report_ttl = round($cr_report_ttl,2);
 	}	
 	
 	$sheet->setCellValue(('A'.$excel_row), $i_count++);
-	$sheet->setCellValue(('B'.$excel_row), (toDMY($report['journal_date'])));	
-	$sheet->setCellValue(('C'.$excel_row), ($report['journal_code']));	
-	$sheet->setCellValue(('D'.$excel_row), ($report['chart_code']));
-	$sheet->setCellValue(('E'.$excel_row), ($report['type_name']));	
-	$sheet->setCellValue(('F'.$excel_row), ($report['chart_name']));	
+	$sheet->setCellValue(('B'.$excel_row), ($report['chart_code']));
+	$sheet->setCellValue(('C'.$excel_row), ($report['type_name']));	
+	$sheet->setCellValue(('D'.$excel_row), ($report['chart_name']));	
+	$sheet->setCellValue(('E'.$excel_row), (toDMY($report['journal_date'])));	
+	$sheet->setCellValue(('F'.$excel_row), ($report['journal_code']));	
 	$sheet->setCellValue(('G'.$excel_row), ($report['description']));	
 	$sheet->setCellValue(('H'.$excel_row), ($report['amount']));	
 	
@@ -86,7 +86,7 @@ $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray)
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
 
 $excel_row++;
-$sheet->setCellValue(('G'.$excel_row), ('Balance Total:'));	
+$sheet->setCellValue(('G'.$excel_row), ('Balanace Total:'));	
 $sheet->setCellValue(('H'.$excel_row), ($report_ttl));	
 $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
@@ -96,7 +96,7 @@ $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray)
 $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 $dt = new DateTime();
 $path = __DIR__.DIR_EXCEL_OUTPUT;
-$file_name = 'gl_report_journal_entry_'.$dt->format('Y-m-d_H_i_s').'.xlsx';
+$file_name = 'gl_report_general_ledger_'.$dt->format('Y-m-d_H_i_s').'.xlsx';
 $writer->save($path.$file_name);
 
 header ("Content-Type: application/x-msexcel");

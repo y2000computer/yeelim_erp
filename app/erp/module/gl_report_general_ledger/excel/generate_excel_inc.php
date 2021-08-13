@@ -29,6 +29,12 @@ $styleArray = array(
 	),
 );
 
+$last_chart_code ='';
+$chart_row_newcol_is = false;
+$chart_row_dr_ttl = 0;
+$chart_row_cr_ttl = 0;
+$chart_row_balance_ttl = 0;
+
 $dr_report_ttl = 0;
 $cr_report_ttl = 0;
 $report_ttl = 0;
@@ -40,14 +46,76 @@ foreach ($arr_report as $report):
 
 	$report_ttl += $report['amount'];
 	$report_ttl = round($report_ttl,2);
-	if($report['amount'] > 0) {
+	if($report['amount'] >= 0) {
 		$dr_report_ttl += $report['amount'];
 		$dr_report_ttl = round($dr_report_ttl,2);
 	} else {
-		$cr_report_ttl += ($report['amount'] * -1);
+		$cr_report_ttl += ($report['amount'] );
 		$cr_report_ttl = round($cr_report_ttl,2);
 	}	
 	
+
+	if ($last_chart_code == '') {
+		$last_chart_code = trim($report['chart_code']);
+		$chart_row_newcol_is = true;
+	}
+
+	if ($last_chart_code == trim($report['chart_code'])) {
+
+		$chart_row_balance_ttl += $report['amount'];
+		$chart_row_balance_ttl = round($chart_row_balance_ttl,2);
+	
+		if($report['amount'] >= 0) {
+			$chart_row_dr_ttl += $report['amount'];
+			$chart_row_dr_ttl = round($chart_row_dr_ttl,2);
+		} else {
+			$chart_row_cr_ttl += ($report['amount'] );
+			$chart_row_cr_ttl = round($chart_row_cr_ttl,2);
+		}	
+
+	}	
+
+	if ($last_chart_code <> trim($report['chart_code'])) {
+		//print empty col 
+		//$excel_row++;
+
+
+
+
+		$sheet->setCellValue(('G'.$excel_row), ('Dr. Total:'));	
+		$sheet->setCellValue(('H'.$excel_row), ($chart_row_dr_ttl));	
+		$sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
+		$sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
+		$excel_row++;
+		$sheet->setCellValue(('G'.$excel_row), ('Cr. Total:'));	
+		$sheet->setCellValue(('H'.$excel_row), ($chart_row_cr_ttl));	
+		$sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
+		$sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
+		$excel_row++;
+		
+		//skip two  empty col 
+		$excel_row++;
+		$excel_row++;
+
+		$chart_row_dr_ttl = 0;
+		$chart_row_cr_ttl = 0;
+		$chart_row_balance_ttl = 0;
+		$last_chart_code = trim($report['chart_code']);
+
+		$chart_row_balance_ttl += $report['amount'];
+		$chart_row_balance_ttl = round($chart_row_balance_ttl,2);
+	
+		if($report['amount'] >= 0) {
+			$chart_row_dr_ttl += $report['amount'];
+			$chart_row_dr_ttl = round($chart_row_dr_ttl,2);
+		} else {
+			$chart_row_cr_ttl += ($report['amount'] );
+			$chart_row_cr_ttl = round($chart_row_cr_ttl,2);
+		}			
+		
+	}
+
+
 	$sheet->setCellValue(('A'.$excel_row), $i_count++);
 	$sheet->setCellValue(('B'.$excel_row), ($report['chart_code']));
 	$sheet->setCellValue(('C'.$excel_row), ($report['type_name']));	
@@ -71,22 +139,42 @@ foreach ($arr_report as $report):
 	
 endforeach; 	
 
+
+//print last chart_code col sum 
+$excel_row++;
+$sheet->setCellValue(('G'.$excel_row), ('Dr. Total:'));	
+$sheet->setCellValue(('H'.$excel_row), ($chart_row_dr_ttl));	
+$sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
+$sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
+$excel_row++;
+$sheet->setCellValue(('G'.$excel_row), ('Cr. Total:'));	
+$sheet->setCellValue(('H'.$excel_row), ($chart_row_cr_ttl));	
+$sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
+$sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
+$excel_row++;
+
+
+//skip two  empty col 
+$excel_row++;
+$excel_row++;
+
+
 //Print report balance:
 
 $excel_row++;
-$sheet->setCellValue(('G'.$excel_row), ('Dr. Total:'));	
+$sheet->setCellValue(('G'.$excel_row), ('Report Dr. Total:'));	
 $sheet->setCellValue(('H'.$excel_row), ($dr_report_ttl));	
 $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
 
 $excel_row++;
-$sheet->setCellValue(('G'.$excel_row), ('Cr. Total:'));	
+$sheet->setCellValue(('G'.$excel_row), ('Report Cr. Total:'));	
 $sheet->setCellValue(('H'.$excel_row), ($cr_report_ttl));	
 $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
 
 $excel_row++;
-$sheet->setCellValue(('G'.$excel_row), ('Balanace Total:'));	
+$sheet->setCellValue(('G'.$excel_row), ('Report Balanace Total:'));	
 $sheet->setCellValue(('H'.$excel_row), ($report_ttl));	
 $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
