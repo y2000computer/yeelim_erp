@@ -96,7 +96,7 @@ $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray)
 $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 $dt = new DateTime();
 $path = __DIR__.DIR_EXCEL_OUTPUT;
-$file_name = 'gl_report_general_ledger_'.$dt->format('Y-m-d_H_i_s').'.xlsx';
+$file_name = 'gl_report_journal_entry_'.$dt->format('Y-m-d_H_i_s').'.xlsx';
 $writer->save($path.$file_name);
 
 header ("Content-Type: application/x-msexcel");
