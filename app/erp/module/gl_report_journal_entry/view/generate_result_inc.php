@@ -42,10 +42,20 @@ echo '<DIV id="BodyDiv">';
 
 		<?php
 			$i_count=1 ;
+			$dr_report_ttl = 0;
+			$cr_report_ttl = 0;
 			$report_ttl = 0;
 			foreach ($arr_report as $report): 
 				$report_ttl += $report['amount'];
 				$report_ttl = round($report_ttl,2);
+				if($report['amount'] > 0) {
+					$dr_report_ttl += $report['amount'];
+					$dr_report_ttl = round($dr_report_ttl,2);
+				} else {
+					$cr_report_ttl += ($report['amount'] * -1);
+					$cr_report_ttl = round($cr_report_ttl,2);
+				}
+
 				echo '<tr>';
 				echo '<td>'.$i_count++.'</td>';
 				echo '<td>'.htmlspecialchars(toDMY($report['journal_date'])).'</td>';
@@ -59,11 +69,23 @@ echo '<DIV id="BodyDiv">';
 			endforeach; 	
 		?>								
 
+		<tr>	
 		<td colspan="6" align="left">&nbsp;</td>
-		<td style="text-align:right">Report Balance:</td>
-		<td style="text-align:right"><?php echo $report_ttl;?></td>
+		<td style="text-align:right">Dr. Total:</td>
+		<td style="text-align:right"><?php echo $dr_report_ttl;?></td>
 		</tr>		
 
+		<tr>	
+		<td colspan="6" align="left">&nbsp;</td>
+		<td style="text-align:right">Cr. Total:</td>
+		<td style="text-align:right"><?php echo $cr_report_ttl;?></td>
+		</tr>		
+
+		<tr>	
+		<td colspan="6" align="left">&nbsp;</td>
+		<td style="text-align:right">Balance Total:</td>
+		<td style="text-align:right"><?php echo $report_ttl;?></td>
+		</tr>		
 
 		
 		<td colspan="8" align="left">*End of Report*</td>

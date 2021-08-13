@@ -29,7 +29,8 @@ $styleArray = array(
 	),
 );
 
-
+$dr_report_ttl = 0;
+$cr_report_ttl = 0;
 $report_ttl = 0;
 $i_count=1;
 $excel_row = 6;
@@ -39,6 +40,13 @@ foreach ($arr_report as $report):
 
 	$report_ttl += $report['amount'];
 	$report_ttl = round($report_ttl,2);
+	if($report['amount'] > 0) {
+		$dr_report_ttl += $report['amount'];
+		$dr_report_ttl = round($dr_report_ttl,2);
+	} else {
+		$cr_report_ttl += ($report['amount'] * -1);
+		$cr_report_ttl = round($cr_report_ttl,2);
+	}	
 	
 	$sheet->setCellValue(('A'.$excel_row), $i_count++);
 	$sheet->setCellValue(('B'.$excel_row), ($report['chart_code']));
@@ -66,10 +74,23 @@ endforeach;
 //Print report balance:
 
 $excel_row++;
-$sheet->setCellValue(('G'.$excel_row), ('Report Balance:'));	
+$sheet->setCellValue(('G'.$excel_row), ('Dr. Total::'));	
+$sheet->setCellValue(('H'.$excel_row), ($dr_report_ttl));	
+$sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
+$sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
+
+$excel_row++;
+$sheet->setCellValue(('G'.$excel_row), ('Cr. Total::'));	
+$sheet->setCellValue(('H'.$excel_row), ($cr_report_ttl));	
+$sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
+$sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
+
+$excel_row++;
+$sheet->setCellValue(('G'.$excel_row), ('Balanace Total::'));	
 $sheet->setCellValue(('H'.$excel_row), ($report_ttl));	
 $sheet ->getStyle(('G'.$excel_row.':G'.$excel_row))->applyFromArray($styleArray);
 $sheet ->getStyle(('H'.$excel_row.':H'.$excel_row))->applyFromArray($styleArray);
+
 
 
 $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
