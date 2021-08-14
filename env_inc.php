@@ -1,5 +1,5 @@
-<?php
-
+<?phpS
+KJKJ
 //Environment 
 define('ENV', 'UAT');  //define('ENV', 'PROD');
 
@@ -20,6 +20,10 @@ DEFINE('DB_CONNECTION_STRING', MYSQL_CONNECTION_STRING);
 define('DIR_FS_DOCS', __DIR__.'/log');
 define('DIR_FS_STORE_LOG_USER', DIR_FS_DOCS . '/users/');
 
+
+echo 'DIR_FS_DOCS = '. DIR_FS_DOCS .'<br>';
+exit;AAA
+
 //Debug setting
 define('DEBUG_MODE', false);
 define('DIR_PUBLIC_HTML', __DIR__.'/../../document');
@@ -27,7 +31,7 @@ define('DIR_PUBLIC_UPLOAD', '../document');
 
 //Encryption setting
 define('SALT', 'REVAMP'); 
-define('SYSTEM_PAGE_ROW_LIMIT', '50');
+DEFINE('SYSTEM_PAGE_ROW_LIMIT', '50');
 
 
 //Email setting

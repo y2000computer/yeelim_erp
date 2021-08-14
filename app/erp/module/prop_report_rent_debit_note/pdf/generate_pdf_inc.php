@@ -78,6 +78,7 @@ $mpdf->useAdobeCJK = true;		// Default setting in config.php
 
 $dir=DIR_PUBLIC_HTML.'/prop_rent_debit_note_output/';
 
+
 if (!is_dir($dir)) 	{
 	mkdir($dir,0777,true);
 }
