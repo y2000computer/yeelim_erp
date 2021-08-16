@@ -42,54 +42,113 @@ echo '<DIV id="BodyDiv">';
 
 		<?php
 			$i_count=1 ;
-			$dr_report_ttl = 0;
-			$cr_report_ttl = 0;
-			$report_ttl = 0;
 			foreach ($arr_report as $report): 
-				$report_ttl += $report['amount'];
-				$report_ttl = round($report_ttl,2);
-				if($report['amount'] > 0) {
-					$dr_report_ttl += $report['amount'];
-					$dr_report_ttl = round($dr_report_ttl,2);
-				} else {
-					$cr_report_ttl += ($report['amount'] * -1);
-					$cr_report_ttl = round($cr_report_ttl,2);
-				}
-				
+				$chart_brought_forward = $report['brought_forward'];
+				$chart_previous_balance = $dmReport_tb->get_previous_balance($report['chart_id'],$json_search_items['criteria']);
+				$chart_current_period_balance = $dmReport_tb->get_current_period_balance($report['chart_id'],$json_search_items['criteria']);
+				$chart_ending_balance = $chart_brought_forward + $chart_previous_balance + $chart_current_period_balance;
+
+				$chart_brought_forward = round($chart_brought_forward,2);
+				$chart_previous_balance = round($chart_previous_balance,2);
+				$chart_current_period_balance = round($chart_current_period_balance,2);
+				$chart_ending_balance = round($chart_ending_balance,2);
+
 				echo '<tr>';
 				echo '<td>'.$i_count++.'</td>';
 				echo '<td>'. $report['chart_code'] .'</td>';
 				echo '<td>'.htmlspecialchars($report['type_name']).'</td>';
 				echo '<td>'.htmlspecialchars($report['chart_name']).'</td>';
-				echo '<td>'.htmlspecialchars(toDMY($report['journal_date'])).'</td>';
-				echo '<td>'.htmlspecialchars($report['journal_code']).'</td>';
-				echo '<td>'.htmlspecialchars($report['description']).'</td>';
-				echo '<td style="text-align:right" >'.htmlspecialchars($report['amount']).'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'Brought Forward:'.'</td>';
+				echo '<td style="text-align:right" >'.htmlspecialchars($chart_brought_forward).'</td>';
 				echo '</tr>';
+
+				echo '<tr>';
+				echo '<td>'.$i_count++.'</td>';
+				echo '<td>'. $report['chart_code'] .'</td>';
+				echo '<td>'.htmlspecialchars($report['type_name']).'</td>';
+				echo '<td>'.htmlspecialchars($report['chart_name']).'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'Previous Balance:'.'</td>';
+				echo '<td style="text-align:right" >'.htmlspecialchars($chart_previous_balance).'</td>';
+				echo '</tr>';
+
+
+				if($json['criteria']['chart_code_from']<>"") {
+					if(!empty($sql_filter)) $sql_filter.=" AND ";
+					$sql_filter .= " C.chart_code BETWEEN '". $json['criteria']['chart_code_from']."' AND '". $json['criteria']['chart_code_to']."'" ;
+				}			
+		
+
+				
+				
+				$ar = json_decode($json_searchphrase, true);
+				$ar['criteria']['chart_code_from'] = $report['chart_code'];
+				$ar['criteria']['chart_code_to'] = $report['chart_code'];
+				$json_searchphrase = json_encode($ar);	
+				$arr_current_trans=$dmReport->current_trans($json_searchphrase);
+				foreach ($arr_current_trans as $current_tran): 
+					echo '<tr>';
+					echo '<td>'.$i_count++.'</td>';
+					echo '<td>'. $report['chart_code'] .'</td>';
+					echo '<td>'.htmlspecialchars($report['type_name']).'</td>';
+					echo '<td>'.htmlspecialchars($report['chart_name']).'</td>';
+					echo '<td>'.htmlspecialchars(toDMY($current_tran['journal_date'])).'</td>';
+					echo '<td>'.htmlspecialchars($repocurrent_tranrt['journal_code']).'</td>';
+					echo '<td>'.htmlspecialchars($current_tran['description']).'</td>';
+					echo '<td style="text-align:right" >'.htmlspecialchars($current_tran['amount']).'</td>';
+					echo '</tr>';	
+
+				endforeach; 	
+
+
+				echo '<tr>';
+				echo '<td>'.$i_count++.'</td>';
+				echo '<td>'. $report['chart_code'] .'</td>';
+				echo '<td>'.htmlspecialchars($report['type_name']).'</td>';
+				echo '<td>'.htmlspecialchars($report['chart_name']).'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'Current Balance:'.'</td>';
+				echo '<td style="text-align:right" >'.htmlspecialchars($chart_current_period_balance).'</td>';
+				echo '</tr>';
+
+
+				echo '<tr>';
+				echo '<td>'.$i_count++.'</td>';
+				echo '<td>'. $report['chart_code'] .'</td>';
+				echo '<td>'.htmlspecialchars($report['type_name']).'</td>';
+				echo '<td>'.htmlspecialchars($report['chart_name']).'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'Ending Balance:'.'</td>';
+				echo '<td style="text-align:right" >'.htmlspecialchars($chart_ending_balance).'</td>';
+				echo '</tr>';
+
+
+
+				echo '<tr>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '<td>'.'&nbsp;'.'</td>';
+				echo '</tr>';
+
+
+
+
 			endforeach; 	
 		?>								
 
-		<tr>	
-		<td colspan="6" align="left">&nbsp;</td>
-		<td style="text-align:right">Dr. Total:</td>
-		<td style="text-align:right"><?php echo $dr_report_ttl;?></td>
-		</tr>		
-
-		<tr>	
-		<td colspan="6" align="left">&nbsp;</td>
-		<td style="text-align:right">Cr. Total:</td>
-		<td style="text-align:right"><?php echo $cr_report_ttl;?></td>
-		</tr>		
 
 
-		<tr>	
-		<td colspan="6" align="left">&nbsp;</td>
-		<td style="text-align:right">Balance Total:</td>
-		<td style="text-align:right"><?php echo $report_ttl;?></td>
-		</tr>		
-
-
-		
+		<tr>		
 		<td colspan="8" align="left">*End of Report*</td>
 		</tr>		
 		

@@ -11,6 +11,7 @@ if($allow == 0) require __DIR__.'/../../../template/sorry_inc.php';
 $dmReport = new gl_report_trial_balance_model();  
 
 	
+
 switch($IS_action)
 {
 	

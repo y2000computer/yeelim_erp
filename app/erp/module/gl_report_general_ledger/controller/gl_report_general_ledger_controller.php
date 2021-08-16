@@ -9,7 +9,7 @@ if($allow == 0) require __DIR__.'/../../../template/sorry_inc.php';
 
 //Open report database connnection 
 $dmReport = new gl_report_general_ledger_model();  
-
+$dmReport_tb = new gl_report_trial_balance_model();  
 	
 switch($IS_action)
 {

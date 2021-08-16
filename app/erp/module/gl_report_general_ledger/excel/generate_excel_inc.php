@@ -31,6 +31,12 @@ $styleArray = array(
 
 $last_chart_code ='';
 $chart_row_newcol_is = false;
+
+$chart_row_brought_forward_ttl = 0;
+$chart_row_previous_balance_ttl = 0;
+$chart_row_current_period_balance_ttl = 0;
+$chart_row_ending_balance_ttl = 0;
+
 $chart_row_dr_ttl = 0;
 $chart_row_cr_ttl = 0;
 $chart_row_balance_ttl = 0;
@@ -97,6 +103,11 @@ foreach ($arr_report as $report):
 		$excel_row++;
 		$excel_row++;
 
+		$chart_row_brought_forward_ttl = 0;
+		$chart_row_previous_balance_ttl = 0;
+		$chart_row_current_period_balance_ttl = 0;
+		$chart_row_ending_balance_ttl = 0;
+		
 		$chart_row_dr_ttl = 0;
 		$chart_row_cr_ttl = 0;
 		$chart_row_balance_ttl = 0;

@@ -46,20 +46,51 @@ class gl_report_general_ledger_model extends dataManager
 			$sql_filter .= " C.chart_code BETWEEN '". $json['criteria']['chart_code_from']."' AND '". $json['criteria']['chart_code_to']."'" ;
 		}			
 
+
+		$sql = " SELECT C.chart_id, C.chart_code, C.chart_name, C.brought_forward , TY.type_name ";
+		$sql .= " FROM tbl_gl_chart_master AS C  ";
+		$sql .= " LEFT JOIN  tbl_gl_chart_type_master AS TY ON C.type_code = TY.type_code  ";
+		$sql .= "  WHERE ";
+		$sql .= " C.comp_id = ". $comp_id ;
+		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
+		$sql .= " ORDER  BY C.chart_code  ASC ; ";
+		
+		//echo '<br>'.$sql.'<br>';
+
+
+		$record = $this->runSQLAssoc($sql);	
+ 		  
+		  
+		return $record;
+	}	
+	
+   	
+	
+	public function current_trans($jsondata)
+	{
+
+		$json = json_decode($jsondata, true);
+		$comp_id = $json['criteria']['comp_id'];
+		
+		$sql_filter = "";
+
+		if($json['criteria']['chart_code_from']<>"") {
+			if(!empty($sql_filter)) $sql_filter.=" AND ";
+			$sql_filter .= " C.chart_code BETWEEN '". $json['criteria']['chart_code_from']."' AND '". $json['criteria']['chart_code_to']."'" ;
+		}			
+
 		
 		if($json['criteria']['journal_date_from']<>"") {
 			if(!empty($sql_filter)) $sql_filter.=" AND ";
 			$sql_filter .= " date(J.journal_date) BETWEEN '". toYMD($json['criteria']['journal_date_from'])."' AND '". toYMD($json['criteria']['journal_date_to'])."'" ;
 		}			
 
-		$sql = " SELECT C.chart_code, C.chart_name, TY.type_name, J.journal_date, J.journal_code, JD.*  ";
+		$sql = " SELECT  C.chart_id, C.chart_code, C.chart_name, TY.type_name, J.journal_date, J.journal_code, JD.*  ";
 		$sql .= " FROM  tbl_gl_journal_entry AS J    ";
 		$sql .= " LEFT JOIN  tbl_gl_journal_entry_detail AS JD ON J.journal_id = JD.journal_id  ";
-		//$sql .= " LEFT JOIN  tbl_gl_chart_master AS C ON JD.chart_code = C.chart_code  ";
 		$sql .= " LEFT JOIN  tbl_gl_chart_master AS C ON JD.chart_id = C.chart_id  ";
 		$sql .= " LEFT JOIN  tbl_gl_chart_type_master AS TY ON C.type_code = TY.type_code  ";
 		$sql .= "  WHERE ";
-		//$sql .= " J.comp_id = ". $_SESSION["target_comp_id"] ;
 		$sql .= " J.comp_id = ". $comp_id ;
 		$sql .= " AND J.posting_is  =  1 ";
 		$sql .= " AND J.status  =  1 ";
@@ -75,8 +106,8 @@ class gl_report_general_ledger_model extends dataManager
 		return $record;
 	}	
 	
-   	
 	
+
     public function close()
 	{
 		$this->dbh = null;
