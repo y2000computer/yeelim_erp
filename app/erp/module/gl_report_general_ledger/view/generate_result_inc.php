@@ -89,7 +89,7 @@ echo '<DIV id="BodyDiv">';
 					echo '<td>'.htmlspecialchars($report['type_name']).'</td>';
 					echo '<td>'.htmlspecialchars($report['chart_name']).'</td>';
 					echo '<td>'.htmlspecialchars(toDMY($current_tran['journal_date'])).'</td>';
-					echo '<td>'.htmlspecialchars($repocurrent_tranrt['journal_code']).'</td>';
+					echo '<td>'.htmlspecialchars($current_tran['journal_code']).'</td>';
 					echo '<td>'.htmlspecialchars($current_tran['description']).'</td>';
 					echo '<td style="text-align:right" >'.htmlspecialchars($current_tran['amount']).'</td>';
 					echo '</tr>';	
