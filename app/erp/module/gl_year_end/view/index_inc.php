@@ -50,7 +50,7 @@ if ($IS_action=='new') {
 									<label class="">Journal Date From:</label>
 								</span>
 								<span class="formInput" data-remarks="(dd/mm/yyyy)">
-									<input id="journal_date_from" class="datepicker" style="width: 140px" type="text" required name="criteria[journal_date_from]" autocomplete="off" value="<?php echo $general['journal_date_from'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+									<input id="journal_date_from" class="datepicker" style="width: 140px" type="text" required name="criteria[journal_date_from]" autocomplete="off" value="<?php echo $json_search_items['criteria']['journal_date_from'];?>" placeholder="dd/mm/yyyy" maxlength="10">
 								</span>
 							</span>							
 							<span class="formRow">
@@ -62,7 +62,7 @@ if ($IS_action=='new') {
 									<label class="">Journal Date To:</label>
 								</span>
 								<span class="formInput" data-remarks="(dd/mm/yyyy)">
-									<input id="journal_date_to" class="datepicker" style="width: 140px" type="text" required name="criteria[journal_date_to]" autocomplete="off" value="<?php echo $general['journal_date_to'];?>" placeholder="dd/mm/yyyy" maxlength="10">
+									<input id="journal_date_to" class="datepicker" style="width: 140px" type="text" required name="criteria[journal_date_to]" autocomplete="off" value="<?php echo  $json_search_items['criteria']['journal_date_to'];?>" placeholder="dd/mm/yyyy" maxlength="10">
 								</span>
 							</span>							
 							<span class="formRow">

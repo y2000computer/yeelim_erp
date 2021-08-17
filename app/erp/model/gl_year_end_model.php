@@ -98,6 +98,39 @@ class gl_year_end_model extends dataManager
 	}		
 	
 	
+
+	public function is_previous_journal_unpost_found($form)
+	{
+		
+		$comp_id = $form['comp_id'];
+
+		$sql_filter = "";
+		
+
+		//echo "<br>sql_filter:".$sql_filter."<br>";
+		
+		$sql ="SELECT COUNT(*) AS RecordCount FROM tbl_gl_journal_entry AS J ";
+		$sql .= "  WHERE ";
+		$sql .= " J.comp_id = ". $comp_id ;
+		$sql .= " AND ";
+		$sql .= " date(J.journal_date) < '". toYMD($form['journal_date_from'])."'";
+		$sql .= " AND ";
+		$sql .= " J.posting_is = 1 ";
+		$sql .= " AND ";
+		$sql .= " J.year_end_is <> 1 ";
+		$sql .= " AND ";
+		$sql .= " J.status = 1 ";
+		//echo '<br>'.$sql; // Debug used		
+		
+		$arr_record = $this->runSQLAssoc($sql);	
+
+		$is_find = false;
+		if ($arr_record[0]['RecordCount'] >=1) $is_find = true;
+		
+		return $is_find;
+	}	
+			
+
 	
     public function close()
 	{

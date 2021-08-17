@@ -29,6 +29,12 @@ class general_validation
 			$icheck = false;
 		} 
 
+
+		if ($this->dataModel->is_previous_journal_unpost_found($form)) {
+			$this->problemMsg .= 'Previously Unpost Journal had found!. Year end can\'t process<br>';
+			$icheck = false;
+		} 
+
 		
 		return $icheck;
 	}
