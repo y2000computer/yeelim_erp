@@ -112,7 +112,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 									<label class="">Add(2) :</label>
 								</span>
 								<span class="formInput">
-										<input type="text" name="general[add_3]"  size="100"  class="thirteen" value="<?php echo htmlspecialchars($general['add_3']);?>" />
+										<input type="text" name="general[add_2]"  size="100"  class="thirteen" value="<?php echo htmlspecialchars($general['add_2']);?>" />
 								</span>
 							</span>
 							<span class="formRow">
@@ -123,7 +123,7 @@ if(isset($paging)) $page =$paging->CalcuatePageNo($item_id,SYSTEM_PAGE_ROW_LIMIT
 									<label class="">Add(3) :</label>
 								</span>
 								<span class="formInput">
-										<input type="text" name="general[add_2]"  size="100"  class="thirteen" value="<?php echo htmlspecialchars($general['add_2']);?>" />
+										<input type="text" name="general[add_3]"  size="100"  class="thirteen" value="<?php echo htmlspecialchars($general['add_3']);?>" />
 								</span>
 							</span>
 							<span class="formRow">
