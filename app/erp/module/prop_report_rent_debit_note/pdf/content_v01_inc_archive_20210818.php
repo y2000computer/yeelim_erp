@@ -123,7 +123,7 @@
 	<tr style="">
 		<td align="left" width="20%" style="FONT-SIZE:16px"> &nbsp;</td>
 		<td align="left" width="" style='FONT-SIZE:16px'>
-		&nbsp;&nbsp;&nbsp;<?php echo YMDtoDMY($report['period_date_from']); ?>
+			<?php echo YMDtoDMY($report['period_date_from']); ?>
 			&nbsp;&nbsp; - &nbsp;&nbsp;
 			<?php echo YMDtoDMY($report['period_date_to']); ?>
 		</td>
