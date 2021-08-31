@@ -491,12 +491,12 @@ class prop_maint_payment_model extends dataManager
 		//echo '<br>prefix_YY ='.$prefix_YY.'<br>'	;
 		$sql = "SELECT MAX(payment_code) as max  FROM tbl_prop_maint_payment WHERE
 					build_id=".$build_id." and left(payment_code,4)='".$prefix_YY."'";
-		//echo '<br>'.$sql.'<br>';
+		echo '<br>'.$sql.'<br>';
 		$prefix_max ='';
 
 		$rows = $this->runSQLAssoc($sql);	
 		foreach ($rows as $row): 
-			$prefix_max = $now['max'];
+			$prefix_max = $row['max'];
 		endforeach;	
 		
 

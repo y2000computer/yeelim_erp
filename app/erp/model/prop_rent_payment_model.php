@@ -492,7 +492,7 @@ class prop_rent_payment_model extends dataManager
 
 		$rows = $this->runSQLAssoc($sql);	
 		foreach ($rows as $row): 
-			$prefix_max = $now['max'];
+			$prefix_max = $row['max'];
 		endforeach;	
 		
 		//echo '<br>prefix_max ='.$prefix_max.'<br>'	;
