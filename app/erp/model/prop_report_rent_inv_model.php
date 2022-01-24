@@ -73,7 +73,8 @@ class prop_report_rent_inv_model  extends dataManager
 		$sql .= "  WHERE ";
 		$sql .= " (1) " ;
 		if(!empty($sql_filter)) $sql .= " AND  ".$sql_filter ;
-		$sql .= " ORDER  BY INV.inv_date ASC ; ";
+		//$sql .= " ORDER  BY INV.inv_date ASC ; ";  //remark 24 Jan 2022
+		$sql .= " ORDER  BY INV.inv_id ASC ; ";
 		//echo "<br>sql:".$sql."<br>";
 		
 		$record = $this->runSQLAssoc($sql);	

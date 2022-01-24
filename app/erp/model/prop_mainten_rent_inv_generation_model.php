@@ -62,7 +62,7 @@ class prop_mainten_rent_inv_generation_model extends dataManager
 		$sql .= " AND C.status = 1 " ;
 		//$sql .= " ORDER BY C.tenant_id ;" ;  //remark 20 Nov 2021
 		$sql .= " ORDER BY C.tenant_code ;" ;
-		//echo "<br>sql:".$sql."<br>";
+		echo "<br>sql:".$sql."<br>";
 		
 		$tenant_records = $this->runSQLAssoc($sql);			
 
